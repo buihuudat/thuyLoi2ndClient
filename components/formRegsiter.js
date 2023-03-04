@@ -13,12 +13,18 @@ export default function FormRegsiter() {
           textAlign: "center",
         }}
       >
-        Đăng ký tài khoản
+        Đăng nhập
       </Text>
       <InputForm
         label={"Mã sinh viên"}
         placeholder="Mã sinh viên"
         type="numberic"
+      />
+      <InputForm
+        label={"Mật khẩu"}
+        placeholder="Mật khẩu"
+        type="numberic"
+        secure={true}
       />
       <Button title="Tiếp" />
     </View>

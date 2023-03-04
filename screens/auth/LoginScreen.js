@@ -1,166 +1,138 @@
 import {
   View,
   Text,
-  SafeAreaView,
-  Image,
-  TextInput,
-  Button,
-  Keyboard,
   TouchableOpacity,
-  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Button,
 } from "react-native";
-import React, { useContext, useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { styled } from "nativewind";
-import { AntDesign, Entypo, FontAwesome } from "@expo/vector-icons";
-const LoginScreen = ({ route }) => {
+import { SafeAreaView } from "react-native-safe-area-context";
+import { BGWave, Logo } from "../../assets";
+import { Entypo } from "@expo/vector-icons";
+import InputForm from "../../components/InputForm";
+
+export default function LoginScreen() {
   const navigation = useNavigation();
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [phoneErrorText, setPhoneErrorText] = useState(null);
-  const [passwordErrorText, setPasswordErrorText] = useState(null);
-
-  const { handlers } = useContext(AuthContext);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
     });
   }, []);
-
-  const handleSubmit = () => {
-    let err = false;
-    if (phone === "") {
-      setPhoneErrorText("Yêu cầu nhập Số điện thoại");
-      err = true;
-    }
-    if (password === "") {
-      setPasswordErrorText("Yêu cầu nhập mật khẩu");
-      err = true;
-    }
-    // if (password.length < 8) {
-    //   setPasswordErrorText("Password must be at 8 characters");
-    //   err = true;
-    // }
-
-    if (err) {
-      return;
-    }
-
-    setPhoneErrorText(null);
-    setPasswordErrorText(null);
-    Keyboard.dismiss();
-
-    try {
-      handlers.signIn({ phone, password });
-      navigation.navigate("DiscoverScreen");
-    } catch (e) {
-      Alert.alert("Login failure ", e.message);
-      return;
-    }
-  };
-
-  const handleBack = () => {
-    navigation.navigate(route.params?.back, { param: route.params.data });
-  };
-
-  const StyleView = styled(View);
-  const StyleImage = styled(Image);
-  const StyleText = styled(Text);
-  const StyleTextInput = styled(TextInput);
-  const StyleButton = styled(Button);
-
+  const handleBack = () => {};
   return (
-    <SafeAreaView className="flex-1">
-      {/* <TouchableOpacity
-        onPress={handleBack}
-        className="w-10 h-10 rounded-md items-center justify-center z-10 mt-8 ml-4"
-      >
-        <Entypo name="chevron-left" size={24} color="#06b2bb" />
-      </TouchableOpacity>
-      <StyleView></StyleView>
-      <StyleView className="mt-3 h-[150]">
-        <StyleImage
-          source={ImageLogin}
-          className="-mt-20 w-full h-max relative"
-          resizeMode="center"
-        />
-      </StyleView>
-      <StyleText className="text-center font-bold text-[30px] text-[#0b646b]">
-        Login to your Account
-      </StyleText>
-      <StyleView className="m-3 space-y-8">
-        <StyleView>
-          <StyleTextInput
-            className={`w-full h-10 border-b-2 border-solid border-[#0b646b] rounded ${
-              phoneErrorText && "border-red-400"
-            }`}
-            style={{ padding: 10 }}
-            value={phone}
-            onChangeText={(e) => setPhone(e)}
-            placeholder="Phone"
-            returnKeyType="next"
-            autoCapitalize="none"
-            keyboardType="numeric"
-            autoCorrect={false}
+    <SafeAreaView>
+      <Image
+        source={BGWave}
+        w="full"
+        style={{
+          position: "absolute",
+        }}
+        sizeMode="cover"
+      />
+      <ScrollView>
+        <TouchableOpacity onPress={handleBack} style={{ padding: 13 }}>
+          <Entypo name="chevron-left" size={34} color="#06b2bb" />
+        </TouchableOpacity>
+        <View
+          style={
+            styles.flexColumn && {
+              padding: 10,
+              gap: 15,
+            }
+          }
+        >
+          <Image
+            style={{
+              marginLeft: "auto",
+              marginRight: "auto",
+              marginBottom: 4,
+            }}
+            alt="logo"
+            source={Logo}
+            resizeMode="center"
           />
-          {phoneErrorText && (
-            <StyleText style={{ color: "red", fontStyle: "italic" }}>
-              {phoneErrorText}
-            </StyleText>
-          )}
-        </StyleView>
-        <StyleView>
-          <StyleTextInput
-            className={`w-full h-10 border-b-2 border-solid border-[#0b646b] rounded ${
-              passwordErrorText && "border-red-400"
-            }`}
-            style={{ padding: 10 }}
-            value={password}
-            onChangeText={(e) => setPassword(e)}
-            placeholder="Password"
-            secureTextEntry
-            returnKeyType="go"
-            onSubmitEditing={handleSubmit}
-          />
-          {passwordErrorText && (
-            <StyleText style={{ color: "red", fontStyle: "italic" }}>
-              {passwordErrorText}
-            </StyleText>
-          )}
-        </StyleView>
-
-        <StyleView className="">
-          <StyleButton title="Submit" onPress={handleSubmit} />
-        </StyleView>
-      </StyleView>
-
-      <StyleText className="text-center">-Or Login With-</StyleText>
-
-      <StyleView className="flex-row justify-center gap-4 pt-3">
-        <StyleView className="bg-[#2fafe2] flex-row  w-[100px]  m-2 p-3 rounded-md font-bold">
-          <AntDesign name="google" size={24} color="white" />
-          <StyleText className="text-center text-white">oogle</StyleText>
-        </StyleView>
-        <StyleView className="bg-[#2fafe2] flex-row  w-[100px]  m-2 p-3 rounded-md font-bold">
-          <FontAwesome name="facebook" size={20} color="white" />
-          <StyleText className="text-center text-white">acebook</StyleText>
-        </StyleView>
-      </StyleView>
-
-      <StyleView className="flex justify-center text-center mt-10">
-        <StyleText style={{ textAlign: "center" }}>
-          Don't have an account{" "}
-          <StyleText
-            className="text-[#4ee629] font-bold"
-            onPress={() => navigation.navigate("Register")}
+          <Text
+            style={{
+              paddingTop: 10,
+              fontSize: 30,
+              fontWeight: 600,
+              textAlign: "center",
+            }}
           >
-            Register now
-          </StyleText>
-        </StyleText>
-      </StyleView> */}
+            Đăng nhập
+          </Text>
+          <InputForm
+            label={"Mã sinh viên"}
+            placeholder="Mã sinh viên"
+            type="numberic"
+          />
+          <InputForm
+            label={"Mật khẩu"}
+            placeholder="Mật khẩu"
+            type="numberic"
+            secure={true}
+          />
+          <Button title="Tiếp" />
+          <TouchableOpacity
+            style={{
+              borderWidth: 0.5,
+              padding: 5,
+              borderRadius: 20,
+              backgroundColor: "999",
+              opacity: 0.5,
+            }}
+            onPress={() => alert("Chức năng đang phát triển")}
+          >
+            <Text style={{ textAlign: "center", fontWeight: 600 }}>
+              Quên mật khẩu
+            </Text>
+          </TouchableOpacity>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 5,
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                padding: 10,
+                textAlign: "center",
+                borderRadius: 10,
+                backgroundColor: "#3878DB",
+              }}
+            >
+              <Text style={styles.textButton}>Facebook</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("register")}
+              style={{
+                padding: 10,
+                textAlign: "center",
+                borderRadius: 10,
+                backgroundColor: "green",
+              }}
+            >
+              <Text style={styles.textButton}>Đăng ký</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
-export default LoginScreen;
+const styles = StyleSheet.create({
+  flexColumn: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  textButton: {
+    fontWeight: 600,
+    color: "white",
+  },
+});
