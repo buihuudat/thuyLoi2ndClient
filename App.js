@@ -1,20 +1,31 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import HomeScreen from "./screens/HomeScreen";
+import LoginScreen from "./screens/auth/LoginScreen";
+import RegisterScreen from "./screens/auth/RegisterScreen";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import CategoryScreen from "./screens/CategoryScreen";
+import ProductsScreen from "./screens/ProductsScreen";
+import ProductScreen from "./screens/ProductScreen";
+import ProductReviewScreen from "./screens/ProductReviewScreen";
+
+const Stask = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stask.Navigator>
+          <Stask.Screen name="login" component={LoginScreen} />
+          <Stask.Screen name="register" component={RegisterScreen} />
+          <Stask.Screen name="home" component={HomeScreen} />
+          <Stask.Screen name="caregory" component={CategoryScreen} />
+          <Stask.Screen name="product" component={ProductScreen} />
+          <Stask.Screen name="products" component={ProductsScreen} />
+          <Stask.Screen name="review" component={ProductReviewScreen} />
+        </Stask.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
