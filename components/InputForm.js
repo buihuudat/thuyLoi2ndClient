@@ -1,7 +1,14 @@
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import React from "react";
 
-export default function InputForm({ label, placeholder, type, secure }) {
+export default function InputForm({
+  label,
+  placeholder,
+  type,
+  secure,
+  data,
+  setData,
+}) {
   return (
     <View>
       <Text>{label}</Text>
@@ -11,6 +18,8 @@ export default function InputForm({ label, placeholder, type, secure }) {
         keyboardType={type}
         secureTextEntry={secure}
         label={label}
+        value={data}
+        onChangeText={(e) => setData(e)}
       />
     </View>
   );

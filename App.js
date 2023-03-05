@@ -18,10 +18,9 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <Stask.Navigator>
-          <Stask.Screen name="first" component={FirstScreen} />
-          {/* <Stask.Screen name="login" component={LoginScreen} />
-          <Stask.Screen name="register" component={RegisterScreen} /> */}
-
+          {/* <Stask.Screen name="first" component={FirstScreen} /> */}
+          {/* {/* <Stask.Screen name="login" component={LoginScreen} /> */}
+          <Stask.Screen name="register" component={RegisterScreen} />
           {/* <Stask.Screen name="home" component={HomeScreen} />
           <Stask.Screen name="caregory" component={CategoryScreen} /> */}
           <Stask.Screen name="product" component={ProductScreen} />
