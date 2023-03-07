@@ -28,7 +28,7 @@ export default function FirstScreen() {
             gap: 15,
             position: "absolute",
             left: "50%",
-            transform: "translate(-50%,0)",
+            // transform: "translate(-50%,0)",
           }}
         >
           <Image alt="logo" source={Logo} />
