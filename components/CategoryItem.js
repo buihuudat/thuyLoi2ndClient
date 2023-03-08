@@ -1,17 +1,17 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Colors from "../../assets/constants/Colors";
+import Colors from "../assets/constants/Colors";
 
-const CategoryItem = ({ postproduct }) => {
+const CategoryItem = ({ postproduct, navigate }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} >
       <View>
         <TouchableOpacity>
           <Image style={styles.image} source={postproduct.source} />
         </TouchableOpacity>
 
         <View style={styles.titlePostProduct}>
-          <Text style={styles.titleContent}>{postproduct.title}</Text>
+          <Text style={styles.titleContent} onPress={navigate}>{postproduct.title}</Text>
         </View>
       </View>
     </View>
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     height: 100,
-    borderRadius:30
+    borderRadius: 30,
   },
   titlePostProduct: {
     flexDirection: "row",
@@ -43,6 +43,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.DEFAULT_BLACK,
     fontWeight: 600,
-    textAlign:"center"
+    textAlign: "center",
   },
 });

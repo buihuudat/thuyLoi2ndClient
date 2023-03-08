@@ -1,4 +1,6 @@
-//tran thanh tu
+{
+  /* tranthanhtu 8/3/2023 */
+}
 import {
   View,
   Text,
@@ -18,7 +20,8 @@ import { dataCateGories, dataPostProducts } from "../data";
 import CategoryItem from "../components/CategoryItem";
 import PostProductItem from "../components/PostProductItem";
 import { ScrollView } from "react-native-virtualized-view";
-const HomeScreen = ({ navigation }) => {
+import CategoryDetailItem from "../components/CategoryDetailItem";
+const CategoryDetails = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar
@@ -28,6 +31,16 @@ const HomeScreen = ({ navigation }) => {
       />
 
       <View style={styles.backgroundCurvedContainer}>
+        <TouchableWithoutFeedback
+          onPress={() => navigation.navigate("HomeTabs")}
+        >
+          <IonIcons
+            name="chevron-back-outline"
+            size={25}
+            color={Colors.DEFAULT_BLACK}
+            style={{ marginTop: 40 }}
+          />
+        </TouchableWithoutFeedback>
         <View style={styles.inputContainer}>
           <View style={styles.inputSubContainer}>
             <Feather
@@ -63,77 +76,49 @@ const HomeScreen = ({ navigation }) => {
         </TouchableWithoutFeedback>
       </View>
       <ScrollView>
-        <View style={{ flex: 1, width: "100%", height: 120 }}>
-          <Swiper
-            containerStyle={styles.wrapper}
-            showsButtons={false}
-            loop={true}
-            autoplay={true}
-            paginationStyle={false}
-            showsPagination={false}
-          >
-            <View style={styles.slide}>
-              <Image
-                style={styles.image}
-                source={require("../assets/images/banners/banner_one.jpg")}
-              />
-            </View>
-            <View style={styles.slide}>
-              <Image
-                style={styles.image}
-                source={require("../assets/images/banners/banner_two.jpg")}
-              />
-            </View>
-            <View style={styles.slide}>
-              <Image
-                style={styles.image}
-                source={require("../assets/images/banners/banner_three.jpg")}
-              />
-            </View>
-            <View style={styles.slide}>
-              <Image
-                style={styles.image}
-                source={require("../assets/images/banners/banner_four.jpg")}
-              />
-            </View>
-          </Swiper>
-        </View>
+        <View style={styles.filterContainer}>
+          <View style={styles.filterAndIconContainer}>
+            <IonIcons
+              name="funnel-outline"
+              size={23}
+              color={Colors.DEFAULT_BLACK}
+              //   style={{}}
+            />
 
-        <View style={styles.title}>
-          <Text style={styles.content}>Khám phá danh mục</Text>
-        </View>
-        <View style={styles.mainContainer}>
-          <FlatList
-            data={dataCateGories}
-            horizontal={true}
-            keyExtractor={(item) => item?.id}
-            renderItem={({ item }) => (
-              <CategoryItem
-                postproduct={item}
-                navigate={() =>
-                  navigation.navigate("CategoryDetails")
-                }
-              />
-            )}
-          />
-        </View>
-
-        <View style={styles.title}>
-          <Text style={styles.content}>Tin đăng dành cho bạn</Text>
+            <Text style={styles.filterTitle}>Lọc</Text>
+          </View>
+          <View style={styles.filterAndIconContainerItem}>
+            <Text style={styles.filterTitle}>Thú cưng</Text>
+            <IonIcons
+              name="caret-down-outline"
+              size={20}
+              color={Colors.DEFAULT_BLACK}
+              //   style={{}}
+            />
+          </View>
+          <View style={styles.priceAndIconContainer}>
+            <Text style={styles.filterTitle}>Giá</Text>
+            <IonIcons
+              name="add"
+              size={23}
+              color={Colors.DEFAULT_BLACK}
+              //   style={{}}
+            />
+          </View>
         </View>
         <View style={styles.mainContainer}>
           <FlatList
             data={dataPostProducts}
-            numColumns={2}
+            numColumns={1}
             keyExtractor={(item) => item?.id}
-            renderItem={({ item }) => <PostProductItem postproduct={item} />}
+            renderItem={({ item }) => <CategoryDetailItem postproduct={item} />}
           />
         </View>
       </ScrollView>
     </View>
   );
 };
-export default HomeScreen;
+export default CategoryDetails;
 
 const styles = StyleSheet.create({
   container: {
@@ -152,7 +137,7 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   inputContainer: {
-    width: "80%",
+    width: "70%",
     height: 35,
     backgroundColor: Colors.LIGHT_GREY,
     paddingHorizontal: 10,
@@ -175,6 +160,51 @@ const styles = StyleSheet.create({
     width: 100,
     color: Colors.DEFAULT_BLACK,
     flex: 1,
+  },
+  filterContainer: {
+    padding: 10,
+    flexDirection: "row",
+    width: "100%",
+    height: 60,
+  },
+  filterAndIconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: Colors.DEFAULT_BLACK,
+    borderRadius: 5,
+    height: 40,
+    width: 70,
+    paddingHorizontal: 5,
+    marginHorizontal: 5,
+  },
+  filterAndIconContainerItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: Colors.DEFAULT_BLACK,
+    borderRadius: 5,
+    height: 40,
+    width: 100,
+    paddingHorizontal: 5,
+    marginHorizontal: 5,
+  },
+  priceAndIconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.DEFAULT_GREY,
+    borderRadius: 5,
+    height: 40,
+    width: 60,
+    paddingHorizontal: 5,
+    marginHorizontal: 5,
+  },
+  filterTitle: {
+    fontSize: 14,
+    fontWeight: 600,
+    paddingHorizontal: 2,
   },
   wrapper: {},
   slide: {
@@ -202,19 +232,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 
-  title: {
-    width: "100%",
-    height: 40,
-    justifyContent: "center",
-    backgroundColor: Colors.LIGHT_GREY,
-    marginVertical: 5,
-  },
-  content: {
-    color: Colors.DEFAULT_BLACK,
-    fontSize: 16,
-    fontWeight: 600,
-    padding: 10,
-  },
   mainContainer: {
     marginHorizontal: 10,
   },

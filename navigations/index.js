@@ -12,6 +12,7 @@ import LoginScreen from "../screens/auth/LoginScreen";
 import RegisterScreen from "../screens/auth/RegisterScreen";
 import FavoriteScreen from "../screens/FavoriteScreen";
 import OrderScreen from "../screens/OrderScreen";
+import CategoryDetails from "../screens/CategoryDetails";
 
 // const Stack = createNativeStackNavigator();
 const Stack = createStackNavigator();
@@ -43,6 +44,9 @@ const Navigators = () => {
           <Stack.Screen name="AccountScreen" component={AccountScreen} />
           <Stack.Screen name="FavoriteScreen" component={FavoriteScreen} />
           <Stack.Screen name="OrderScreen" component={OrderScreen} />
+
+          {/* tranthanhtu 8/3/2023 */}
+          <Stack.Screen name="CategoryDetails" component={CategoryDetails} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

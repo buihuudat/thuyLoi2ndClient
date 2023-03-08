@@ -15,7 +15,7 @@ import Feather from "react-native-vector-icons/Feather";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
 import { dataCateGories, dataPostProducts } from "../data";
-import CategoryItem from "../components/layouts/CategoryItem";
+import CategoryItem from "../components/CategoryItem";
 import PostProductItem from "../components/PostProductItem";
 import { ScrollView } from "react-native-virtualized-view";
 const HomeScreen = () => {
