@@ -7,12 +7,12 @@ const CategoryDetailItem = ({ postproduct }) => {
   return (
     <View style={styles.container}>
       <View style={styles.favoriteIcon}>
-          <IonIcons
-            name="heart-outline"
-            size={23}
-            style={{ color: Colors.DEFAULT_RED }}
-          />
-        </View>
+        <IonIcons
+          name="heart-outline"
+          size={23}
+          style={{ color: Colors.DEFAULT_RED }}
+        />
+      </View>
       <View>
         <TouchableOpacity>
           <Image style={styles.image} source={postproduct.source} />
@@ -29,8 +29,6 @@ const CategoryDetailItem = ({ postproduct }) => {
             <Text style={styles.time}>3 km</Text>
             <Text style={styles.time}>Q. Bình Thạnh</Text>
           </View>
-          
-
         </View>
       </View>
     </View>
@@ -66,12 +64,12 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 13,
     color: Colors.DEFAULT_RED,
-    paddingVertical:5,
+    paddingVertical: 5,
   },
   time: {
     fontSize: 13,
     color: Colors.DEFAULT_BLACK,
-    paddingHorizontal:3
+    paddingHorizontal: 3,
   },
   timeContainer: {
     flexDirection: "row",
