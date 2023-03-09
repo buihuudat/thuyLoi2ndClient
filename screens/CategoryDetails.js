@@ -21,7 +21,7 @@ import CategoryItem from "../components/CategoryItem";
 import PostProductItem from "../components/PostProductItem";
 import { ScrollView } from "react-native-virtualized-view";
 import CategoryDetailItem from "../components/CategoryDetailItem";
-const CategoryDetails = ({navigation}) => {
+const CategoryDetails = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar
@@ -111,7 +111,14 @@ const CategoryDetails = ({navigation}) => {
             data={dataPostProducts}
             numColumns={1}
             keyExtractor={(item) => item?.id}
-            renderItem={({ item }) => <CategoryDetailItem postproduct={item} />}
+            renderItem={({ item }) => (
+              <CategoryDetailItem
+                postproduct={item}
+                navigate={() =>
+                  navigation.navigate("PostProductItemDetail")
+                }
+              />
+            )}
           />
         </View>
       </ScrollView>

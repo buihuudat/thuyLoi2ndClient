@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Colors from "../assets/constants/Colors";
 
-const CategoryDetailItem = ({ postproduct }) => {
+const CategoryDetailItem = ({ postproduct, navigate }) => {
   return (
     <View style={styles.container}>
       <View style={styles.favoriteIcon}>
@@ -20,7 +20,9 @@ const CategoryDetailItem = ({ postproduct }) => {
       </View>
 
       <View style={styles.titlePostProduct}>
-        <Text style={styles.titleContent}>{postproduct.title}</Text>
+        <Text style={styles.titleContent} onPress={navigate}>
+          {postproduct.title}
+        </Text>
         <View style={{ flex: 1, justifyContent: "space-between" }}>
           <Text style={styles.price}>{postproduct.price} đ</Text>
           <View style={styles.timeContainer}>

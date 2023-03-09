@@ -36,7 +36,7 @@ const Navigators = () => {
 
           {/* TranThanhTu */}
 
-          {/* <Stack.Screen name="Splash" component={SplashScreen} />
+          <Stack.Screen name="Splash" component={SplashScreen} />
 
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
@@ -45,10 +45,10 @@ const Navigators = () => {
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="AccountScreen" component={AccountScreen} />
           <Stack.Screen name="FavoriteScreen" component={FavoriteScreen} />
-          <Stack.Screen name="OrderScreen" component={OrderScreen} /> */}
+          <Stack.Screen name="OrderScreen" component={OrderScreen} />
 
           {/* tranthanhtu 8/3/2023 */}
-          {/* <Stack.Screen name="CategoryDetails" component={CategoryDetails} /> */}
+          <Stack.Screen name="CategoryDetails" component={CategoryDetails} />
 
           {/* tranthanhtu 9/3/2023 */}
           <Stack.Screen
