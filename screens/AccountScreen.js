@@ -4,22 +4,17 @@ import {
   Text,
   StatusBar,
   StyleSheet,
-  TextInput,
-  TouchableWithoutFeedback,
   Image,
-  FlatList,
+  TouchableOpacity,
 } from "react-native";
 import React from "react";
 import Colors from "../assets/constants/Colors";
-import Feather from "react-native-vector-icons/Feather";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import Swiper from "react-native-swiper";
-import { dataCateGories, dataPostProducts } from "../data";
-import CategoryItem from "../components/CategoryItem";
-import PostProductItem from "../components/PostProductItem";
-import { ScrollView } from "react-native-virtualized-view";
-const HomeScreen = () => {
-    
+import { Rating } from "react-native-elements";
+import { Divider } from "@rneui/themed";
+import TitleContainer from "../components/TitleContainer";
+import IconAndSubTitle from "../components/IconAndSubTitle";
+const AccountScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar
@@ -29,18 +24,96 @@ const HomeScreen = () => {
       />
 
       <View style={styles.backgroundCurvedContainer}>
-        <Text style={styles.title}>
-            Tài khoản
-        </Text>
+        <Text style={styles.title}>Tài khoản</Text>
       </View>
+      <View style={styles.mainContainer}>
+        <View style={styles.iconEditContainer}>
+          <IonIcons name="build" size={12} style={styles.iconEdit} />
+        </View>
+
+        <View style={styles.contentContainer}>
+          <Image
+            style={styles.avatarProfile}
+            source={require("../assets/images/default-avatar-profile.jpg")}
+          />
+
+          <View style={styles.infoAcountContainer}>
+            <Text style={styles.name}>Trần Thanh Tú</Text>
+            <View style={styles.rating}>
+              <Rating
+                // showRating
+                onFinishRating={2}
+                // style={{ paddingVertical: 10 }}
+                readonly={false}
+                size={10}
+                // fractions={2}
+                imageSize={15}
+                defaultRating={2}
+                ratingCount={5}
+                isDisabled={false}
+                onSwipeRating={false}
+              />
+            </View>
+
+            <View style={styles.followContainer}>
+              <View style={styles.followContainerItem}>
+                <Text style={styles.numberFollow}>0</Text>
+                <Text style={styles.userFollow}>Người theo dõi</Text>
+              </View>
+              <View style={styles.followContainerItem}>
+                <Text style={styles.numberFollow}>0</Text>
+                <Text style={styles.userFollow}>Người đang theo dõi</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+      <TitleContainer content="Quản lý đơn hàng" />
+      <IconAndSubTitle
+        title="Đơn mua"
+        icon="basket"
+        bgr={Colors.FABEBOOK_BLUE}
+      />
+      <Divider />
+      <IconAndSubTitle
+        title="Đơn bán"
+        icon="reader"
+        bgr={Colors.DEFAULT_GREEN}
+      />
+      <TitleContainer content="Tiện ích" />
+
+      <TouchableOpacity onPress={() => navigation.navigate("FavoriteScreen")}>
+        <IconAndSubTitle
+          title="Tin đã lưu"
+          icon="bookmarks"
+          bgr={Colors.DEFAULT_PINK}
+        />
+      </TouchableOpacity>
+      <Divider />
+      <TouchableOpacity>
+        <IconAndSubTitle
+          title="Đánh giá"
+          icon="star-half"
+          bgr={Colors.DEFAULT_YELLOW}
+        />
+      </TouchableOpacity>
+      <TitleContainer content="Khác" />
+      <TouchableOpacity>
+        <IconAndSubTitle
+          title="Đăng xuất"
+          icon="log-out"
+          bgr={Colors.INACTIVE_GREY}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
-export default HomeScreen;
+export default AccountScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.DEFAULT_WHITE,
   },
   backgroundCurvedContainer: {
     flexDirection: "row",
@@ -56,8 +129,64 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    marginTop:20,
-    fontSize:19,
-    fontWeight:600
+    marginTop: 20,
+    fontSize: 19,
+    fontWeight: 600,
+  },
+  mainContainer: {
+    marginHorizontal: 10,
+  },
+  avatarProfile: {
+    width: 65,
+    height: 65,
+    objectFit: "fill",
+    borderRadius: 100,
+    marginRight: 1,
+  },
+  contentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  infoAcountContainer: {
+    flexDirection: "column",
+  },
+  name: {
+    color: Colors.DEFAULT_BLACK,
+    fontSize: 14,
+    fontWeight: 600,
+  },
+  followContainer: {
+    flexDirection: "row",
+  },
+  numberFollow: {
+    marginRight: 5,
+    fontSize: 14,
+    fontWeight: 600,
+  },
+  userFollow: {
+    fontSize: 14,
+    color: Colors.INACTIVE_GREY,
+  },
+  followContainerItem: {
+    flexDirection: "row",
+    marginRight: 20,
+  },
+  rating: {
+    paddingVertical: 5,
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+  iconEditContainer: {
+    position: "absolute",
+    top: "60%",
+    left: "10%",
+    zIndex: 1,
+    borderRadius: 15,
+    backgroundColor: Colors.DEFAULT_BLACK,
+  },
+  iconEdit: {
+    color: Colors.DEFAULT_WHITE,
+    padding: 3,
   },
 });

@@ -1,20 +1,21 @@
+//tran thanh tu
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Colors from "../assets/constants/Colors";
 
 const CategoryItem = ({ postproduct, navigate }) => {
   return (
-    <View style={styles.container} >
-      <View>
-        <TouchableOpacity>
+    <TouchableOpacity onPress={navigate}>
+      <View style={styles.container}>
+        <View>
           <Image style={styles.image} source={postproduct.source} />
-        </TouchableOpacity>
 
-        <View style={styles.titlePostProduct}>
-          <Text style={styles.titleContent} onPress={navigate}>{postproduct.title}</Text>
+          <View style={styles.titlePostProduct}>
+            <Text style={styles.titleContent}>{postproduct.title}</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

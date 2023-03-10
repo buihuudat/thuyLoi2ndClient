@@ -1,3 +1,4 @@
+//tran thanh tu
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -5,35 +6,33 @@ import Colors from "../assets/constants/Colors";
 
 const CategoryDetailItem = ({ postproduct, navigate }) => {
   return (
-    <View style={styles.container}>
-      <View style={styles.favoriteIcon}>
-        <IonIcons
-          name="heart-outline"
-          size={23}
-          style={{ color: Colors.DEFAULT_RED }}
-        />
-      </View>
-      <View>
-        <TouchableOpacity>
+    <TouchableOpacity onPress={navigate}>
+      <View style={styles.container}>
+        <View style={styles.favoriteIcon}>
+          <IonIcons
+            name="heart-outline"
+            size={23}
+            style={{ color: Colors.DEFAULT_RED }}
+          />
+        </View>
+        <View>
           <Image style={styles.image} source={postproduct.source} />
-        </TouchableOpacity>
-      </View>
+        </View>
 
-      <View style={styles.titlePostProduct}>
-        <Text style={styles.titleContent} onPress={navigate}>
-          {postproduct.title}
-        </Text>
-        <View style={{ flex: 1, justifyContent: "space-between" }}>
-          <Text style={styles.price}>{postproduct.price} đ</Text>
-          <View style={styles.timeContainer}>
-            <IonIcons name="time" size={14} />
-            <Text style={styles.time}>{postproduct.time}</Text>
-            <Text style={styles.time}>3 km</Text>
-            <Text style={styles.time}>Q. Bình Thạnh</Text>
+        <View style={styles.titlePostProduct}>
+          <Text style={styles.titleContent}>{postproduct.title}</Text>
+          <View style={{ flex: 1, justifyContent: "space-between" }}>
+            <Text style={styles.price}>{postproduct.price} đ</Text>
+            <View style={styles.timeContainer}>
+              <IonIcons name="time" size={14} />
+              <Text style={styles.time}>{postproduct.time}</Text>
+              <Text style={styles.time}>3 km</Text>
+              <Text style={styles.time}>Q. Bình Thạnh</Text>
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

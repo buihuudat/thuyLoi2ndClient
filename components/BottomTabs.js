@@ -1,10 +1,8 @@
+//tran thanh tu
 import { View, Text } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import ProductReviewScreen from "../screens/ProductReviewScreen";
-import CategoryScreen from "../screens/CategoryScreen";
-import ProductScreen from "../screens/ProductScreen";
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import Colors from "../assets/constants/Colors";

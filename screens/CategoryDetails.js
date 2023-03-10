@@ -8,17 +8,14 @@ import {
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
-  Image,
   FlatList,
 } from "react-native";
 import React from "react";
 import Colors from "../assets/constants/Colors";
 import Feather from "react-native-vector-icons/Feather";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import Swiper from "react-native-swiper";
-import { dataCateGories, dataPostProducts } from "../data";
-import CategoryItem from "../components/CategoryItem";
-import PostProductItem from "../components/PostProductItem";
+
+import { dataPostProducts } from "../data";
 import { ScrollView } from "react-native-virtualized-view";
 import CategoryDetailItem from "../components/CategoryDetailItem";
 const CategoryDetails = ({ navigation }) => {
@@ -114,9 +111,7 @@ const CategoryDetails = ({ navigation }) => {
             renderItem={({ item }) => (
               <CategoryDetailItem
                 postproduct={item}
-                navigate={() =>
-                  navigation.navigate("PostProductItemDetail")
-                }
+                navigate={() => navigation.navigate("PostProductItemDetail")}
               />
             )}
           />

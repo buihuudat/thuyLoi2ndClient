@@ -1,7 +1,49 @@
 //tran thanh tu
-import { View, Text, StatusBar, StyleSheet } from "react-native";
+import { View, Text, StatusBar, StyleSheet, FlatList } from "react-native";
 import React from "react";
 import Colors from "../assets/constants/Colors";
+import { ScrollView } from "react-native-virtualized-view";
+import IonIcons from "react-native-vector-icons/Ionicons";
+import CategoryDetailItem from "../components/CategoryDetailItem";
+
+const dataPostProducts = [
+  {
+    id: "1",
+    source: {
+      uri: "https://imaxmobile.vn/media/data/iphone-8-plus-64GB-cu-5.jpg",
+    },
+    title: "Cần bán iphone 8 plus ",
+    price: "2.500.000",
+    time: "hôm qua",
+  },
+  {
+    id: "2",
+    source: {
+      uri: "https://filebroker-cdn.lazada.vn/kf/S35d38b24ffb340829a6eb2ffdd6953d2k.jpg",
+    },
+    title: "Bán quạt",
+    price: "150.000",
+    time: "2 ngày trước",
+  },
+  {
+    id: "3",
+    source: {
+      uri: "https://kiemtraxecu.com/wp-content/uploads/2019/08/wave-cu.jpg",
+    },
+    title: "Bán xe wave alpha",
+    price: "5.000.000",
+    time: "2 ngày trước",
+  },
+  {
+    id: "4",
+    source: {
+      uri: "https://muabandonghothuysy.com/wp-content/uploads/2020/04/longines-l4.778.8.12.0-6-767x1024.jpg",
+    },
+    title: "đồng hồ",
+    price: "300.000",
+    time: "5 ngày trước",
+  },
+];
 
 const FavoriteScreen = () => {
   return (
@@ -15,6 +57,21 @@ const FavoriteScreen = () => {
       <View style={styles.backgroundCurvedContainer}>
         <Text style={styles.title}>Tin đã lưu</Text>
       </View>
+      <ScrollView>
+        <View style={styles.mainContainer}>
+          <FlatList
+            data={dataPostProducts}
+            numColumns={1}
+            keyExtractor={(item) => item?.id}
+            renderItem={({ item }) => (
+              <CategoryDetailItem
+                postproduct={item}
+                navigate={() => navigation.navigate("PostProductItemDetail")}
+              />
+            )}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -35,6 +92,9 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
     zIndex: -1,
+  },
+  mainContainer: {
+    marginHorizontal: 10,
   },
 
   title: {

@@ -16,9 +16,10 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { ScrollView } from "react-native-virtualized-view";
 import SwiperPostProductItemDetail from "../components/SwiperPostProductItemDetail";
 // import StarRating from "react-native-star-rating";
-import { Rating, AirbnbRating } from "react-native-elements";
+
 import ChatContentItem from "../components/ChatContentItem";
-import { color } from "react-native-elements/dist/helpers";
+import { Rating } from "react-native-ratings";
+
 
 const chatList = [
   {

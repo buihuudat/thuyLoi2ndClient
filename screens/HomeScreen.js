@@ -18,6 +18,7 @@ import { dataCateGories, dataPostProducts } from "../data";
 import CategoryItem from "../components/CategoryItem";
 import PostProductItem from "../components/PostProductItem";
 import { ScrollView } from "react-native-virtualized-view";
+import TitleContainer from "../components/TitleContainer";
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
@@ -98,10 +99,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
           </Swiper>
         </View>
-
-        <View style={styles.title}>
-          <Text style={styles.content}>Khám phá danh mục</Text>
-        </View>
+        <TitleContainer content="Khám phá danh mục" />
         <View style={styles.mainContainer}>
           <FlatList
             data={dataCateGories}
@@ -110,23 +108,23 @@ const HomeScreen = ({ navigation }) => {
             renderItem={({ item }) => (
               <CategoryItem
                 postproduct={item}
-                navigate={() =>
-                  navigation.navigate("CategoryDetails")
-                }
+                navigate={() => navigation.navigate("CategoryDetails")}
               />
             )}
           />
         </View>
-
-        <View style={styles.title}>
-          <Text style={styles.content}>Tin đăng dành cho bạn</Text>
-        </View>
+        <TitleContainer content="Tin đăng dành cho bạn" />
         <View style={styles.mainContainer}>
           <FlatList
             data={dataPostProducts}
             numColumns={2}
             keyExtractor={(item) => item?.id}
-            renderItem={({ item }) => <PostProductItem postproduct={item} />}
+            renderItem={({ item }) => (
+              <PostProductItem
+                postproduct={item}
+                navigate={() => navigation.navigate("PostProductItemDetail")}
+              />
+            )}
           />
         </View>
       </ScrollView>
@@ -202,19 +200,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 
-  title: {
-    width: "100%",
-    height: 40,
-    justifyContent: "center",
-    backgroundColor: Colors.LIGHT_GREY,
-    marginVertical: 5,
-  },
-  content: {
-    color: Colors.DEFAULT_BLACK,
-    fontSize: 16,
-    fontWeight: 600,
-    padding: 10,
-  },
   mainContainer: {
     marginHorizontal: 10,
   },
