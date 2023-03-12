@@ -9,20 +9,11 @@ import {
 } from "react-native";
 import Colors from "../assets/constants/Colors";
 import { Logo } from "../assets";
-import { useDispatch } from "react-redux";
-import SelectDropdown from "react-native-select-dropdown";
 import { Cities_VN } from "../data";
-import * as Animatable from "react-native-animatable";
 import Svg, { Path } from "react-native-svg";
-import { setCity } from "../redux/features/citySlice";
-import { useNavigation } from "@react-navigation/native";
-import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
-import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as Animatable from "react-native-animatable";
-import { Logo } from "../assets";
 import SelectDropdown from "react-native-select-dropdown";
-import { Cities_VN } from "../data";
 import { useDispatch } from "react-redux";
 import { setCity } from "../redux/features/citySlice";
 

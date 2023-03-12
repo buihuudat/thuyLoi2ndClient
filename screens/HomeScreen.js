@@ -1,19 +1,15 @@
 import {
   View,
-
   StatusBar,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
   Image,
   FlatList,
+  TouchableOpacity,
 } from "react-native";
-import React from "react";
 import Colors from "../assets/constants/Colors";
-
 import React from "react";
-import Colors from "../components/contants/Colors";
-
 import Feather from "react-native-vector-icons/Feather";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
@@ -22,8 +18,7 @@ import CategoryItem from "../components/CategoryItem";
 import PostProductItem from "../components/PostProductItem";
 import { ScrollView } from "react-native-virtualized-view";
 import TitleContainer from "../components/TitleContainer";
-import PostProductItem from "../components/PostProductItem";
-import { ScrollView } from "react-native-virtualized-view";
+import { Entypo } from "@expo/vector-icons";
 
 const HomeScreen = ({ navigation }) => {
   const handleBack = () => {
@@ -34,13 +29,6 @@ const HomeScreen = ({ navigation }) => {
       <StatusBar
         barStyle="light-content"
         backgroundColor={Colors.DEFAULT_BLUE}
-  
-/>
-    <View style={styles.container}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={Colors.DEFAULT_PINK}
-
       />
 
       <View style={styles.backgroundCurvedContainer}>
@@ -151,9 +139,8 @@ const HomeScreen = ({ navigation }) => {
           />
         </View>
       </ScrollView>
-    </View> 
     </View>
-  )
+  );
 };
 export default HomeScreen;
 
@@ -174,7 +161,7 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   inputContainer: {
-    width: "80%",
+    width: "70%",
     height: 35,
     backgroundColor: Colors.LIGHT_GREY,
     paddingHorizontal: 10,
