@@ -14,7 +14,9 @@ import FavoriteScreen from "../screens/FavoriteScreen";
 import OrderScreen from "../screens/OrderScreen";
 import CategoryDetails from "../screens/CategoryDetails";
 import PostProductItemDetail from "../screens/PostProductItemDetailScreen";
-
+import OrderSold from "../screens/OrderSoldScreen";
+import PurchaseOrderScreen from "../screens/PurchaseOrderScreen";
+import PostManagerScreen from "../screens/PostManagerScreen";
 
 // const Stack = createNativeStackNavigator();
 const Stack = createStackNavigator();
@@ -25,14 +27,7 @@ const Navigators = () => {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {/* <Stack.Screen name="first" component={FirstScreen} /> */}
-          {/* {/* <Stack.Screen name="login" component={LoginScreen} /> */}
-          {/* <Stack.Screen name="register" component={RegisterScreen} /> */}
-          {/* <Stack.Screen name="home" component={HomeScreen} />
-          <Stack.Screen name="caregory" component={CategoryScreen} /> */}
-          {/* <Stack.Screen name="product" component={ProductScreen} /> */}
-          {/* <Stack.Screen name="products" component={ProductsScreen} /> */}
-          {/* <Stack.Screen name="review" component={ProductReviewScreen} /> */}
+          
 
           {/* TranThanhTu */}
 
@@ -54,6 +49,16 @@ const Navigators = () => {
           <Stack.Screen
             name="PostProductItemDetail"
             component={PostProductItemDetail}
+          />
+          {/* tranthanhtu 11/3/2023 */}
+          <Stack.Screen name="OrderSold" component={OrderSold} />
+          <Stack.Screen
+            name="PurchaseOrderScreen"
+            component={PurchaseOrderScreen}
+          />
+          <Stack.Screen
+            name="PostManagerScreen"
+            component={PostManagerScreen}
           />
         </Stack.Navigator>
       </NavigationContainer>

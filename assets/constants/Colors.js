@@ -24,6 +24,7 @@ export default {
     DARK_FIVE: '#B3B3B3',
 
     DEFAULT_PINK: '#FF6666',
+    DEFAULT_BLUE:'#1D5C94'
 
 
   };

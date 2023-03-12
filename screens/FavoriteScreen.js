@@ -1,5 +1,12 @@
 //tran thanh tu
-import { View, Text, StatusBar, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StatusBar,
+  StyleSheet,
+  FlatList,
+  TouchableWithoutFeedback,
+} from "react-native";
 import React from "react";
 import Colors from "../assets/constants/Colors";
 import { ScrollView } from "react-native-virtualized-view";
@@ -45,17 +52,35 @@ const dataPostProducts = [
   },
 ];
 
-const FavoriteScreen = () => {
+const FavoriteScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar
         barStyle="dark-content"
-        backgroundColor={Colors.DEFAULT_PINK}
+        backgroundColor={Colors.DEFAULT_BLUE}
         translucent
       />
 
       <View style={styles.backgroundCurvedContainer}>
+        <TouchableWithoutFeedback
+          onPress={() => navigation.navigate("HomeTabs")}
+        >
+          <IonIcons
+            name="chevron-back-outline"
+            size={25}
+            color={Colors.DEFAULT_WHITE}
+            style={{ marginTop: 20 }}
+          />
+        </TouchableWithoutFeedback>
         <Text style={styles.title}>Tin đã lưu</Text>
+        <TouchableWithoutFeedback>
+          <IonIcons
+            name="ellipsis-vertical-outline"
+            size={25}
+            color={Colors.DEFAULT_WHITE}
+            style={{ marginRight: 5, marginTop: 20 }}
+          />
+        </TouchableWithoutFeedback>
       </View>
       <ScrollView>
         <View style={styles.mainContainer}>
@@ -83,15 +108,16 @@ const styles = StyleSheet.create({
   },
   backgroundCurvedContainer: {
     flexDirection: "row",
-    backgroundColor: Colors.DEFAULT_PINK,
+    backgroundColor: Colors.DEFAULT_BLUE,
     height: 70,
     position: "relative",
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
     alignSelf: "center",
     zIndex: -1,
+    paddingHorizontal: 10,
   },
   mainContainer: {
     marginHorizontal: 10,
@@ -101,5 +127,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 19,
     fontWeight: 600,
+    color:Colors.DEFAULT_WHITE
   },
 });

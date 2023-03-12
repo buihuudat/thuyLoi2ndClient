@@ -41,7 +41,7 @@ const PostProductItemDetail = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar
         barStyle="dark-content"
-        backgroundColor={Colors.DEFAULT_PINK}
+        backgroundColor={Colors.DEFAULT_BLUE}
         translucent
       />
 
@@ -52,8 +52,8 @@ const PostProductItemDetail = ({ navigation }) => {
           <IonIcons
             name="chevron-back-outline"
             size={25}
-            color={Colors.DEFAULT_BLACK}
-            style={{ marginTop: 20 }}
+            color={Colors.DEFAULT_WHITE}
+            style={{ marginTop: 40 }}
           />
         </TouchableWithoutFeedback>
 
@@ -61,8 +61,8 @@ const PostProductItemDetail = ({ navigation }) => {
           <IonIcons
             name="ellipsis-vertical-outline"
             size={25}
-            color={Colors.DEFAULT_BLACK}
-            style={{ marginRight: 5, marginTop: 20 }}
+            color={Colors.DEFAULT_WHITE}
+            style={{ marginRight: 5, marginTop: 40 }}
           />
         </TouchableWithoutFeedback>
       </View>
@@ -222,8 +222,8 @@ const styles = StyleSheet.create({
   },
   backgroundCurvedContainer: {
     flexDirection: "row",
-    backgroundColor: Colors.DEFAULT_PINK,
-    height: 70,
+    backgroundColor: Colors.DEFAULT_BLUE,
+    height: 80,
     position: "relative",
     display: "flex",
     justifyContent: "space-between",
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.DEFAULT_GREEN,
+    backgroundColor: Colors.DEFAULT_BLUE,
     width: "100%",
     height: "100%",
     flex: 1,

@@ -23,8 +23,8 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar
-        barStyle="dark-content"
-        backgroundColor={Colors.DEFAULT_PINK}
+        barStyle="light-content"
+        backgroundColor={Colors.DEFAULT_BLUE}
         translucent
       />
 
@@ -50,7 +50,7 @@ const HomeScreen = ({ navigation }) => {
           <Feather
             name="bell"
             size={25}
-            color={Colors.DEFAULT_BLACK}
+            color={Colors.DEFAULT_WHITE}
             style={{ marginRight: 5, marginTop: 40 }}
           />
         </TouchableWithoutFeedback>
@@ -58,7 +58,7 @@ const HomeScreen = ({ navigation }) => {
           <IonIcons
             name="chatbox-ellipses-outline"
             size={25}
-            color={Colors.DEFAULT_BLACK}
+            color={Colors.DEFAULT_WHITE}
             style={{ marginRight: 5, marginTop: 40 }}
           />
         </TouchableWithoutFeedback>
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   backgroundCurvedContainer: {
     flexDirection: "row",
-    backgroundColor: Colors.DEFAULT_PINK,
+    backgroundColor: Colors.DEFAULT_BLUE,
     height: 90,
     position: "relative",
     display: "flex",
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 8,
     borderWidth: 0.5,
-    borderColor: Colors.DEFAULT_PINK,
+    borderColor: Colors.DEFAULT_WHITE,
     justifyContent: "center",
   },
   inputSubContainer: {

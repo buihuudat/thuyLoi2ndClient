@@ -7,8 +7,10 @@ import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import Colors from "../assets/constants/Colors";
 import AccountScreen from "../screens/AccountScreen";
-import FavoriteScreen from "../screens/FavoriteScreen";
+
 import OrderScreen from "../screens/OrderScreen";
+import PostManagerScreen from "../screens/PostManagerScreen";
+import { StyleSheet } from "react-native";
 
 const BottomTabs = createBottomTabNavigator();
 
@@ -22,12 +24,12 @@ const HomeTabs = () => {
           borderTopLeftRadius: 25,
           borderTopRightRadius: 25,
           height: 60,
-          backgroundColor: Colors.DEFAULT_PINK,
+          backgroundColor: Colors.DEFAULT_BLUE,
           borderTopWidth: 0,
         },
         tabBarShowLabel: false,
-        tabBarActiveTintColor: Colors.DEFAULT_WHITE,
-        tabBarInactiveTintColor: Colors.DEFAULT_BLACK,
+        tabBarActiveTintColor: Colors.DEFAULT_YELLOW,
+        tabBarInactiveTintColor: Colors.DEFAULT_WHITE,
       }}
     >
       <BottomTabs.Screen
@@ -40,11 +42,11 @@ const HomeTabs = () => {
         }}
       />
       <BottomTabs.Screen
-        name="FavoriteScreen"
-        component={FavoriteScreen}
+        name="PostManagerScreen"
+        component={PostManagerScreen}
         options={{
           tabBarIcon: ({ color }) => (
-            <IonIcons name="bookmark-outline" size={23} color={color} />
+            <IonIcons name="reader-outline" size={23} color={color} />
           ),
         }}
       />
@@ -53,30 +55,15 @@ const HomeTabs = () => {
         component={LoginScreen}
         options={{
           tabBarIcon: ({ color }) => (
-            <View
-              style={{
-                backgroundColor: Colors.DEFAULT_PINK,
-                justifyContent: "center",
-                alignItems: "center",
-                width: 100,
-                height: 100,
-                borderRadius: 100,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.DEFAULT_YELLOW,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: 80,
-                  height: 80,
-                  borderRadius: 100,
-                }}
-              >
-                <IonIcons name="share-outline" size={30} color={color} />
-                <View>
-                  <Text>Đăng tin</Text>
-                </View>
+            <View style={styles.containerCircleBig}>
+              <View style={styles.containerCircleSmall}>
+                <IonIcons
+                  name="share-outline"
+                  size={30}
+                  color={Colors.DEFAULT_BLACK}
+                />
+
+                <Text style={styles.title}>Đăng tin</Text>
               </View>
             </View>
           ),
@@ -106,3 +93,26 @@ const HomeTabs = () => {
 };
 
 export default HomeTabs;
+
+const styles = StyleSheet.create({
+  containerCircleBig: {
+    backgroundColor: Colors.DEFAULT_BLUE,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 100,
+    height: 100,
+    borderRadius: 100,
+  },
+  containerCircleSmall: {
+    backgroundColor: Colors.DEFAULT_WHITE,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 80,
+    height: 80,
+    borderRadius: 100,
+  },
+  title: {
+    color: Colors.DEFAULT_BLACK,
+    fontWeight: 600,
+  },
+});

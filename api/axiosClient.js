@@ -1,7 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
-const baseURL = "http://localhost:5000/api";
-const getToken = () => localStorage.getItem("token");
+const IP = "10.68.0.206";
+// const IP = "192.168.1.9";
+const baseURL = `http://${IP}:5000/api`;
+// const baseURL = "http://localhost:5000/api";
+const getToken = () => AsyncStorage.getItem("token");
 
 const axiosClient = axios.create({
   baseURL,

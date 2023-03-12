@@ -1,274 +1,328 @@
 import {
   View,
   Text,
-  TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
   Image,
   StyleSheet,
-  StatusBar,
-  TextInput,
+  TouchableOpacity,
+  Button,
 } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { BGregister, Logo } from "../../assets/index";
 import { Entypo } from "@expo/vector-icons";
-import Feather from "react-native-vector-icons/Feather";
-import Images from "../../assets/constants/Images";
+import InputForm from "../../components/InputForm";
+import SelectDropdown from "react-native-select-dropdown";
+import { sex } from "../../data";
+import TextErrorInput from "../../components/textErrorInput";
+import { authAPI } from "../../api/authAPI";
+import { useDispatch } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setUser } from "../../redux/features/userSlice";
+import IonIcons from "react-native-vector-icons/Ionicons";
+import Lottie from "lottie-react-native";
 import Colors from "../../assets/constants/Colors";
 
-const RegisterScreen = () => {
-  const navigation = useNavigation();
-  const [isPasswordShow, setIsPasswordShow] = useState(false);
+export default function RegisterScreen() {
+  const [show, setShow] = useState(0);
+  const [data, setData] = useState({
+    firstname: "",
+    lastname: "",
+    msv: "",
+    phone: "",
+    password: "",
+    sex,
+    cfpassword: "",
+    fullname: "",
+  });
+  const [msvErrText, setMsvErrText] = useState("");
+  const [fnErrText, setFnErrText] = useState("");
+  const [lnErrText, setLnErrText] = useState("");
+  const [phoneErrText, setPhoneErrText] = useState("");
+  const [passErrText, setPassErrText] = useState("");
+  const [cfPassErrText, setCfPassErrText] = useState("");
+  const [sexErrText, setSexErrText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
-  }, []);
+
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+
   const handleBack = () => {
-    navigation.navigate("LoginScreen");
+    navigation.navigate("HomeTabs");
   };
-  return (
-    <SafeAreaView>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={Colors.DEFAULT_PINK}
-        translucent
-      />
 
-      <TouchableOpacity onPress={handleBack} style={{ padding: 13 }}>
-        <Entypo name="chevron-left" size={34} color="#06b2bb" />
-      </TouchableOpacity>
-      <View style={styles.backgroundCurvedContainer} />
-      <View
-        style={
-          styles.flexColumn && {
-            padding: 10,
-            gap: 15,
-            justifyContent: "center",
-            alignItems: "center",
-          }
+  const handleNext = () => {
+    const { msv, firstname, lastname, fullname, sex } = data;
+    let err = false;
+    if (!msv) {
+      setMsvErrText("Bạn chưa nhập mã sinh viên");
+      err = true;
+    }
+    if (msv.length !== 10) {
+      setMsvErrText("Mã sinh viên không hợp lệ");
+      err = true;
+    }
+    if (!firstname) {
+      setFnErrText("Bạn chưa nhập tên");
+      err = true;
+    }
+    if (firstname.length < 3) {
+      setFnErrText("Tên không hợp lệ");
+      err = true;
+    }
+    if (!lastname) {
+      setLnErrText("Bạn chưa nhập họ");
+      err = true;
+    }
+    if (lastname.length < 3) {
+      setLnErrText("Họ không hợp lệ");
+      err = true;
+    }
+    if (!sex) {
+      setSexErrText("Vui lòng chọn giới tính");
+      err = true;
+    }
+    if (err) return;
+    setData({ ...data, fullname: firstname + " " + lastname });
+    setMsvErrText("");
+    setFnErrText("");
+    setFnErrText("");
+    setLnErrText();
+    setShow(1);
+  };
+
+  const handleRegister = async () => {
+    const { phone, password, cfpassword } = data;
+    let err = false;
+    if (!phone) {
+      setPhoneErrText("Bạn chưa nhập số điện thoại");
+      err = true;
+    }
+    if (phone.length < 10 || phone.length > 11) {
+      setPhoneErrText("Số điện thoại không hợp lệ");
+      err = true;
+    }
+
+    if (!password) {
+      setPassErrText("Bạn chưa nhập mật khẩu");
+      err = true;
+    }
+    if (password.length < 8) {
+      setPassErrText("Mật khẩu yêu cầu tối thiểu 8 kí tự");
+      err = true;
+    }
+    if (!cfpassword || password !== cfpassword) {
+      setCfPassErrText("Mật khẩu không khớp");
+      err = true;
+    }
+
+    if (err) return;
+    setPhoneErrText("");
+    setPassErrText("");
+    setCfPassErrText("");
+
+    try {
+      const { user, token } = await authAPI.register(data);
+      dispatch(setUser(user));
+      await AsyncStorage.setItem("token", token);
+      navigation.navigate("home");
+    } catch (e) {
+      const errors = e.data.errors;
+      errors.forEach((e) => {
+        if (e.param === "phone") {
+          setPhoneErrText(e.msg);
         }
-      >
-        <Image
-          source={Images.LOGO_TLS}
-          style={styles.image}
-          resizeMode="contain"
-        />
-        <Text
-          style={{
-            marginTop: 30,
-            marginBottom: 20,
-            paddingTop: 20,
-            fontSize: 30,
-            fontWeight: 600,
-            textAlign: "center",
-          }}
-        >
-          Đăng ký
-        </Text>
-        {/* <InputForm
-          label={"Mã sinh viên"}
-          placeholder="Mã sinh viên"
-          type="numberic"
-        /> */}
+      });
+    }
+  };
 
-        <View style={styles.inputContainer}>
-          <View style={styles.inputSubContainer}>
-            <Feather
-              name="user"
-              size={22}
-              color={Colors.DEFAULT_GREY}
-              style={{ marginRight: 10 }}
-            />
-            <TextInput
-              placeholder="Nhập mã sinh viên"
-              placeholderTextColor={Colors.DEFAULT_GREY}
-              selectionColor={Colors.DEFAULT_GREY}
-              style={styles.inputText}
-              // onChangeText={(text) => setUsername(text)}
-            />
-          </View>
-        </View>
-        <View style={styles.inputContainer}>
-          <View style={styles.inputSubContainer}>
-            <Feather
-              name="phone"
-              size={22}
-              color={Colors.DEFAULT_GREY}
-              style={{ marginRight: 10 }}
-            />
-            <TextInput
-              placeholder="Nhập mã số điện thoại"
-              placeholderTextColor={Colors.DEFAULT_GREY}
-              selectionColor={Colors.DEFAULT_GREY}
-              style={styles.inputText}
-              // onChangeText={(text) => setUsername(text)}
-            />
-          </View>
-        </View>
-        <View style={styles.inputContainer}>
-          <View style={styles.inputSubContainer}>
-            <Feather
-              name="lock"
-              size={22}
-              color={Colors.DEFAULT_GREY}
-              style={{ marginRight: 10 }}
-            />
-            <TextInput
-              secureTextEntry={isPasswordShow ? false : true}
-              placeholder="Nhập password"
-              placeholderTextColor={Colors.DEFAULT_GREY}
-              selectionColor={Colors.DEFAULT_GREY}
-              style={styles.inputText}
-              // onChangeText={(text) => setPassword(text)}
-            />
-            <Feather
-              name={isPasswordShow ? "eye" : "eye-off"}
-              size={22}
-              color={Colors.DEFAULT_GREY}
-              style={{ marginRight: 10 }}
-              onPress={() => setIsPasswordShow(!isPasswordShow)}
-            />
-          </View>
-        </View>
-
-        <TouchableOpacity
-          style={styles.signInButton}
-          // onPress={() => signIn()}
-          activeOpacity={0.8}
-        >
-          {isLoading ? (
-            <LottieView source={Images.LOADING} autoPlay />
-          ) : (
-            <Text style={styles.signInButtonText}>Đăng ký</Text>
-          )}
+  return (
+    <View style={styles.container}>
+      <View style={styles.backgroundCurvedContainer}>
+        <TouchableOpacity onPress={handleBack}>
+          <IonIcons
+            name="chevron-back-outline"
+            size={25}
+            color={Colors.DEFAULT_WHITE}
+            style={{ marginTop: 20 }}
+          />
         </TouchableOpacity>
-        <TouchableOpacity
+      </View>
+
+      <View style={styles.mainContainer}>
+        <Image
           style={{
-            borderWidth: 0.5,
-            padding: 5,
-            borderRadius: 20,
-            backgroundColor: "999",
-            opacity: 0.5,
+            marginLeft: "auto",
+            marginRight: "auto",
           }}
-          onPress={() => alert("Chức năng đang phát triển")}
-        >
-          <Text
+          alt="logo"
+          source={Logo}
+          resizeMode="center"
+        />
+        <Text style={styles.title}>Đăng ký tài khoản</Text>
+        {show === 0 && (
+          <View style={{ display: "flex", gap: 20 }}>
+            <View>
+              <InputForm
+                label={"Mã sinh viên"}
+                placeholder="Mã sinh viên"
+                type="numeric"
+                data={data.msv}
+                setData={(msv) => setData({ ...data, msv })}
+              />
+              {msvErrText !== "" && TextErrorInput(msvErrText)}
+            </View>
+
+            <View>
+              <InputForm
+                label={"Tên"}
+                placeholder="Tên"
+                type="default"
+                data={data.firstname}
+                setData={(firstname) => setData({ ...data, firstname })}
+                autoCap="words"
+              />
+              {fnErrText !== "" && TextErrorInput(fnErrText)}
+            </View>
+
+            <View>
+              <InputForm
+                label={"Họ"}
+                placeholder="Họ"
+                type="default"
+                data={data.lastname}
+                setData={(lastname) => setData({ ...data, lastname })}
+                autoCap="words"
+              />
+              {lnErrText !== "" && TextErrorInput(lnErrText)}
+            </View>
+            <View>
+              <SelectDropdown
+                data={sex}
+                defaultButtonText={"Chọn giới tính"}
+                onSelect={(selectedItem, index) => {
+                  setData({ ...data, sex: selectedItem });
+                }}
+              />
+              {sexErrText !== "" && TextErrorInput(sexErrText)}
+            </View>
+            <TouchableOpacity
+              onPress={handleNext}
+              style={{
+                padding: 10,
+                marginVertical: 20,
+                borderRadius: 10,
+                backgroundColor: Colors.DEFAULT_BLUE,
+              }}
+            >
+              <Text style={styles.textButton}>Đăng ký</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        {show === 1 && (
+          <View
             style={{
-              textAlign: "center",
-              fontWeight: 600,
-              paddingHorizontal: 10,
+              display: "flex",
+              flexDirection: "column",
+              gap: 20,
             }}
           >
-            hoặc
-          </Text>
-        </TouchableOpacity>
+            <View>
+              <InputForm
+                label={"Số điện thoại"}
+                placeholder="Số điện thoại"
+                type="numeric"
+                data={data.phone}
+                setData={(phone) => setData({ ...data, phone })}
+              />
+              {phoneErrText !== "" && TextErrorInput(phoneErrText)}
+            </View>
+            <View>
+              <InputForm
+                label={"Mật khẩu"}
+                placeholder="Mật khẩu"
+                type="visible-password"
+                secure={true}
+                data={data.password}
+                setData={(password) => setData({ ...data, password })}
+              />
+              {passErrText !== "" && TextErrorInput(passErrText)}
+            </View>
+            <View>
+              <InputForm
+                label={"Xác nhận mật khẩu"}
+                placeholder="Xác nhận mật khẩu"
+                type="visible-password"
+                secure={true}
+                data={data.cfpassword}
+                setData={(cfpassword) => setData({ ...data, cfpassword })}
+              />
+              {cfPassErrText !== "" && TextErrorInput(cfPassErrText)}
+            </View>
+            {isLoading ? (
+              // <Lottie source={Images.LOADING} autoPlay />
+              <></>
+            ) : (
+              <Button title="Đăng ký" onPress={handleRegister} color="green" />
+            )}
+            <Button
+              title="Quay lại"
+              onPress={() => setShow(0)}
+              color="#EFC868"
+            />
+          </View>
+        )}
         <View
           style={{
             display: "flex",
-            flexDirection: "row",
-            gap: 5,
             justifyContent: "center",
+            textAlign: "center",
+            flexDirection: "row",
           }}
         >
-          <TouchableOpacity
-            style={{
-              padding: 10,
-              textAlign: "center",
-              borderRadius: 10,
-              backgroundColor: "#3878DB",
-            }}
-          >
-            <Text
-              style={styles.textButton}
-              onPress={() => alert("Chức năng đang phát triển")}
-            >
-              Facebook
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("LoginScreen")}
-            style={{
-              padding: 10,
-              textAlign: "center",
-              borderRadius: 10,
-              backgroundColor: "green",
-            }}
-          >
-            <Text style={styles.textButton}>Đăng nhập</Text>
+          <Text style={{ fontSize: 15 }}>Đã có tài khoản? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("HomeTabs")}>
+            <Text style={{ color: Colors.DEFAULT_BLUE, fontSize: 15 }}>Đăng nhập ngay</Text>
           </TouchableOpacity>
         </View>
       </View>
-      {/* </ScrollView> */}
-    </SafeAreaView>
+    </View>
   );
-};
-
-export default RegisterScreen;
+}
 
 const styles = StyleSheet.create({
-  flexColumn: {
-    display: "flex",
-    flexDirection: "column",
+  container: {
+    backgroundColor: Colors.DEFAULT_WHITE,
+    width: "100%",
+    height: "100%",
   },
   backgroundCurvedContainer: {
-    backgroundColor: Colors.DEFAULT_PINK,
-    height: 1000,
-    position: "absolute",
-    top: -780,
-    width: 1000,
-    borderRadius: 1000,
+    flexDirection: "row",
+    backgroundColor: Colors.DEFAULT_BLUE,
+    height: 70,
+    position: "relative",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
     alignSelf: "center",
     zIndex: -1,
-  },
-
-  textButton: {
-    fontWeight: 600,
-    color: "white",
-  },
-  image: {
-    height: 100,
-    width: 100,
-  },
-
-  inputContainer: {
-    width: "100%",
-    height: 50,
-    backgroundColor: Colors.LIGHT_GREY,
     paddingHorizontal: 10,
+  },
+  mainContainer: {
     marginHorizontal: 20,
-    borderRadius: 8,
-    borderWidth: 0.5,
-    borderColor: Colors.DEFAULT_PINK,
-    justifyContent: "center",
   },
-  inputSubContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+  title: {
+    fontSize: 25,
+    fontWeight: 500,
+    textAlign: "center",
+    marginBottom: 20,
   },
-  inputText: {
-    fontSize: 18,
-    textAlignVertical: "center",
-    padding: 0,
-    height: "100%",
-    width: 100,
-    color: Colors.DEFAULT_BLACK,
-    flex: 1,
-  },
-  signInButton: {
-    backgroundColor: Colors.DEFAULT_PINK,
-    borderRadius: 8,
-    marginHorizontal: 20,
-    height: 40,
-    width: 300,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  signInButtonText: {
-    fontSize: 18,
-    lineHeight: 18 * 1.4,
-    color: Colors.DEFAULT_WHITE,
-    fontWeight: "600",
+  textButton: {
+    fontWeight: 500,
+    fontSize: 15,
+    color: "white",
+    textAlign: "center",
   },
 });

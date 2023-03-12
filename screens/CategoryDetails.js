@@ -22,8 +22,8 @@ const CategoryDetails = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar
-        barStyle="dark-content"
-        backgroundColor={Colors.DEFAULT_PINK}
+        barStyle="light-content"
+        backgroundColor={Colors.DEFAULT_BLUE}
         translucent
       />
 
@@ -34,7 +34,7 @@ const CategoryDetails = ({ navigation }) => {
           <IonIcons
             name="chevron-back-outline"
             size={25}
-            color={Colors.DEFAULT_BLACK}
+            color={Colors.DEFAULT_WHITE}
             style={{ marginTop: 40 }}
           />
         </TouchableWithoutFeedback>
@@ -59,7 +59,7 @@ const CategoryDetails = ({ navigation }) => {
           <Feather
             name="bell"
             size={25}
-            color={Colors.DEFAULT_BLACK}
+            color={Colors.DEFAULT_WHITE}
             style={{ marginRight: 5, marginTop: 40 }}
           />
         </TouchableWithoutFeedback>
@@ -67,7 +67,7 @@ const CategoryDetails = ({ navigation }) => {
           <IonIcons
             name="chatbox-ellipses-outline"
             size={25}
-            color={Colors.DEFAULT_BLACK}
+            color={Colors.DEFAULT_WHITE}
             style={{ marginRight: 5, marginTop: 40 }}
           />
         </TouchableWithoutFeedback>
@@ -128,8 +128,8 @@ const styles = StyleSheet.create({
   },
   backgroundCurvedContainer: {
     flexDirection: "row",
-    backgroundColor: Colors.DEFAULT_PINK,
-    height: 90,
+    backgroundColor: Colors.DEFAULT_BLUE,
+    height: 100,
     position: "relative",
     display: "flex",
     justifyContent: "center",
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 8,
     borderWidth: 0.5,
-    borderColor: Colors.DEFAULT_PINK,
+    borderColor: Colors.DEFAULT_WHITE,
     justifyContent: "center",
   },
   inputSubContainer: {

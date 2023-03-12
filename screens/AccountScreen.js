@@ -14,18 +14,17 @@ import { Rating } from "react-native-elements";
 import { Divider } from "@rneui/themed";
 import TitleContainer from "../components/TitleContainer";
 import IconAndSubTitle from "../components/IconAndSubTitle";
+import TitleBar from "../components/TitleBar";
 const AccountScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar
         barStyle="dark-content"
-        backgroundColor={Colors.DEFAULT_PINK}
+        backgroundColor={Colors.DEFAULT_BLUE}
         translucent
       />
+      <TitleBar title="Tài khoản" />
 
-      <View style={styles.backgroundCurvedContainer}>
-        <Text style={styles.title}>Tài khoản</Text>
-      </View>
       <View style={styles.mainContainer}>
         <View style={styles.iconEditContainer}>
           <IonIcons name="build" size={12} style={styles.iconEdit} />
@@ -69,17 +68,25 @@ const AccountScreen = ({ navigation }) => {
         </View>
       </View>
       <TitleContainer content="Quản lý đơn hàng" />
-      <IconAndSubTitle
-        title="Đơn mua"
-        icon="basket"
-        bgr={Colors.FABEBOOK_BLUE}
-      />
+      <TouchableOpacity
+        onPress={() => navigation.navigate("PurchaseOrderScreen")}
+      >
+        <IconAndSubTitle
+          title="Đơn mua"
+          icon="basket"
+          bgr={Colors.FABEBOOK_BLUE}
+        />
+      </TouchableOpacity>
+
       <Divider />
-      <IconAndSubTitle
-        title="Đơn bán"
-        icon="reader"
-        bgr={Colors.DEFAULT_GREEN}
-      />
+      <TouchableOpacity onPress={() => navigation.navigate("OrderSold")}>
+        <IconAndSubTitle
+          title="Đơn bán"
+          icon="reader"
+          bgr={Colors.DEFAULT_GREEN}
+        />
+      </TouchableOpacity>
+
       <TitleContainer content="Tiện ích" />
 
       <TouchableOpacity onPress={() => navigation.navigate("FavoriteScreen")}>
@@ -114,24 +121,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.DEFAULT_WHITE,
-  },
-  backgroundCurvedContainer: {
-    flexDirection: "row",
-    backgroundColor: Colors.DEFAULT_PINK,
-    height: 70,
-    position: "relative",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    alignSelf: "center",
-    zIndex: -1,
-  },
-
-  title: {
-    marginTop: 20,
-    fontSize: 19,
-    fontWeight: 600,
   },
   mainContainer: {
     marginHorizontal: 10,
