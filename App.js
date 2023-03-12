@@ -9,7 +9,8 @@ import CategoryScreen from "./screens/CategoryScreen";
 import ProductsScreen from "./screens/ProductsScreen";
 import ProductScreen from "./screens/ProductScreen";
 import ProductReviewScreen from "./screens/ProductReviewScreen";
-import FirstScreen from "./screens/FirstScreen";
+import SplashScreen from "./screens/SplashScreen";
+import HomeTabs from "./components/HomeTabs";
 
 const Stask = createNativeStackNavigator();
 
@@ -17,15 +18,19 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stask.Navigator>
-          {/* <Stask.Screen name="first" component={FirstScreen} /> */}
-          {/* {/* <Stask.Screen name="login" component={LoginScreen} /> */}
-          <Stask.Screen name="register" component={RegisterScreen} />
-          {/* <Stask.Screen name="home" component={HomeScreen} />
-          <Stask.Screen name="caregory" component={CategoryScreen} /> */}
-          <Stask.Screen name="product" component={ProductScreen} />
-          <Stask.Screen name="products" component={ProductsScreen} />
-          <Stask.Screen name="review" component={ProductReviewScreen} />
+        <Stask.Navigator screenOptions={{ headerShown: false }}>
+          <Stask.Screen name="SplashScreen" component={SplashScreen} />
+          <Stask.Screen name="HomeTab" component={HomeTabs} />
+          <Stask.Screen name="HomeScreen" component={HomeScreen} />
+          <Stask.Screen name="LoginScreen" component={LoginScreen} />
+          <Stask.Screen name="RegisterScreen" component={RegisterScreen} />
+          <Stask.Screen name="CategoryScreen" component={CategoryScreen} />
+          <Stask.Screen name="ProductScreen" component={ProductScreen} />
+          <Stask.Screen name="ProductsScreen" component={ProductsScreen} />
+          <Stask.Screen
+            name="ProductReviewScreen"
+            component={ProductReviewScreen}
+          />
         </Stask.Navigator>
       </NavigationContainer>
     </Provider>
