@@ -1,6 +1,6 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Colors from "../components/contants/Colors";
+import Colors from "../assets/constants/Colors";
 
 const CategoryItem = ({ postproduct }) => {
   return (
