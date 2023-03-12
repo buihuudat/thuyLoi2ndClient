@@ -1,8 +1,6 @@
 import {
   View,
   Text,
-  SafeAreaView,
-  ScrollView,
   Image,
   StyleSheet,
   TouchableOpacity,
@@ -10,8 +8,8 @@ import {
 } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { BGregister, Logo } from "../../assets/index";
-import { Entypo } from "@expo/vector-icons";
+import {  Logo } from "../../assets/index";
+
 import InputForm from "../../components/InputForm";
 import SelectDropdown from "react-native-select-dropdown";
 import { sex } from "../../data";
@@ -21,7 +19,6 @@ import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setUser } from "../../redux/features/userSlice";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import Lottie from "lottie-react-native";
 import Colors from "../../assets/constants/Colors";
 
 export default function RegisterScreen() {

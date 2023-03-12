@@ -14,6 +14,9 @@ import TextErrorInput from "../../components/textErrorInput";
 import { authAPI } from "../../api/authAPI";
 import { setUser } from "../../redux/features/userSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StyleSheet } from "react-native";
+import Colors from "../../assets/constants/Colors";
+import IonIcons from "react-native-vector-icons/Ionicons";
 
 
 export default function LoginScreen() {
