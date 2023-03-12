@@ -1,4 +1,3 @@
-//tran thanh tu
 import {
   View,
   Text,
@@ -130,3 +129,4 @@ const styles = StyleSheet.create({
     color:Colors.DEFAULT_WHITE
   },
 });
+

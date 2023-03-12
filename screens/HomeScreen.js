@@ -1,7 +1,6 @@
-//tran thanh tu
 import {
   View,
-  Text,
+
   StatusBar,
   StyleSheet,
   TextInput,
@@ -11,6 +10,10 @@ import {
 } from "react-native";
 import React from "react";
 import Colors from "../assets/constants/Colors";
+
+import React from "react";
+import Colors from "../components/contants/Colors";
+
 import Feather from "react-native-vector-icons/Feather";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
@@ -19,16 +22,35 @@ import CategoryItem from "../components/CategoryItem";
 import PostProductItem from "../components/PostProductItem";
 import { ScrollView } from "react-native-virtualized-view";
 import TitleContainer from "../components/TitleContainer";
+import PostProductItem from "../components/PostProductItem";
+import { ScrollView } from "react-native-virtualized-view";
+
 const HomeScreen = ({ navigation }) => {
+  const handleBack = () => {
+    navigation.navigate("SplashScreen");
+  };
   return (
     <View style={styles.container}>
       <StatusBar
         barStyle="light-content"
         backgroundColor={Colors.DEFAULT_BLUE}
-        translucent
+  
+/>
+    <View style={styles.container}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={Colors.DEFAULT_PINK}
+
       />
 
       <View style={styles.backgroundCurvedContainer}>
+        <TouchableOpacity
+          onPress={handleBack}
+          style={{ marginLeft: 5, marginTop: 40 }}
+        >
+          <Entypo name="chevron-left" size={34} color={Colors.DEFAULT_GREY} />
+        </TouchableOpacity>
+
         <View style={styles.inputContainer}>
           <View style={styles.inputSubContainer}>
             <Feather
@@ -99,6 +121,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
           </Swiper>
         </View>
+
         <TitleContainer content="Khám phá danh mục" />
         <View style={styles.mainContainer}>
           <FlatList
@@ -128,8 +151,9 @@ const HomeScreen = ({ navigation }) => {
           />
         </View>
       </ScrollView>
+    </View> 
     </View>
-  );
+  )
 };
 export default HomeScreen;
 

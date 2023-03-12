@@ -1,5 +1,4 @@
-//tran thanh tu
-import { View, Text, StatusBar, StyleSheet } from "react-native";
+import { View, StatusBar, StyleSheet } from "react-native";
 import React from "react";
 import Colors from "../assets/constants/Colors";
 import TitleBar from "../components/TitleBar";
@@ -24,3 +23,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+

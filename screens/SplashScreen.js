@@ -1,4 +1,3 @@
-//tran tu
 import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
@@ -17,8 +16,18 @@ import * as Animatable from "react-native-animatable";
 import Svg, { Path } from "react-native-svg";
 import { setCity } from "../redux/features/citySlice";
 import { useNavigation } from "@react-navigation/native";
+import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
+import React, { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import * as Animatable from "react-native-animatable";
+import { Logo } from "../assets";
+import SelectDropdown from "react-native-select-dropdown";
+import { Cities_VN } from "../data";
+import { useDispatch } from "react-redux";
+import { setCity } from "../redux/features/citySlice";
 
-const SplashScreen = () => {
+export default function SplashScreen() {
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [city, setCityState] = useState("");
@@ -110,7 +119,7 @@ const SplashScreen = () => {
   );
 };
 
-export default SplashScreen;
+
 
 const styles = StyleSheet.create({
   container: {
@@ -148,3 +157,5 @@ const styles = StyleSheet.create({
     bottom: 20,
   },
 });
+
+

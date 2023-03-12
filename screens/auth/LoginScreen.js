@@ -3,21 +3,18 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  StyleSheet,
   Alert,
 } from "react-native";
-import React, { useLayoutEffect, useState } from "react";
+import React, {useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { BGWave, Logo } from "../../assets";
+import { Logo } from "../../assets";
 import InputForm from "../../components/InputForm";
 import { useDispatch } from "react-redux";
 import TextErrorInput from "../../components/textErrorInput";
 import { authAPI } from "../../api/authAPI";
 import { setUser } from "../../redux/features/userSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Lottie from "lottie-react-native";
-import IonIcons from "react-native-vector-icons/Ionicons";
-import Colors from "../../assets/constants/Colors";
+
 
 export default function LoginScreen() {
   const [phoneErrText, setPhoneErrText] = useState("");
@@ -68,6 +65,7 @@ export default function LoginScreen() {
     }
   };
   return (
+
     <View style={{ position: "relative", flex: 1 }}>
       <View style={styles.backgroundCurvedContainer}>
         <TouchableOpacity onPress={handleBack}>
@@ -133,7 +131,8 @@ export default function LoginScreen() {
             setIsPasswordShow={setIsPasswordShow}
           />
           {passErrText !== "" && TextErrorInput(passErrText)}
-        </View>
+
+         
 
         <TouchableOpacity
           onPress={handleLogin}
@@ -188,8 +187,10 @@ export default function LoginScreen() {
         </View>
       </View>
     </View>
-  );
-}
+    </View>
+  )
+  }
+
 
 const styles = StyleSheet.create({
   flexColumn: {

@@ -1,4 +1,3 @@
-//tran thanh tu
 import {
   View,
   Text,
@@ -179,3 +178,4 @@ const styles = StyleSheet.create({
     padding: 3,
   },
 });
+
