@@ -276,6 +276,15 @@ const HomeTabs = () => {
                   onSelect={(selectedItem, index) => {
                     setData({ ...data, filterCateGories: selectedItem });
                   }}
+                  renderDropdownIcon={(isOpened) => {
+                    return (
+                      <IonIcons
+                        name={isOpened ? "chevron-up" : "chevron-down"}
+                        color={"#444"}
+                        size={18}
+                      />
+                    );
+                  }}
                 />
               </View>
               <TextInput
@@ -335,6 +344,15 @@ const HomeTabs = () => {
                       setDistricts(selectedItem.districts);
                       setCity(selectedItem.code);
                     }}
+                    renderDropdownIcon={(isOpened) => {
+                      return (
+                        <IonIcons
+                          name={isOpened ? "chevron-up" : "chevron-down"}
+                          color={"#444"}
+                          size={18}
+                        />
+                      );
+                    }}
                   />
                   {/* {sexErrText !== "" && TextErrorInput(sexErrText)} */}
                 </View>
@@ -370,6 +388,15 @@ const HomeTabs = () => {
                     }}
                     rowTextForSelection={(item, index) => {
                       return item.name;
+                    }}
+                    renderDropdownIcon={(isOpened) => {
+                      return (
+                        <IonIcons
+                          name={isOpened ? "chevron-up" : "chevron-down"}
+                          color={"#444"}
+                          size={18}
+                        />
+                      );
                     }}
                   />
                   {/* {sexErrText !== "" && TextErrorInput(sexErrText)} */}
