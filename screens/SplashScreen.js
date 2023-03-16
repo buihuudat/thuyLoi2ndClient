@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import Colors from "../assets/constants/Colors";
 import { Logo } from "../assets";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SelectDropdown from "react-native-select-dropdown";
 import { Cities_VN } from "../data";
 import * as Animatable from "react-native-animatable";
@@ -22,6 +22,8 @@ export default function SplashScreen() {
   const dispatch = useDispatch();
   const [city, setCityState] = useState("");
   const [isDisable, setIsDisable] = useState(true);
+  // const user = useSelector((state) => state?.user.data);
+  // console.log(user);
 
   useEffect(() => {
     if (city) {
@@ -30,7 +32,7 @@ export default function SplashScreen() {
   }, [city]);
   const handleNext = () => {
     dispatch(setCity(city));
-    navigation.navigate("HomeTabs");
+    navigation.navigate("LoginScreen");
   };
   return (
     <View style={styles.container}>

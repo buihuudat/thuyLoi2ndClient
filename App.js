@@ -1,5 +1,10 @@
+import { Provider } from "react-redux";
 import Navigators from "./navigations";
+import store from "./redux/store";
 
-//tran tu
-
-export default () => <Navigators />;
+export default () => (
+    
+  <Provider store={store}>
+    <Navigators />
+  </Provider>
+);

@@ -4,22 +4,22 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  StyleSheet,
 } from "react-native";
-import React, {useState } from "react";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Logo } from "../../assets";
 import InputForm from "../../components/InputForm";
 import { useDispatch } from "react-redux";
 import TextErrorInput from "../../components/textErrorInput";
 import { authAPI } from "../../api/authAPI";
-import { setUser } from "../../redux/features/userSlice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StyleSheet } from "react-native";
+import userSlice, { setUser } from "../../redux/features/userSlice";
 import Colors from "../../assets/constants/Colors";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import StorageService from "../../redux/services/StorageService";
+import GeneralAction from "../../redux/GeneralAction";
 
-
-export default function LoginScreen() {
+export default function LoginScreen({}) {
   const [phoneErrText, setPhoneErrText] = useState("");
   const [passErrText, setPassErrText] = useState("");
   const [isPasswordShow, setIsPasswordShow] = useState(true);
@@ -50,10 +50,20 @@ export default function LoginScreen() {
 
     try {
       const { user, token } = await authAPI.login(data);
-      dispatch(setUser(user));
-      await AsyncStorage.setItem("token", token);
+
+      // dispatch(setToken(token));
+      //
+
+      StorageService.setToken(token);
+      dispatch(GeneralAction.setToken(token));
+      // dispatch(GeneralAction.setUserData(user));
+
+      // dispatch(setUser(user));
+      // userSlice.setToken(token);
+
+      // dispatch(GeneralAction.setToken(token));
+      // navigation.navigate("HomeTabs");
       setIsLoading(false);
-      navigation.navigate("home");
     } catch (e) {
       const errors = e.data.errors;
       errors.forEach((e) => {
@@ -68,17 +78,16 @@ export default function LoginScreen() {
     }
   };
   return (
-
     <View style={{ position: "relative", flex: 1 }}>
       <View style={styles.backgroundCurvedContainer}>
-        <TouchableOpacity onPress={handleBack}>
+        {/* <TouchableOpacity onPress={handleBack}>
           <IonIcons
             name="chevron-back-outline"
             size={25}
             color={Colors.DEFAULT_WHITE}
             style={{ marginTop: 20 }}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <View
@@ -135,65 +144,62 @@ export default function LoginScreen() {
           />
           {passErrText !== "" && TextErrorInput(passErrText)}
 
-         
-
-        <TouchableOpacity
-          onPress={handleLogin}
-          style={{
-            padding: 10,
-            marginVertical: 20,
-            borderRadius: 10,
-            backgroundColor: Colors.DEFAULT_BLUE,
-          }}
-        >
-          <Text style={styles.textButton}>Đăng nhập</Text>
-        </TouchableOpacity>
-
-        <Text
-          style={{ textAlign: "center", fontWeight: 600 }}
-          onPress={() => Alert.alert("Chức năng đang phát triển")}
-        >
-          Quên mật khẩu?
-        </Text>
-
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 5,
-            justifyContent: "center",
-            marginTop: 20,
-          }}
-        >
           <TouchableOpacity
+            onPress={handleLogin}
+            style={{
+              padding: 10,
+              marginVertical: 20,
+              borderRadius: 10,
+              backgroundColor: Colors.DEFAULT_BLUE,
+            }}
+          >
+            <Text style={styles.textButton}>Đăng nhập</Text>
+          </TouchableOpacity>
+
+          <Text
+            style={{ textAlign: "center", fontWeight: 600 }}
             onPress={() => Alert.alert("Chức năng đang phát triển")}
+          >
+            Quên mật khẩu?
+          </Text>
+
+          <View
             style={{
-              padding: 10,
-              textAlign: "center",
-              borderRadius: 10,
-              backgroundColor: "#3878DB",
+              display: "flex",
+              flexDirection: "row",
+              gap: 5,
+              justifyContent: "center",
+              marginTop: 20,
             }}
           >
-            <Text style={styles.textButton}>Facebook</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("RegisterScreen")}
-            style={{
-              padding: 10,
-              textAlign: "center",
-              borderRadius: 10,
-              backgroundColor: "green",
-            }}
-          >
-            <Text style={styles.textButton}>Đăng ký</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => Alert.alert("Chức năng đang phát triển")}
+              style={{
+                padding: 10,
+                textAlign: "center",
+                borderRadius: 10,
+                backgroundColor: "#3878DB",
+              }}
+            >
+              <Text style={styles.textButton}>Facebook</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("RegisterScreen")}
+              style={{
+                padding: 10,
+                textAlign: "center",
+                borderRadius: 10,
+                backgroundColor: "green",
+              }}
+            >
+              <Text style={styles.textButton}>Đăng ký</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
-    </View>
-  )
-  }
-
+  );
+}
 
 const styles = StyleSheet.create({
   flexColumn: {

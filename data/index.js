@@ -295,3 +295,32 @@ export const dataCateGories = [
     title: "Tất cả danh mục",
   },
 ];
+export const filterCateGories = [
+  "Đồ  điện tử",
+  "Xe cộ",
+  "Văn phòng",
+  "Dịch vụ,du lịch",
+  "Gia dụng, nội thất",
+  "Thú cưng",
+  "Việc làm",
+  "Thời trang",
+  "Cho tặng miễn phí",
+];
+
+export const filterDistrict = [
+  "Quận 1",
+  "Quận 2",
+  "Quận 3",
+  "Quận 4",
+  "Quận 5",
+  "Quận 6",
+  "Quận 7",
+  "Quận 8",
+  "Quận 9",
+  "Quận 10",
+  "Quận 11",
+  "Quận 12",
+  "Quận Gò Vấp",
+  "Quận Bình Thạnh",
+  "Quận Tân Phú",
+];

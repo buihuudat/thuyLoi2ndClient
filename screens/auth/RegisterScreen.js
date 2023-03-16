@@ -46,7 +46,7 @@ export default function RegisterScreen() {
   const navigation = useNavigation();
 
   const handleBack = () => {
-    navigation.navigate("HomeTabs");
+    navigation.navigate("LoginScreen");
   };
 
   const handleNext = () => {
@@ -213,7 +213,7 @@ export default function RegisterScreen() {
                 backgroundColor: Colors.DEFAULT_BLUE,
               }}
             >
-              <Text style={styles.textButton}>Đăng ký</Text>
+              <Text style={styles.textButton}>Tiếp</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -261,7 +261,7 @@ export default function RegisterScreen() {
               // <Lottie source={Images.LOADING} autoPlay />
               <></>
             ) : (
-              <Button title="Đăng ký" onPress={handleRegister} color="green" />
+              <Button title="Tiếp" onPress={handleRegister} color="green" />
             )}
             <Button
               title="Quay lại"
@@ -279,7 +279,7 @@ export default function RegisterScreen() {
           }}
         >
           <Text style={{ fontSize: 15 }}>Đã có tài khoản? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("HomeTabs")}>
+          <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
             <Text style={{ color: Colors.DEFAULT_BLUE, fontSize: 15 }}>Đăng nhập ngay</Text>
           </TouchableOpacity>
         </View>
