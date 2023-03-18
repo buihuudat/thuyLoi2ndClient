@@ -1,8 +1,6 @@
 import {
   View,
   Text,
-  SafeAreaView,
-  ScrollView,
   Image,
   StyleSheet,
   TouchableOpacity,
@@ -10,8 +8,8 @@ import {
 } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { BGregister, Logo } from "../../assets/index";
-import { Entypo } from "@expo/vector-icons";
+import {  Logo } from "../../assets/index";
+
 import InputForm from "../../components/InputForm";
 import SelectDropdown from "react-native-select-dropdown";
 import { sex } from "../../data";
@@ -21,7 +19,6 @@ import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setUser } from "../../redux/features/userSlice";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import Lottie from "lottie-react-native";
 import Colors from "../../assets/constants/Colors";
 
 export default function RegisterScreen() {
@@ -49,7 +46,7 @@ export default function RegisterScreen() {
   const navigation = useNavigation();
 
   const handleBack = () => {
-    navigation.navigate("HomeTabs");
+    navigation.navigate("LoginScreen");
   };
 
   const handleNext = () => {
@@ -216,7 +213,7 @@ export default function RegisterScreen() {
                 backgroundColor: Colors.DEFAULT_BLUE,
               }}
             >
-              <Text style={styles.textButton}>Đăng ký</Text>
+              <Text style={styles.textButton}>Tiếp</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -264,7 +261,7 @@ export default function RegisterScreen() {
               // <Lottie source={Images.LOADING} autoPlay />
               <></>
             ) : (
-              <Button title="Đăng ký" onPress={handleRegister} color="green" />
+              <Button title="Tiếp" onPress={handleRegister} color="green" />
             )}
             <Button
               title="Quay lại"
@@ -282,7 +279,7 @@ export default function RegisterScreen() {
           }}
         >
           <Text style={{ fontSize: 15 }}>Đã có tài khoản? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("HomeTabs")}>
+          <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
             <Text style={{ color: Colors.DEFAULT_BLUE, fontSize: 15 }}>Đăng nhập ngay</Text>
           </TouchableOpacity>
         </View>

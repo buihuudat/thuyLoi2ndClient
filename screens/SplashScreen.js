@@ -9,20 +9,21 @@ import {
 } from "react-native";
 import Colors from "../assets/constants/Colors";
 import { Logo } from "../assets";
-import { Cities_VN } from "../data";
-import Svg, { Path } from "react-native-svg";
-import { useNavigation } from "@react-navigation/native";
-import * as Animatable from "react-native-animatable";
-import SelectDropdown from "react-native-select-dropdown";
 import { useDispatch } from "react-redux";
+import SelectDropdown from "react-native-select-dropdown";
+import { Cities_VN } from "../data";
+import * as Animatable from "react-native-animatable";
+import Svg, { Path } from "react-native-svg";
 import { setCity } from "../redux/features/citySlice";
+import { useNavigation } from "@react-navigation/native";
 
 export default function SplashScreen() {
-
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [city, setCityState] = useState("");
   const [isDisable, setIsDisable] = useState(true);
+  // const user = useSelector((state) => state?.user.data);
+  // console.log(user);
 
   useEffect(() => {
     if (city) {
@@ -31,7 +32,7 @@ export default function SplashScreen() {
   }, [city]);
   const handleNext = () => {
     dispatch(setCity(city));
-    navigation.navigate("HomeTabs");
+    navigation.navigate("LoginScreen");
   };
   return (
     <View style={styles.container}>
@@ -108,9 +109,7 @@ export default function SplashScreen() {
       </View>
     </View>
   );
-};
-
-
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -148,5 +147,3 @@ const styles = StyleSheet.create({
     bottom: 20,
   },
 });
-
-

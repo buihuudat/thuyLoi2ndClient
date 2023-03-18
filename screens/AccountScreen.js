@@ -14,7 +14,22 @@ import { Divider } from "@rneui/themed";
 import TitleContainer from "../components/TitleContainer";
 import IconAndSubTitle from "../components/IconAndSubTitle";
 import TitleBar from "../components/TitleBar";
+import { useDispatch, useSelector } from "react-redux";
+import { setToken } from "../redux/features/userSlice";
+import StorageService from "../redux/services/StorageService";
+import GeneralAction from "../redux/GeneralAction";
+
 const AccountScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const logout = () => {
+    StorageService.setToken("");
+    dispatch(GeneralAction.setToken(""));
+    dispatch(GeneralAction.setUserData(null));
+  };
+
+  const user = useSelector((state) => state?.user.data);
+  console.log(user);
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -36,7 +51,7 @@ const AccountScreen = ({ navigation }) => {
           />
 
           <View style={styles.infoAcountContainer}>
-            <Text style={styles.name}>Trần Thanh Tú</Text>
+            <Text style={styles.name}>Tran Thanh Tu</Text>
             <View style={styles.rating}>
               <Rating
                 // showRating
@@ -104,7 +119,7 @@ const AccountScreen = ({ navigation }) => {
         />
       </TouchableOpacity>
       <TitleContainer content="Khác" />
-      <TouchableOpacity>
+      <TouchableOpacity onPress={logout}>
         <IconAndSubTitle
           title="Đăng xuất"
           icon="log-out"
@@ -178,4 +193,3 @@ const styles = StyleSheet.create({
     padding: 3,
   },
 });
-
