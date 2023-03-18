@@ -1,8 +1,6 @@
 import {
   View,
   Text,
-  SafeAreaView,
-  ScrollView,
   Image,
   StyleSheet,
   TouchableOpacity,
@@ -10,8 +8,8 @@ import {
 } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { BGregister } from "../../assets/index";
-import { Entypo } from "@expo/vector-icons";
+import {  Logo } from "../../assets/index";
+
 import InputForm from "../../components/InputForm";
 import SelectDropdown from "react-native-select-dropdown";
 import { sex } from "../../data";
@@ -20,8 +18,8 @@ import { authAPI } from "../../api/authAPI";
 import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setUser } from "../../redux/features/userSlice";
-import Images from "../../components/contants/Images";
-import Lottie from "lottie-react-native";
+import IonIcons from "react-native-vector-icons/Ionicons";
+import Colors from "../../assets/constants/Colors";
 
 export default function RegisterScreen() {
   const [show, setShow] = useState(0);
@@ -48,7 +46,7 @@ export default function RegisterScreen() {
   const navigation = useNavigation();
 
   const handleBack = () => {
-    navigation.navigate("login");
+    navigation.navigate("LoginScreen");
   };
 
   const handleNext = () => {
@@ -137,160 +135,191 @@ export default function RegisterScreen() {
   };
 
   return (
-    <SafeAreaView>
-      <Image
-        source={BGregister}
-        style={{
-          position: "absolute",
-          width: "100%",
-        }}
-        resizeMode="cover"
-      />
-      <ScrollView>
-        <TouchableOpacity onPress={handleBack} style={{ padding: 10 }}>
-          <Entypo name="chevron-left" size={34} color="#06b2bb" />
+    <View style={styles.container}>
+      <View style={styles.backgroundCurvedContainer}>
+        <TouchableOpacity onPress={handleBack}>
+          <IonIcons
+            name="chevron-back-outline"
+            size={25}
+            color={Colors.DEFAULT_WHITE}
+            style={{ marginTop: 20 }}
+          />
         </TouchableOpacity>
-        <View
-          style={styles.flexColumn && { marginTop: 70, padding: 10, gap: 10 }}
-        >
-          <Text
-            style={{
-              paddingTop: 10,
-              fontSize: 30,
-              fontWeight: 600,
-              textAlign: "center",
-            }}
-          >
-            Đăng ký tài khoản
-          </Text>
-          {show === 0 && (
-            <View style={{ display: "flex", gap: 20 }}>
-              <View>
-                <InputForm
-                  label={"Mã sinh viên"}
-                  placeholder="Mã sinh viên"
-                  type="numeric"
-                  data={data.msv}
-                  setData={(msv) => setData({ ...data, msv })}
-                />
-                {msvErrText !== "" && TextErrorInput(msvErrText)}
-              </View>
+      </View>
 
-              <View>
-                <InputForm
-                  label={"Tên"}
-                  placeholder="Tên"
-                  type="default"
-                  data={data.firstname}
-                  setData={(firstname) => setData({ ...data, firstname })}
-                  autoCap="words"
-                />
-                {fnErrText !== "" && TextErrorInput(fnErrText)}
-              </View>
-
-              <View>
-                <InputForm
-                  label={"Họ"}
-                  placeholder="Họ"
-                  type="default"
-                  data={data.lastname}
-                  setData={(lastname) => setData({ ...data, lastname })}
-                  autoCap="words"
-                />
-                {lnErrText !== "" && TextErrorInput(lnErrText)}
-              </View>
-              <View>
-                <SelectDropdown
-                  data={sex}
-                  defaultButtonText={"Chọn giới tính"}
-                  onSelect={(selectedItem, index) => {
-                    setData({ ...data, sex: selectedItem });
-                  }}
-                />
-                {sexErrText !== "" && TextErrorInput(sexErrText)}
-              </View>
-
-              <Button title="Tiếp" onPress={handleNext} />
+      <View style={styles.mainContainer}>
+        <Image
+          style={{
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+          alt="logo"
+          source={Logo}
+          resizeMode="center"
+        />
+        <Text style={styles.title}>Đăng ký tài khoản</Text>
+        {show === 0 && (
+          <View style={{ display: "flex", gap: 20 }}>
+            <View>
+              <InputForm
+                label={"Mã sinh viên"}
+                placeholder="Mã sinh viên"
+                type="numeric"
+                data={data.msv}
+                setData={(msv) => setData({ ...data, msv })}
+              />
+              {msvErrText !== "" && TextErrorInput(msvErrText)}
             </View>
-          )}
-          {show === 1 && (
-            <View
+
+            <View>
+              <InputForm
+                label={"Tên"}
+                placeholder="Tên"
+                type="default"
+                data={data.firstname}
+                setData={(firstname) => setData({ ...data, firstname })}
+                autoCap="words"
+              />
+              {fnErrText !== "" && TextErrorInput(fnErrText)}
+            </View>
+
+            <View>
+              <InputForm
+                label={"Họ"}
+                placeholder="Họ"
+                type="default"
+                data={data.lastname}
+                setData={(lastname) => setData({ ...data, lastname })}
+                autoCap="words"
+              />
+              {lnErrText !== "" && TextErrorInput(lnErrText)}
+            </View>
+            <View>
+              <SelectDropdown
+                data={sex}
+                defaultButtonText={"Chọn giới tính"}
+                onSelect={(selectedItem, index) => {
+                  setData({ ...data, sex: selectedItem });
+                }}
+              />
+              {sexErrText !== "" && TextErrorInput(sexErrText)}
+            </View>
+            <TouchableOpacity
+              onPress={handleNext}
               style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 20,
+                padding: 10,
+                marginVertical: 20,
+                borderRadius: 10,
+                backgroundColor: Colors.DEFAULT_BLUE,
               }}
             >
-              <View>
-                <InputForm
-                  label={"Số điện thoại"}
-                  placeholder="Số điện thoại"
-                  type="numeric"
-                  data={data.phone}
-                  setData={(phone) => setData({ ...data, phone })}
-                />
-                {phoneErrText !== "" && TextErrorInput(phoneErrText)}
-              </View>
-              <View>
-                <InputForm
-                  label={"Mật khẩu"}
-                  placeholder="Mật khẩu"
-                  type="visible-password"
-                  secure={true}
-                  data={data.password}
-                  setData={(password) => setData({ ...data, password })}
-                />
-                {passErrText !== "" && TextErrorInput(passErrText)}
-              </View>
-              <View>
-                <InputForm
-                  label={"Xác nhận mật khẩu"}
-                  placeholder="Xác nhận mật khẩu"
-                  type="visible-password"
-                  secure={true}
-                  data={data.cfpassword}
-                  setData={(cfpassword) => setData({ ...data, cfpassword })}
-                />
-                {cfPassErrText !== "" && TextErrorInput(cfPassErrText)}
-              </View>
-              {isLoading ? (
-                <Lottie source={Images.LOADING} autoPlay />
-              ) : (
-                <Button
-                  title="Đăng ký"
-                  onPress={handleRegister}
-                  color="green"
-                />
-              )}
-              <Button
-                title="Quay lại"
-                onPress={() => setShow(0)}
-                color="#EFC868"
-              />
-            </View>
-          )}
+              <Text style={styles.textButton}>Tiếp</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        {show === 1 && (
           <View
             style={{
               display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-              flexDirection: "row",
+              flexDirection: "column",
+              gap: 20,
             }}
           >
-            <Text>Đã có tài khoản? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate("login")}>
-              <Text style={{ color: "blue" }}>Đăng nhập ngay</Text>
-            </TouchableOpacity>
+            <View>
+              <InputForm
+                label={"Số điện thoại"}
+                placeholder="Số điện thoại"
+                type="numeric"
+                data={data.phone}
+                setData={(phone) => setData({ ...data, phone })}
+              />
+              {phoneErrText !== "" && TextErrorInput(phoneErrText)}
+            </View>
+            <View>
+              <InputForm
+                label={"Mật khẩu"}
+                placeholder="Mật khẩu"
+                type="visible-password"
+                secure={true}
+                data={data.password}
+                setData={(password) => setData({ ...data, password })}
+              />
+              {passErrText !== "" && TextErrorInput(passErrText)}
+            </View>
+            <View>
+              <InputForm
+                label={"Xác nhận mật khẩu"}
+                placeholder="Xác nhận mật khẩu"
+                type="visible-password"
+                secure={true}
+                data={data.cfpassword}
+                setData={(cfpassword) => setData({ ...data, cfpassword })}
+              />
+              {cfPassErrText !== "" && TextErrorInput(cfPassErrText)}
+            </View>
+            {isLoading ? (
+              // <Lottie source={Images.LOADING} autoPlay />
+              <></>
+            ) : (
+              <Button title="Tiếp" onPress={handleRegister} color="green" />
+            )}
+            <Button
+              title="Quay lại"
+              onPress={() => setShow(0)}
+              color="#EFC868"
+            />
           </View>
+        )}
+        <View
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            textAlign: "center",
+            flexDirection: "row",
+          }}
+        >
+          <Text style={{ fontSize: 15 }}>Đã có tài khoản? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
+            <Text style={{ color: Colors.DEFAULT_BLUE, fontSize: 15 }}>Đăng nhập ngay</Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  flexColumn: {
+  container: {
+    backgroundColor: Colors.DEFAULT_WHITE,
+    width: "100%",
+    height: "100%",
+  },
+  backgroundCurvedContainer: {
+    flexDirection: "row",
+    backgroundColor: Colors.DEFAULT_BLUE,
+    height: 70,
+    position: "relative",
     display: "flex",
-    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    alignSelf: "center",
+    zIndex: -1,
+    paddingHorizontal: 10,
+  },
+  mainContainer: {
+    marginHorizontal: 20,
+  },
+  title: {
+    fontSize: 25,
+    fontWeight: 500,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  textButton: {
+    fontWeight: 500,
+    fontSize: 15,
+    color: "white",
+    textAlign: "center",
   },
 });

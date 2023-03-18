@@ -3,26 +3,22 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  ScrollView,
-  StyleSheet,
-  Button,
   Alert,
 } from "react-native";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { BGWave, Logo } from "../../assets";
-import { Entypo, Feather } from "@expo/vector-icons";
+import { Logo } from "../../assets";
 import InputForm from "../../components/InputForm";
 import { useDispatch } from "react-redux";
 import TextErrorInput from "../../components/textErrorInput";
 import { authAPI } from "../../api/authAPI";
-import { setUser } from "../../redux/features/userSlice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Images from "../../components/contants/Images";
-import Lottie from "lottie-react-native";
+import userSlice, { setUser } from "../../redux/features/userSlice";
+import Colors from "../../assets/constants/Colors";
+import IonIcons from "react-native-vector-icons/Ionicons";
+import StorageService from "../../redux/services/StorageService";
+import GeneralAction from "../../redux/GeneralAction";
 
-export default function LoginScreen() {
+export default function LoginScreen({}) {
   const [phoneErrText, setPhoneErrText] = useState("");
   const [passErrText, setPassErrText] = useState("");
   const [isPasswordShow, setIsPasswordShow] = useState(true);
@@ -53,10 +49,20 @@ export default function LoginScreen() {
 
     try {
       const { user, token } = await authAPI.login(data);
-      dispatch(setUser(user));
-      await AsyncStorage.setItem("token", token);
+
+      // dispatch(setToken(token));
+      //
+
+      StorageService.setToken(token);
+      dispatch(GeneralAction.setToken(token));
+      // dispatch(GeneralAction.setUserData(user));
+
+      // dispatch(setUser(user));
+      // userSlice.setToken(token);
+
+      // dispatch(GeneralAction.setToken(token));
+      // navigation.navigate("HomeTabs");
       setIsLoading(false);
-      navigation.navigate("home");
     } catch (e) {
       const errors = e.data.errors;
       errors.forEach((e) => {
@@ -71,99 +77,102 @@ export default function LoginScreen() {
     }
   };
   return (
-    <SafeAreaView style={{ position: "relative", flex: 1 }}>
-      <Image
-        source={BGWave}
-        style={{
-          position: "absolute",
-          height: "100%",
-          width: "100%",
-        }}
-        resizeMode="stretch"
-      />
-      <ScrollView>
-        <TouchableOpacity onPress={handleBack} style={{ padding: 13 }}>
-          <Entypo name="chevron-left" size={34} color="#06b2bb" />
-        </TouchableOpacity>
-        <View
-          style={
-            styles.flexColumn && {
-              padding: 10,
-              gap: 15,
-            }
-          }
-        >
-          <Image
-            style={{
-              marginLeft: "auto",
-              marginRight: "auto",
-              marginBottom: 4,
-            }}
-            alt="logo"
-            source={Logo}
-            resizeMode="center"
+    <View style={{ position: "relative", flex: 1 }}>
+      <View style={styles.backgroundCurvedContainer}>
+        {/* <TouchableOpacity onPress={handleBack}>
+          <IonIcons
+            name="chevron-back-outline"
+            size={25}
+            color={Colors.DEFAULT_WHITE}
+            style={{ marginTop: 20 }}
           />
-          {isLoading ? (
-            <Lottie source={Images.LOADING} autoPlay />
-          ) : (
-            <Text
-              style={{
-                paddingTop: 10,
-                fontSize: 30,
-                fontWeight: 600,
-                textAlign: "center",
-              }}
-            >
-              Đăng nhập
-            </Text>
-          )}
-          <View>
-            <InputForm
-              label={"Số điện thoại"}
-              placeholder="Số điện thoại"
-              type="numeric"
-              data={data.phone}
-              setData={(phone) => setData({ ...data, phone })}
-            />
-            {phoneErrText !== "" && TextErrorInput(phoneErrText)}
-          </View>
-          <View>
-            <InputForm
-              label={"Mật khẩu"}
-              placeholder="Mật khẩu"
-              type="visible-password"
-              secure={true}
-              data={data.password}
-              setData={(password) => setData({ ...data, password })}
-              isPasswordShow={isPasswordShow}
-              setIsPasswordShow={setIsPasswordShow}
-            />
-            {passErrText !== "" && TextErrorInput(passErrText)}
-          </View>
-          <Button onPress={handleLogin} title="Đăng nhập" />
-          <TouchableOpacity
+        </TouchableOpacity> */}
+      </View>
+
+      <View
+        style={
+          styles.flexColumn && {
+            padding: 10,
+            marginHorizontal: 10,
+          }
+        }
+      >
+        <Image
+          style={{
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+          alt="logo"
+          source={Logo}
+          resizeMode="center"
+        />
+        {isLoading ? (
+          // <Lottie source={Images.LOADING} autoPlay />
+          <></>
+        ) : (
+          <Text
             style={{
-              borderWidth: 0.5,
-              padding: 5,
-              borderRadius: 20,
-              backgroundColor: "999",
-              opacity: 0.5,
+              fontSize: 25,
+              fontWeight: 500,
+              textAlign: "center",
             }}
+          >
+            Đăng nhập
+          </Text>
+        )}
+        <View style={{ marginBottom: 15 }}>
+          <InputForm
+            label={"Số điện thoại"}
+            placeholder="Số điện thoại"
+            type="numeric"
+            data={data.phone}
+            setData={(phone) => setData({ ...data, phone })}
+          />
+          {phoneErrText !== "" && TextErrorInput(phoneErrText)}
+        </View>
+        <View style={{ marginBottom: 15 }}>
+          <InputForm
+            label={"Mật khẩu"}
+            placeholder="Mật khẩu"
+            type="visible-password"
+            secure={true}
+            data={data.password}
+            setData={(password) => setData({ ...data, password })}
+            isPasswordShow={isPasswordShow}
+            setIsPasswordShow={setIsPasswordShow}
+          />
+          {passErrText !== "" && TextErrorInput(passErrText)}
+
+          <TouchableOpacity
+            onPress={handleLogin}
+            style={{
+              padding: 10,
+              marginVertical: 20,
+              borderRadius: 10,
+              backgroundColor: Colors.DEFAULT_BLUE,
+            }}
+          >
+            <Text style={styles.textButton}>Đăng nhập</Text>
+          </TouchableOpacity>
+
+          <Text
+            style={{ textAlign: "center", fontWeight: 600 }}
             onPress={() => Alert.alert("Chức năng đang phát triển")}
           >
-            <Text style={{ textAlign: "center", fontWeight: 600 }}>
-              Quên mật khẩu
-            </Text>
-          </TouchableOpacity>
+            Quên mật khẩu?
+          </Text>
+
           <View
             style={{
               display: "flex",
               flexDirection: "row",
               gap: 5,
               justifyContent: "center",
+              marginTop: 20,
             }}
           >
             <TouchableOpacity
+              onPress={() => Alert.alert("Chức năng đang phát triển")}
               style={{
                 padding: 10,
                 textAlign: "center",
@@ -174,7 +183,7 @@ export default function LoginScreen() {
               <Text style={styles.textButton}>Facebook</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => navigation.navigate("register")}
+              onPress={() => navigation.navigate("RegisterScreen")}
               style={{
                 padding: 10,
                 textAlign: "center",
@@ -186,8 +195,8 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </View>
   );
 }
 
@@ -197,7 +206,28 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   textButton: {
-    fontWeight: 600,
+    fontWeight: 500,
+    fontSize: 15,
     color: "white",
+    textAlign: "center",
+  },
+  backgroundCurvedContainer: {
+    flexDirection: "row",
+    backgroundColor: Colors.DEFAULT_BLUE,
+    height: 70,
+    position: "relative",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    alignSelf: "center",
+    zIndex: -1,
+    paddingHorizontal: 10,
+  },
+  title: {
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: 500,
+    color: Colors.DEFAULT_WHITE,
   },
 });
