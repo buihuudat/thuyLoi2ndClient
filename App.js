@@ -21,8 +21,8 @@ export default function App() {
         <Stask.Navigator screenOptions={{ headerShown: false }}>
           <Stask.Screen name="SplashScreen" component={SplashScreen} />
           <Stask.Screen name="HomeTab" component={HomeTabs} />
-          <Stask.Screen name="HomeScreen" component={HomeScreen} />
           <Stask.Screen name="LoginScreen" component={LoginScreen} />
+          <Stask.Screen name="HomeScreen" component={HomeScreen} />
           <Stask.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stask.Screen name="CategoryScreen" component={CategoryScreen} />
           <Stask.Screen name="ProductScreen" component={ProductScreen} />
