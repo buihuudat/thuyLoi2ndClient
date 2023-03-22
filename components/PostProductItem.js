@@ -1,7 +1,10 @@
 import React from "react";
-import { Image,  StyleSheet,  Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Colors from "../assets/constants/Colors";
+import { formatPriceToVnd } from "./formatPriceToVnd";
+import { format } from "date-fns";
+import moment from "moment";
 
 const PostProductItem = ({ postproduct, navigate }) => {
   return (
@@ -16,17 +19,24 @@ const PostProductItem = ({ postproduct, navigate }) => {
             />
           </View>
 
-          <Image style={styles.image} source={postproduct.source} />
+          <Image
+            style={styles.image}
+            source={{ uri: postproduct.images[0].url }}
+          />
 
           <View style={styles.titlePostProduct}>
             <Text style={styles.titleContent}>{postproduct.title}</Text>
             <IonIcons name="ellipsis-vertical-outline" size={19} />
           </View>
 
-          <Text style={styles.price}>{postproduct.price} đ</Text>
+          <Text style={styles.price}>
+            {formatPriceToVnd(postproduct.price)}
+          </Text>
           <View style={styles.timeContainer}>
             <IonIcons name="time" size={14} />
-            <Text style={styles.time}>{postproduct.time}</Text>
+            <Text style={styles.time}>
+              {moment(postproduct.createdAt).format("L")}
+            </Text>
           </View>
         </View>
       </View>
@@ -38,15 +48,15 @@ export default PostProductItem;
 
 const styles = StyleSheet.create({
   container: {
-    width: 180,
-    height: 300,
+    width: 150,
+    height: 250,
     backgroundColor: Colors.LIGHT_GREY,
     margin: 10,
     borderRadius: 10,
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 150,
   },
   titlePostProduct: {
     flexDirection: "row",

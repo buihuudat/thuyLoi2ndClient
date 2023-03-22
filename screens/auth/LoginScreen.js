@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  StyleSheet,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -11,12 +12,10 @@ import { Logo } from "../../assets";
 import InputForm from "../../components/InputForm";
 import { useDispatch } from "react-redux";
 import TextErrorInput from "../../components/textErrorInput";
-import { authAPI } from "../../api/authAPI";
-import userSlice, { setUser } from "../../redux/features/userSlice";
+import authApi from "../../api/authApi";
+import { setUser } from "../../redux/features/userSlice";
 import Colors from "../../assets/constants/Colors";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import StorageService from "../../redux/services/StorageService";
-import GeneralAction from "../../redux/GeneralAction";
 
 export default function LoginScreen({}) {
   const [phoneErrText, setPhoneErrText] = useState("");
@@ -28,9 +27,9 @@ export default function LoginScreen({}) {
     phone: "",
     password: "",
   });
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const handleBack = () => {};
   const handleLogin = async () => {
     const { phone, password } = data;
     let err = false;
@@ -48,20 +47,10 @@ export default function LoginScreen({}) {
     setIsLoading(true);
 
     try {
-      const { user, token } = await authAPI.login(data);
+      const { user, token } = await authApi.login(data);
 
-      // dispatch(setToken(token));
-      //
-
-      StorageService.setToken(token);
-      dispatch(GeneralAction.setToken(token));
-      // dispatch(GeneralAction.setUserData(user));
-
-      // dispatch(setUser(user));
-      // userSlice.setToken(token);
-
-      // dispatch(GeneralAction.setToken(token));
-      // navigation.navigate("HomeTabs");
+      dispatch(setUser(user));
+      navigation.navigate("HomeTab");
       setIsLoading(false);
     } catch (e) {
       const errors = e.data.errors;
@@ -79,14 +68,14 @@ export default function LoginScreen({}) {
   return (
     <View style={{ position: "relative", flex: 1 }}>
       <View style={styles.backgroundCurvedContainer}>
-        {/* <TouchableOpacity onPress={handleBack}>
+        <TouchableOpacity onPress={() => navigation.navigate("SplashScreen")}>
           <IonIcons
             name="chevron-back-outline"
             size={25}
             color={Colors.DEFAULT_WHITE}
             style={{ marginTop: 20 }}
           />
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </View>
 
       <View
@@ -127,6 +116,7 @@ export default function LoginScreen({}) {
             type="numeric"
             data={data.phone}
             setData={(phone) => setData({ ...data, phone })}
+            isPasswordShow={false}
           />
           {phoneErrText !== "" && TextErrorInput(phoneErrText)}
         </View>

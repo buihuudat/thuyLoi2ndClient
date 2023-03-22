@@ -26,7 +26,6 @@ const Navigators = () => {
   const { isLogin, setIsLogin } = useState(true);
 
   const token = useSelector((state) => state?.user?.token);
-  // console.log(token);
   // const [token, setToken] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {

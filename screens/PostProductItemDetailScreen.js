@@ -9,17 +9,21 @@ import {
   TouchableWithoutFeedback,
   Image,
   FlatList,
+  TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Colors from "../assets/constants/Colors";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { ScrollView } from "react-native-virtualized-view";
 import SwiperPostProductItemDetail from "../components/SwiperPostProductItemDetail";
 // import StarRating from "react-native-star-rating";
-
+import { useSelector } from "react-redux";
 import ChatContentItem from "../components/ChatContentItem";
 import { Rating } from "react-native-ratings";
-
+import moment from "moment";
+import { formatPriceToVnd } from "../components/formatPriceToVnd";
+import userApi from "../api/userApi";
+import favouriteApi from "../api/favouriteApi";
 
 const chatList = [
   {
@@ -36,7 +40,33 @@ const chatList = [
   },
 ];
 
-const PostProductItemDetail = ({ navigation }) => {
+const PostProductItemDetail = ({ navigation, route }) => {
+  const [userSell, setUserSell] = useState({});
+  const [favourite, setFavourite] = useState(false);
+  const post = route.params.item;
+  const user = useSelector((state) => state.user.data);
+
+  useEffect(() => {
+    const getDataDetail = async () => {
+      const rsUser = await userApi.get({ _id: post.user[0].user_id });
+      const rsFavourite = await favouriteApi.get({
+        user_id: post.user[0].user_id,
+        post_id: post._id,
+      });
+      setFavourite(rsFavourite.post && rsFavourite.post.length > 0);
+      setUserSell(rsUser);
+    };
+    getDataDetail();
+  }, [post]);
+
+  const handleAddFavourite = async () => {
+    const rs = await favouriteApi.update({
+      user_id: post.user[0].user_id,
+      post_id: post._id,
+    });
+    setFavourite(rs.status === "add");
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -47,7 +77,7 @@ const PostProductItemDetail = ({ navigation }) => {
 
       <View style={styles.backgroundCurvedContainer}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate("HomeTabs")}
+          onPress={() => navigation.navigate("HomeTab")}
         >
           <IonIcons
             name="chevron-back-outline"
@@ -67,21 +97,24 @@ const PostProductItemDetail = ({ navigation }) => {
         </TouchableWithoutFeedback>
       </View>
       <ScrollView>
-        <SwiperPostProductItemDetail />
+        <SwiperPostProductItemDetail images={post.images} />
         <View style={styles.contentContainer}>
-          <Text style={styles.title}>Cần bán iphone 14 promax 90%</Text>
+          <Text style={styles.title}>{post.title}</Text>
           <View style={styles.priceAndIconFavoriteContainer}>
-            <Text style={styles.price}>8.000.000 đ</Text>
-            <View style={styles.iconAndContent}>
-              <Text>Lưu tin</Text>
+            <Text style={styles.price}>{formatPriceToVnd(post.price)}</Text>
+            <TouchableOpacity
+              onPress={handleAddFavourite}
+              style={styles.iconAndContent}
+            >
+              <Text>{!favourite ? "Lưu tin" : "Đã lưu"}</Text>
               <View style={styles.favoriteIcon}>
                 <IonIcons
-                  name="heart-outline"
+                  name={!favourite ? "heart-outline" : "heart"}
                   size={22}
                   style={{ color: Colors.DEFAULT_RED, padding: 5 }}
                 />
               </View>
-            </View>
+            </TouchableOpacity>
           </View>
           <View style={styles.timeContainer}>
             <IonIcons
@@ -89,7 +122,9 @@ const PostProductItemDetail = ({ navigation }) => {
               size={14}
               style={{ color: Colors.DEFAULT_BLACK, paddingRight: 5 }}
             />
-            <Text style={styles.time}>2 ngày trước</Text>
+            <Text style={styles.time}>
+              {moment(post.createdAt).startOf("day").fromNow()}
+            </Text>
           </View>
           <View style={styles.adrressContainer}>
             <IonIcons
@@ -98,7 +133,7 @@ const PostProductItemDetail = ({ navigation }) => {
               style={{ color: Colors.DEFAULT_BLACK }}
             />
             <Text style={styles.adrress}>
-              412 Nguyễn Văn Công, P.3, Q.Gò Vấp
+              {`${post.location[0].district}, ${post.location[0].city}`}
             </Text>
           </View>
           <View style={styles.profie}>
@@ -106,17 +141,20 @@ const PostProductItemDetail = ({ navigation }) => {
               <View style={styles.avaterAndNameContainer}>
                 <Image
                   style={styles.avatarProfile}
-                  source={require("../assets/images/default-avatar-profile.jpg")}
+                  source={
+                    user.avatar === "" &&
+                    require("../assets/images/default-avatar-profile.jpg")
+                  }
                 />
                 <View style={styles.nameAndTimeContainer}>
-                  <Text style={styles.name}>Trần Thanh Tú</Text>
+                  <Text style={styles.name}>{user.fullname}</Text>
                   <View style={styles.iconAndTimeContainer}>
                     <IonIcons
                       name="radio-button-on-outline"
                       size={11}
-                      style={{ color: Colors.INACTIVE_GREY, paddingRight: 5 }}
+                      style={{ color: Colors.DEFAULT_GREEN, paddingRight: 5 }}
                     />
-                    <Text style={styles.time}>Hoạt động 3 ngày trước</Text>
+                    <Text style={styles.time}>Đang hoạt động</Text>
                   </View>
                 </View>
               </View>
@@ -163,13 +201,9 @@ const PostProductItemDetail = ({ navigation }) => {
               </View>
             </View>
           </View>
-          <Text style={styles.description}>
-            Cần bán iphone 14 fullbox, máy đẹp không tì vết, máy dán sẵn cường
-            lực xịn.Chỉ fix nhệ tiền xăng,không thêm không bớt.Cảm ơn anh chị đã
-            xem tin.
-          </Text>
+          <Text style={styles.description}>{post.description}</Text>
           <View style={styles.phoneContainer}>
-            <Text style={styles.phone}>Liên hệ: 0862966071</Text>
+            <Text style={styles.phone}>Liên hệ: {post.user.phone}</Text>
           </View>
           <View style={styles.chatContainer}>
             <Text style={styles.title}>Chat với người bán</Text>

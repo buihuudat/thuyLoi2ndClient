@@ -18,9 +18,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "../redux/features/userSlice";
 import StorageService from "../redux/services/StorageService";
 import GeneralAction from "../redux/GeneralAction";
+import { useNavigation } from "@react-navigation/native";
 
 const AccountScreen = ({ navigation }) => {
   const dispatch = useDispatch();
+  const { navigate } = useNavigation();
   const logout = () => {
     StorageService.setToken("");
     dispatch(GeneralAction.setToken(""));
@@ -28,7 +30,6 @@ const AccountScreen = ({ navigation }) => {
   };
 
   const user = useSelector((state) => state?.user.data);
-  console.log(user);
 
   return (
     <View style={styles.container}>
@@ -47,11 +48,16 @@ const AccountScreen = ({ navigation }) => {
         <View style={styles.contentContainer}>
           <Image
             style={styles.avatarProfile}
-            source={require("../assets/images/default-avatar-profile.jpg")}
+            source={
+              user.avatar === "" &&
+              require("../assets/images/default-avatar-profile.jpg")
+            }
           />
 
           <View style={styles.infoAcountContainer}>
-            <Text style={styles.name}>Tran Thanh Tu</Text>
+            <TouchableOpacity onPress={() => navigate("ProfileScreen")}>
+              <Text style={styles.name}>{user.fullname}</Text>
+            </TouchableOpacity>
             <View style={styles.rating}>
               <Rating
                 // showRating
@@ -70,11 +76,15 @@ const AccountScreen = ({ navigation }) => {
 
             <View style={styles.followContainer}>
               <View style={styles.followContainerItem}>
-                <Text style={styles.numberFollow}>0</Text>
+                <Text style={styles.numberFollow}>
+                  {user.follow.follower ?? 0}
+                </Text>
                 <Text style={styles.userFollow}>Người theo dõi</Text>
               </View>
               <View style={styles.followContainerItem}>
-                <Text style={styles.numberFollow}>0</Text>
+                <Text style={styles.numberFollow}>
+                  {user.follow.following ?? 0}
+                </Text>
                 <Text style={styles.userFollow}>Người đang theo dõi</Text>
               </View>
             </View>

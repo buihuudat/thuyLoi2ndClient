@@ -43,13 +43,10 @@ const HomeTabs = () => {
   const [nameCity, setNamCity] = useState("");
 
   const [image, setImage] = useState([]);
-  console.log(image);
 
   useEffect(() => {
     const animatedValue = new Animated.Value(0);
-    animatedValue.addListener((value) => {
-      console.log(value);
-    });
+    animatedValue.addListener((value) => {});
     (async () => {
       if (Platform.OS !== "web") {
         const { status } =
@@ -250,12 +247,12 @@ const HomeTabs = () => {
                 }}
               >
                 <Button title="Chụp ảnh" onPress={takePicture} />
-                {image && (
+                {/* {image && (
                   <Image
                     source={{ uri: image }}
                     // source={{ uri: 'data:image/jpeg;base64,' + image }}
                     style={{ width: 100, height: 100 }}
-                  />
+                  /> */}
                 )}
               </View>
 

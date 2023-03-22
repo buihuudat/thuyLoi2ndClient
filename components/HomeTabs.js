@@ -23,9 +23,10 @@ const HomeTabs = () => {
           position: "relative",
           borderTopLeftRadius: 25,
           borderTopRightRadius: 25,
-          height: "10%",
+          height: "100%",
           backgroundColor: Colors.DEFAULT_PINK,
           borderTopWidth: 0,
+          padding: 10,
         },
         tabBarShowLabel: false,
         tabBarActiveTintColor: Colors.DEFAULT_WHITE,
@@ -71,7 +72,7 @@ const HomeTabs = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   width: 80,
-                  height: 80,
+                  height: "100%",
                   borderRadius: 100,
                 }}
               >
