@@ -1,9 +1,12 @@
 import axiosClient from "./axiosClient";
 
-export const userAPI = {
-  gets: () => axiosClient.get("/user"),
+const userApi = {
   get: (payload) => axiosClient.post(`/user/${payload._id}`, payload),
-  create: (payload) => axiosClient.post(`/user`, payload),
   update: (payload) => axiosClient.put(`/user/${payload._id}`, payload),
-  delete: (payload) => axiosClient.patch(`/user/${payload._id}`, payload),
+  updateAvatar: (payload) =>
+    axiosClient.put(`/user/update-avatar/${payload._id}`, payload),
+  delete: (payload) => axiosClient.delete(`/user/${payload._id}`, payload),
+  gets: () => axiosClient.get("user"),
 };
+
+export default userApi;

@@ -7,10 +7,10 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
-  Text,
+  SafeAreaView,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
 import Colors from "../assets/constants/Colors";
+import React, { useEffect, useState } from "react";
 import Feather from "react-native-vector-icons/Feather";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
@@ -20,30 +20,32 @@ import PostProductItem from "../components/PostProductItem";
 import { ScrollView } from "react-native-virtualized-view";
 import TitleContainer from "../components/TitleContainer";
 import { Entypo } from "@expo/vector-icons";
-import { useSelector } from "react-redux";
-import BottomSheet from "react-native-gesture-bottom-sheet";
+import productApi from "../api/postProductApi";
 
 const HomeScreen = ({ navigation }) => {
-  // const user = useSelector((state) => state?.user.data);
-  // console.log(user);
-  const bottomSheet = useRef();
+  const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    const getPosts = async () => {
+      const rs = await productApi.gets();
+      setPosts(rs);
+    };
+    getPosts();
+  }, []);
 
   const handleBack = () => {
     navigation.navigate("SplashScreen");
   };
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar
         barStyle="light-content"
         backgroundColor={Colors.DEFAULT_BLUE}
       />
+
       <View style={styles.backgroundCurvedContainer}>
-        {/* <TouchableOpacity
-          onPress={handleBack}
-          style={{ marginLeft: 5, marginTop: 20 }}
-        >
+        <TouchableOpacity onPress={handleBack}>
           <Entypo name="chevron-left" size={34} color={Colors.DEFAULT_GREY} />
-        </TouchableOpacity> */}
+        </TouchableOpacity>
 
         <View style={styles.inputContainer}>
           <View style={styles.inputSubContainer}>
@@ -67,7 +69,7 @@ const HomeScreen = ({ navigation }) => {
             name="bell"
             size={25}
             color={Colors.DEFAULT_WHITE}
-            style={{ marginRight: 5, marginTop: 20 }}
+            style={{ marginRight: 5 }}
           />
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback>
@@ -75,7 +77,7 @@ const HomeScreen = ({ navigation }) => {
             name="chatbox-ellipses-outline"
             size={25}
             color={Colors.DEFAULT_WHITE}
-            style={{ marginRight: 5, marginTop: 20 }}
+            style={{ marginRight: 5 }}
           />
         </TouchableWithoutFeedback>
       </View>
@@ -133,28 +135,21 @@ const HomeScreen = ({ navigation }) => {
         <TitleContainer content="Tin đăng dành cho bạn" />
         <View style={styles.mainContainer}>
           <FlatList
-            data={dataPostProducts}
+            data={posts}
             numColumns={2}
             keyExtractor={(item) => item?.id}
             renderItem={({ item }) => (
               <PostProductItem
                 postproduct={item}
-                navigate={() => navigation.navigate("PostProductItemDetail")}
+                navigate={() =>
+                  navigation.navigate("PostProductItemDetail", { item })
+                }
               />
             )}
           />
         </View>
       </ScrollView>
-      <View style={styles.containerBS}>
-        {/* <BottomSheet hasDraggableIcon ref={bottomSheet} height={600} /> */}
-        {/* <TouchableOpacity
-          style={styles.button}
-          onPress={() => bottomSheet.current.show()}
-        >
-          <Text style={styles.text}>Open modal</Text>
-        </TouchableOpacity> */}
-      </View>
-    </View>
+    </SafeAreaView>
   );
 };
 export default HomeScreen;
@@ -166,12 +161,12 @@ const styles = StyleSheet.create({
   backgroundCurvedContainer: {
     flexDirection: "row",
     backgroundColor: Colors.DEFAULT_BLUE,
-    height: 70,
     position: "relative",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
+    padding: 10,
     alignSelf: "center",
     zIndex: -1,
   },
@@ -180,7 +175,6 @@ const styles = StyleSheet.create({
     height: 35,
     backgroundColor: Colors.LIGHT_GREY,
     paddingHorizontal: 10,
-    marginTop: 20,
     marginHorizontal: 10,
     borderRadius: 8,
     borderWidth: 0.5,
@@ -228,31 +222,5 @@ const styles = StyleSheet.create({
 
   mainContainer: {
     marginHorizontal: 10,
-  },
-
-  button: {
-    height: 50,
-    width: 150,
-    backgroundColor: "#140078",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 20,
-    shadowColor: "#8559da",
-    shadowOpacity: 0.7,
-    shadowOffset: {
-      height: 4,
-      width: 4,
-    },
-    shadowRadius: 5,
-    elevation: 6,
-  },
-  text: {
-    color: "white",
-    fontWeight: "600",
-  },
-  containerBS: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

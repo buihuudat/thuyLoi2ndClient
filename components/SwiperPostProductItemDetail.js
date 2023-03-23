@@ -5,7 +5,7 @@ import { View, Image, StyleSheet } from "react-native";
 import React from "react";
 import Swiper from "react-native-swiper";
 
-const SwiperPostProductItemDetail = () => {
+const SwiperPostProductItemDetail = ({ images }) => {
   return (
     <View style={{ height: 250, width: "100%" }}>
       <Swiper
@@ -16,30 +16,11 @@ const SwiperPostProductItemDetail = () => {
         paginationStyle={true}
         showsPagination={true}
       >
-        <View style={styles.slide}>
-          <Image
-            style={styles.image}
-            source={require("../assets/images/postproduct/iphone.jpg")}
-          />
-        </View>
-        <View style={styles.slide}>
-          <Image
-            style={styles.image}
-            source={require("../assets/images/postproduct/iphone.jpg")}
-          />
-        </View>
-        <View style={styles.slide}>
-          <Image
-            style={styles.image}
-            source={require("../assets/images/postproduct/iphone.jpg")}
-          />
-        </View>
-        <View style={styles.slide}>
-          <Image
-            style={styles.image}
-            source={require("../assets/images/postproduct/iphone.jpg")}
-          />
-        </View>
+        {images.map((image, i) => (
+          <View style={styles.slide} key={i}>
+            <Image style={styles.image} source={{ uri: image.url }} />
+          </View>
+        ))}
       </Swiper>
     </View>
   );

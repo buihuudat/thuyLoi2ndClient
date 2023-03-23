@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -22,8 +22,13 @@ export default function SplashScreen() {
   const dispatch = useDispatch();
   const [city, setCityState] = useState("");
   const [isDisable, setIsDisable] = useState(true);
-  // const user = useSelector((state) => state?.user.data);
-  // console.log(user);
+  const user = useSelector((state) => state?.user.data);
+
+  useLayoutEffect(() => {
+    if (city) {
+      navigation.navigate("LoginScreen");
+    }
+  }, []);
 
   useEffect(() => {
     if (city) {
@@ -32,7 +37,11 @@ export default function SplashScreen() {
   }, [city]);
   const handleNext = () => {
     dispatch(setCity(city));
-    navigation.navigate("LoginScreen");
+    if (!user) {
+      navigation.navigate("LoginScreen");
+    } else {
+      navigation.navigate("HomeTab");
+    }
   };
   return (
     <View style={styles.container}>

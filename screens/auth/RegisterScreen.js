@@ -8,13 +8,13 @@ import {
 } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import {  Logo } from "../../assets/index";
+import { Logo } from "../../assets/index";
 
 import InputForm from "../../components/InputForm";
 import SelectDropdown from "react-native-select-dropdown";
 import { sex } from "../../data";
 import TextErrorInput from "../../components/textErrorInput";
-import { authAPI } from "../../api/authAPI";
+import authApi from "../../api/authApi";
 import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setUser } from "../../redux/features/userSlice";
@@ -120,7 +120,7 @@ export default function RegisterScreen() {
     setCfPassErrText("");
 
     try {
-      const { user, token } = await authAPI.register(data);
+      const { user, token } = await authApi.register(data);
       dispatch(setUser(user));
       await AsyncStorage.setItem("token", token);
       navigation.navigate("home");
@@ -280,7 +280,9 @@ export default function RegisterScreen() {
         >
           <Text style={{ fontSize: 15 }}>Đã có tài khoản? </Text>
           <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
-            <Text style={{ color: Colors.DEFAULT_BLUE, fontSize: 15 }}>Đăng nhập ngay</Text>
+            <Text style={{ color: Colors.DEFAULT_BLUE, fontSize: 15 }}>
+              Đăng nhập ngay
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
