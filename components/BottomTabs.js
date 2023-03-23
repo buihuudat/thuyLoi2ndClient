@@ -252,8 +252,15 @@ const HomeTabs = () => {
                     source={{ uri: image }}
                     // source={{ uri: 'data:image/jpeg;base64,' + image }}
                     style={{ width: 100, height: 100 }}
-                  /> */}
-                )}
+                  />
+                )} */}
+                {/* {image && (
+                  <Image
+                    source={{ uri: image }}
+                    // source={{ uri: 'data:image/jpeg;base64,' + image }}
+                    style={{ width: 100, height: 100 }}
+                  />
+                )} */}
               </View>
 
               <View style={styles.selectDropdownContainer}>
