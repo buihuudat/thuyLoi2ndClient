@@ -2,8 +2,10 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import { Feather } from "@expo/vector-icons";
 import Colors from "../assets/constants/Colors";
-
+import moment from "moment";
+import { formatPriceToVnd } from "./formatPriceToVnd";
 const CategoryDetailItem = ({ postproduct, navigate }) => {
   return (
     <TouchableOpacity onPress={navigate}>
@@ -16,19 +18,28 @@ const CategoryDetailItem = ({ postproduct, navigate }) => {
           />
         </View>
         <View>
-          <Image style={styles.image} source={postproduct.source} />
+          <Image
+            style={styles.image}
+            source={{ uri: postproduct.images[0].url }}
+          />
         </View>
 
         <View style={styles.titlePostProduct}>
           <Text style={styles.titleContent}>{postproduct.title}</Text>
           <View style={{ flex: 1, justifyContent: "space-between" }}>
-            <Text style={styles.price}>{postproduct.price} đ</Text>
+            <Text style={styles.price}>
+              {formatPriceToVnd(postproduct.price)} đ
+            </Text>
             <View style={styles.timeContainer}>
-              <IonIcons name="time" size={14} />
+              <Feather name="map-pin" size={14} color="black" />
               <Text style={styles.time}>{postproduct.time}</Text>
-              <Text style={styles.time}>3 km</Text>
-              <Text style={styles.time}>Q. Bình Thạnh</Text>
+              {/* <Text style={styles.time}></Text> */}
+              <Text style={styles.time}>
+                {postproduct.location[0].district},{" "}
+                {postproduct.location[0].city}
+              </Text>
             </View>
+            <Text>{moment(postproduct.updatedAt).startOf().toNow()}</Text>
           </View>
         </View>
       </View>

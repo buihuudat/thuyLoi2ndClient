@@ -28,6 +28,7 @@ export default function RegisterScreen() {
     lastname: "",
     msv: "",
     phone: "",
+    email: "",
     password: "",
     sex,
     cfpassword: "",
@@ -37,6 +38,7 @@ export default function RegisterScreen() {
   const [fnErrText, setFnErrText] = useState("");
   const [lnErrText, setLnErrText] = useState("");
   const [phoneErrText, setPhoneErrText] = useState("");
+  const [emailErrorTexxt, setEmailErrorTexxt] = useState("");
   const [passErrText, setPassErrText] = useState("");
   const [cfPassErrText, setCfPassErrText] = useState("");
   const [sexErrText, setSexErrText] = useState("");
@@ -123,12 +125,21 @@ export default function RegisterScreen() {
       const { user, token } = await authApi.register(data);
       dispatch(setUser(user));
       await AsyncStorage.setItem("token", token);
-      navigation.navigate("home");
+      navigation.navigate("HomeScreen");
     } catch (e) {
       const errors = e.data.errors;
       errors.forEach((e) => {
+        if (e.param === "msv") {
+          setMsvErrText(e.msg);
+          setShow(0);
+        }
+        if (e.param === "email") {
+          setEmailErrorTexxt(e.msg);
+          setShow(1);
+        }
         if (e.param === "phone") {
           setPhoneErrText(e.msg);
+          setShow(1);
         }
       });
     }
@@ -234,6 +245,15 @@ export default function RegisterScreen() {
                 setData={(phone) => setData({ ...data, phone })}
               />
               {phoneErrText !== "" && TextErrorInput(phoneErrText)}
+            </View>
+            <View>
+              <InputForm
+                label={"Email"}
+                placeholder="Email"
+                data={data.email}
+                setData={(email) => setData({ ...data, email })}
+              />
+              {emailErrorTexxt !== "" && TextErrorInput(emailErrorTexxt)}
             </View>
             <View>
               <InputForm

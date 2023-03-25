@@ -21,6 +21,7 @@ import { ScrollView } from "react-native-virtualized-view";
 import TitleContainer from "../components/TitleContainer";
 import { Entypo } from "@expo/vector-icons";
 import productApi from "../api/postProductApi";
+import _ from "lodash";
 
 const HomeScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
@@ -127,7 +128,14 @@ const HomeScreen = ({ navigation }) => {
             renderItem={({ item }) => (
               <CategoryItem
                 postproduct={item}
-                navigate={() => navigation.navigate("CategoryDetails")}
+                navigate={() =>
+                  navigation.navigate("CategoryDetails", {
+                    posts: _.filter(posts, {
+                      status_check_post: "access",
+                      category: item.type,
+                    }),
+                  })
+                }
               />
             )}
           />

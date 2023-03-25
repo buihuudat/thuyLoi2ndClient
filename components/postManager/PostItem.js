@@ -1,40 +1,29 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import Colors from "../assets/constants/Colors";
-import { formatPriceToVnd } from "./formatPriceToVnd";
+import Colors from "../../assets/constants/Colors";
+import { formatPriceToVnd } from "../formatPriceToVnd";
 import moment from "moment";
+import { useNavigation } from "@react-navigation/native";
 
-const PostProductItem = ({ postproduct, navigate }) => {
+const PostItem = ({ post }) => {
+  const { navigate } = useNavigation();
   return (
-    <TouchableOpacity onPress={navigate}>
+    <TouchableOpacity onPress={() => navigate("PostManagerScreen")}>
       <View style={styles.container}>
         <View>
-          <View style={styles.bookmarkIcon}>
-            <IonIcons
-              name="bookmark-outline"
-              size={23}
-              style={{ color: Colors.DEFAULT_RED }}
-            />
-          </View>
-
-          <Image
-            style={styles.image}
-            source={{ uri: postproduct.images[0].url }}
-          />
+          <Image style={styles.image} source={{ uri: post.images[0].url }} />
 
           <View style={styles.titlePostProduct}>
-            <Text style={styles.titleContent}>{postproduct.title}</Text>
+            <Text style={styles.titleContent}>{post.title}</Text>
             <IonIcons name="ellipsis-vertical-outline" size={19} />
           </View>
 
-          <Text style={styles.price}>
-            {formatPriceToVnd(postproduct.price)}
-          </Text>
+          <Text style={styles.price}>{formatPriceToVnd(post.price)}</Text>
           <View style={styles.timeContainer}>
             <IonIcons name="time" size={14} />
             <Text style={styles.time}>
-              {moment(postproduct.createdAt).startOf().toNow()}
+              {moment(post.updatedAt).startOf().toNow()}
             </Text>
           </View>
         </View>
@@ -43,7 +32,7 @@ const PostProductItem = ({ postproduct, navigate }) => {
   );
 };
 
-export default PostProductItem;
+export default PostItem;
 
 const styles = StyleSheet.create({
   container: {

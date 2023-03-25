@@ -242,61 +242,70 @@ export const dataPostProducts = [
     time: "1 ngày trước",
   },
 ];
-
 export const dataCateGories = [
   {
     id: "1",
     source: require("../assets/images/categories/do-dien-tu.png"),
-    title: "Đồ  điện tử",
+    title: "Đồ điện tử",
+    type: "dientu",
   },
   {
     id: "2",
     source: require("../assets/images/categories/cho-tot-xe.png"),
     title: "Xe cộ",
+    type: "xeco",
   },
   {
     id: "3",
     source: require("../assets/images/categories/do-van-phong.png"),
     title: "Văn phòng",
+    type: "vanphong",
   },
   {
     id: "4",
     source: require("../assets/images/categories/dich-vu-du-lich.png"),
     title: "Dịch vụ,du lịch",
+    type: "dichvudulich",
   },
   {
     id: "5",
     source: require("../assets/images/categories/noi-ngoai-that.png"),
     title: "Gia dụng, nội thất",
+    type: "giadungnoithat",
   },
   {
     id: "6",
     source: require("../assets/images/categories/thu-cung.png"),
     title: "Thú cưng",
+    type: "thucung",
   },
   {
     id: "7",
     source: require("../assets/images/categories/viec-lam.png"),
     title: "Việc làm",
+    type: "vieclam",
   },
   {
     id: "8",
     source: require("../assets/images/categories/thoi-trang-do-dung-ca-nhan.png"),
     title: "Thời trang",
+    type: "thoitrang",
   },
   {
     id: "9",
     source: require("../assets/images/categories/cho-tang-mien-phi.png"),
     title: "Cho tặng miễn phí",
+    type: "free",
   },
   {
     id: "10",
     source: require("../assets/images/categories/tat-ca-danh-muc.png"),
     title: "Tất cả danh mục",
+    type: "all",
   },
 ];
 export const filterCateGories = [
-  "Đồ  điện tử",
+  "Đồ điện tử",
   "Xe cộ",
   "Văn phòng",
   "Dịch vụ,du lịch",

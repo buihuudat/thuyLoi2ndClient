@@ -1,6 +1,3 @@
-{
-  /* tranthanhtu 8/3/2023 */
-}
 import {
   View,
   Text,
@@ -10,6 +7,7 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import Colors from "../assets/constants/Colors";
@@ -48,20 +46,24 @@ const PostProductItemDetail = ({ navigation, route }) => {
 
   useEffect(() => {
     const getDataDetail = async () => {
-      const rsUser = await userApi.get({ _id: post.user[0].user_id });
-      const rsFavourite = await favouriteApi.get({
-        user_id: post.user[0].user_id,
-        post_id: post._id,
-      });
-      setFavourite(rsFavourite.post && rsFavourite.post.length > 0);
-      setUserSell(rsUser);
+      try {
+        const rsUser = await userApi.get({ _id: post.user[0].user_id });
+        const rsFavourite = await favouriteApi.get({
+          user_id: user._id,
+          post_id: post._id,
+        });
+        setFavourite(rsFavourite.post && rsFavourite.post.length > 0);
+        setUserSell(rsUser);
+      } catch (error) {
+        // console.error("Error: ", error);
+      }
     };
     getDataDetail();
   }, [post]);
 
   const handleAddFavourite = async () => {
     const rs = await favouriteApi.update({
-      user_id: post.user[0].user_id,
+      user_id: user._id,
       post_id: post._id,
     });
     setFavourite(rs.status === "add");
@@ -77,7 +79,11 @@ const PostProductItemDetail = ({ navigation, route }) => {
 
       <View style={styles.backgroundCurvedContainer}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate("HomeTab")}
+          onPress={() =>
+            navigation.navigate(route.params.back ?? "HomeTab", {
+              posts: route.params.posts,
+            })
+          }
         >
           <IonIcons
             name="chevron-back-outline"
@@ -203,7 +209,16 @@ const PostProductItemDetail = ({ navigation, route }) => {
           </View>
           <Text style={styles.description}>{post.description}</Text>
           <View style={styles.phoneContainer}>
-            <Text style={styles.phone}>Liên hệ: {post.user.phone}</Text>
+            <Text>
+              {" "}
+              Liên hệ:{" "}
+              <Text
+                style={styles.phone}
+                onPress={() => Linking.openURL(`tel:${post.user[0].phone}`)}
+              >
+                {post.user[0].phone}
+              </Text>
+            </Text>
           </View>
           <View style={styles.chatContainer}>
             <Text style={styles.title}>Chat với người bán</Text>
@@ -383,6 +398,7 @@ const styles = StyleSheet.create({
   },
   phone: {
     color: Colors.FABEBOOK_BLUE,
+    fontWeight: 600,
   },
   chatContainer: {
     paddingVertical: 10,

@@ -27,7 +27,7 @@ export default function App() {
           <Stask.Screen name="HomeScreen" component={HomeScreen} />
           <Stask.Screen name="LoginScreen" component={LoginScreen} />
           <Stask.Screen name="RegisterScreen" component={RegisterScreen} />
-          <Stask.Screen name="CategoryScreen" component={CategoryDetails} />
+          <Stask.Screen name="CategoryDetails" component={CategoryDetails} />
           <Stask.Screen name="ProductScreen" component={ProductScreen} />
           <Stask.Screen name="ProductsScreen" component={ProductsScreen} />
           <Stask.Screen name="ProfileScreen" component={ProfileScreen} />

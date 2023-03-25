@@ -10,15 +10,17 @@ import {
   TouchableWithoutFeedback,
   FlatList,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Colors from "../assets/constants/Colors";
 import Feather from "react-native-vector-icons/Feather";
 import IonIcons from "react-native-vector-icons/Ionicons";
 
-import { dataPostProducts } from "../data";
 import { ScrollView } from "react-native-virtualized-view";
 import CategoryDetailItem from "../components/CategoryDetailItem";
-const CategoryDetails = ({ navigation }) => {
+
+const CategoryDetails = ({ navigation, route }) => {
+  const posts = route.params.posts;
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -29,7 +31,7 @@ const CategoryDetails = ({ navigation }) => {
 
       <View style={styles.backgroundCurvedContainer}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate("HomeTabs")}
+          onPress={() => navigation.navigate("HomeTab")}
         >
           <IonIcons
             name="chevron-back-outline"
@@ -104,17 +106,31 @@ const CategoryDetails = ({ navigation }) => {
           </View>
         </View>
         <View style={styles.mainContainer}>
-          <FlatList
-            data={dataPostProducts}
-            numColumns={1}
-            keyExtractor={(item) => item?.id}
-            renderItem={({ item }) => (
-              <CategoryDetailItem
-                postproduct={item}
-                navigate={() => navigation.navigate("PostProductItemDetail")}
-              />
-            )}
-          />
+          {posts.length === 0 ? (
+            <View>
+              <Text style={{ textAlign: "center" }}>
+                Không tìm thấy sản phẩm
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              data={posts}
+              numColumns={1}
+              keyExtractor={(item) => item?._id}
+              renderItem={({ item }) => (
+                <CategoryDetailItem
+                  postproduct={item}
+                  navigate={() =>
+                    navigation.navigate("PostProductItemDetail", {
+                      item,
+                      posts,
+                      back: "CategoryDetails",
+                    })
+                  }
+                />
+              )}
+            />
+          )}
         </View>
       </ScrollView>
     </View>

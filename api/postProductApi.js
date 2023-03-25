@@ -6,6 +6,7 @@ const productApi = {
   statusUpdate: (payload) => axiosClient.put(`post/${payload._id}`, payload),
   delete: (payload) => axiosClient.delete(`post/${payload}`, payload),
   get: (payload) => axiosClient.post(`post/${payload._id}`, payload),
+  userGet: (payload) => axiosClient.post(`post/${payload.user_id}`),
   gets: () => axiosClient.get("post"),
 };
 
