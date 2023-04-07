@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Colors from "../../assets/constants/Colors";
@@ -8,8 +8,11 @@ import { useNavigation } from "@react-navigation/native";
 
 const PostItem = ({ post }) => {
   const { navigate } = useNavigation();
+  const handleBack = useCallback(() => {
+    navigate("PostProductItemDetail", { item: post });
+  }, [navigate]);
   return (
-    <TouchableOpacity onPress={() => navigate("PostManagerScreen")}>
+    <TouchableOpacity onPress={handleBack}>
       <View style={styles.container}>
         <View>
           <Image style={styles.image} source={{ uri: post.images[0].url }} />
@@ -36,7 +39,7 @@ export default PostItem;
 
 const styles = StyleSheet.create({
   container: {
-    width: 150,
+    width: 170,
     height: 250,
     backgroundColor: Colors.LIGHT_GREY,
     margin: 10,

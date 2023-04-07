@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import GeneralAction from "../GeneralAction";
 
 const initialState = {
   token: "",

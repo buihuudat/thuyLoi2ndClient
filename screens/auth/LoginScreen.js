@@ -5,6 +5,7 @@ import {
   Image,
   Alert,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -13,9 +14,11 @@ import InputForm from "../../components/InputForm";
 import { useDispatch } from "react-redux";
 import TextErrorInput from "../../components/textErrorInput";
 import authApi from "../../api/authApi";
-import { setUser } from "../../redux/features/userSlice";
+import { setToken, setUser } from "../../redux/features/userSlice";
 import Colors from "../../assets/constants/Colors";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import FbLogin from "../../components/handlers/loginFB";
 
 export default function LoginScreen({}) {
   const [phoneErrText, setPhoneErrText] = useState("");
@@ -50,8 +53,9 @@ export default function LoginScreen({}) {
       const { user, token } = await authApi.login(data);
 
       dispatch(setUser(user));
+      dispatch(setToken(token));
+      await AsyncStorage.setItem("token", token);
       navigation.navigate("HomeTab");
-      setIsLoading(false);
     } catch (e) {
       const errors = e.data.errors;
       errors.forEach((e) => {
@@ -62,6 +66,7 @@ export default function LoginScreen({}) {
           setPassErrText(e.msg);
         }
       });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -95,20 +100,17 @@ export default function LoginScreen({}) {
           source={Logo}
           resizeMode="center"
         />
-        {isLoading ? (
-          // <Lottie source={Images.LOADING} autoPlay />
-          <></>
-        ) : (
-          <Text
-            style={{
-              fontSize: 25,
-              fontWeight: 500,
-              textAlign: "center",
-            }}
-          >
-            Đăng nhập
-          </Text>
-        )}
+
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: 500,
+            textAlign: "center",
+          }}
+        >
+          Đăng nhập
+        </Text>
+
         <View style={{ marginBottom: 15 }}>
           <InputForm
             label={"Số điện thoại"}
@@ -133,17 +135,21 @@ export default function LoginScreen({}) {
           />
           {passErrText !== "" && TextErrorInput(passErrText)}
 
-          <TouchableOpacity
-            onPress={handleLogin}
-            style={{
-              padding: 10,
-              marginVertical: 20,
-              borderRadius: 10,
-              backgroundColor: Colors.DEFAULT_BLUE,
-            }}
-          >
-            <Text style={styles.textButton}>Đăng nhập</Text>
-          </TouchableOpacity>
+          {isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <TouchableOpacity
+              onPress={handleLogin}
+              style={{
+                padding: 10,
+                marginVertical: 20,
+                borderRadius: 10,
+                backgroundColor: Colors.DEFAULT_BLUE,
+              }}
+            >
+              <Text style={styles.textButton}>Đăng nhập</Text>
+            </TouchableOpacity>
+          )}
 
           <Text
             style={{ textAlign: "center", fontWeight: 600 }}
@@ -161,17 +167,8 @@ export default function LoginScreen({}) {
               marginTop: 20,
             }}
           >
-            <TouchableOpacity
-              onPress={() => Alert.alert("Chức năng đang phát triển")}
-              style={{
-                padding: 10,
-                textAlign: "center",
-                borderRadius: 10,
-                backgroundColor: "#3878DB",
-              }}
-            >
-              <Text style={styles.textButton}>Facebook</Text>
-            </TouchableOpacity>
+            {/* login with FB */}
+            <FbLogin />
             <TouchableOpacity
               onPress={() => navigation.navigate("RegisterScreen")}
               style={{

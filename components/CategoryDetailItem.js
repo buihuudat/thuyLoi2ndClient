@@ -1,18 +1,36 @@
 //tran thanh tu
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { Feather } from "@expo/vector-icons";
 import Colors from "../assets/constants/Colors";
 import moment from "moment";
 import { formatPriceToVnd } from "./formatPriceToVnd";
+import { useSelector } from "react-redux";
+import favouriteApi from "../api/favouriteApi";
 const CategoryDetailItem = ({ postproduct, navigate }) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const user = useSelector((state) => state.user.data);
+  useEffect(() => {
+    const getFav = async () => {
+      try {
+        const rs = await favouriteApi.get({
+          user_id: user._id,
+          post_id: postproduct._id,
+        });
+        if (rs) {
+          setIsFavorite(true);
+        }
+      } catch {}
+    };
+    getFav();
+  }, []);
   return (
     <TouchableOpacity onPress={navigate}>
       <View style={styles.container}>
         <View style={styles.favoriteIcon}>
           <IonIcons
-            name="heart-outline"
+            name={isFavorite ? "heart" : "heart-outline"}
             size={23}
             style={{ color: Colors.DEFAULT_RED }}
           />
@@ -28,7 +46,7 @@ const CategoryDetailItem = ({ postproduct, navigate }) => {
           <Text style={styles.titleContent}>{postproduct.title}</Text>
           <View style={{ flex: 1, justifyContent: "space-between" }}>
             <Text style={styles.price}>
-              {formatPriceToVnd(postproduct.price)} đ
+              {formatPriceToVnd(postproduct.price)}
             </Text>
             <View style={styles.timeContainer}>
               <Feather name="map-pin" size={14} color="black" />

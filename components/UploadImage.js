@@ -1,51 +1,97 @@
-import React from "react";
+import React, { useCallback } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import * as Permissions from "expo-permissions";
+import * as FileSystem from "expo-file-system";
 
-export default function UploadImage() {
-  const [images, setImages] = useState([]);
+export default function UploadImage({ images, setImages }) {
   const pickImage = async () => {
+    if (images.length === 6) {
+      Alert("Đã đạt số lượng ảnh tối đa");
+      return;
+    }
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-      multiple: true, // Cho phép chọn nhiều ảnh
+      multiple: true,
     });
 
-    if (!result.cancelled) {
-      setImages([...images, result.uri]); // Thêm ảnh đã chọn vào mảng images
+    if (result?.assets && !result.assets[0].cancelled) {
+      const rp = await FileSystem.readAsStringAsync(result?.assets[0]?.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      setImages([...images, { url: `data:image/jpeg;base64,${rp}` }]);
     }
   };
-  const removeImage = (index) => {
+  const takePhoto = async () => {
+    let permissionResult = await Permissions.askAsync(Permissions.CAMERA);
+    if (permissionResult.status !== "granted") {
+      alert("Permission to access camera is required!");
+      return;
+    }
+    if (images.length === 6) {
+      Alert("Đã đạt số lượng ảnh tối đa");
+      return;
+    }
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (result?.assets && !result.assets[0].cancelled) {
+      const rp = await FileSystem.readAsStringAsync(result.assets[0].uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      setImages([...images, { url: `data:image/jpeg;base64,${rp}` }]);
+    }
+  };
+  const removeImage = useCallback((index) => {
     const newImages = [...images];
     newImages.splice(index, 1);
     setImages(newImages);
-  };
+  }, []);
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={pickImage}>
-        <Text style={styles.button}>Add Image</Text>
-      </TouchableOpacity>
-
+    <View style={{ padding: 10 }}>
       <View style={styles.imageContainer}>
-        {images.map((image, index) => (
-          <TouchableOpacity key={index} onPress={() => removeImage(index)}>
-            <Image source={{ uri: image }} style={styles.image} />
-          </TouchableOpacity>
-        ))}
+        {images &&
+          images.map((image, index) => (
+            <TouchableOpacity key={index} onPress={() => removeImage(index)}>
+              <Image source={{ uri: image.url }} style={styles.image} />
+            </TouchableOpacity>
+          ))}
+      </View>
+      <View style={styles.container}>
+        <TouchableOpacity onPress={pickImage}>
+          <Text style={styles.button}>Thêm ảnh</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={takePhoto}>
+          <Text style={styles.button}>Chụp ảnh</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    display: "flex",
+    flexDirection: "row",
+    gap: 20,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    width: "100%",
+    height: 60,
     backgroundColor: "#fff",
   },
   button: {

@@ -1,4 +1,3 @@
-//tran thanh tu
 import { View, Text, StatusBar, StyleSheet, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import Colors from "../assets/constants/Colors";
@@ -50,8 +49,8 @@ const PostManagerScreen = () => {
     const getPosts = async () => {
       const rs = await productApi.userGet({ user_id: user._id });
       setAccessPost(_.filter(rs, { status_check_post: "access" }));
-      pendingPost(_.filter(rs, { status_check_post: "pending" }));
-      refusePost(_.filter(rs, { status_check_post: "refuse" }));
+      setPendingPost(_.filter(rs, { status_check_post: "pending" }));
+      setRefusePost(_.filter(rs, { status_check_post: "refuse" }));
     };
     getPosts();
   }, []);

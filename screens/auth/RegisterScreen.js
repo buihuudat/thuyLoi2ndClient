@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Button,
+  ActivityIndicator,
 } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -17,7 +18,7 @@ import TextErrorInput from "../../components/textErrorInput";
 import authApi from "../../api/authApi";
 import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { setUser } from "../../redux/features/userSlice";
+import { setToken, setUser } from "../../redux/features/userSlice";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Colors from "../../assets/constants/Colors";
 
@@ -43,6 +44,7 @@ export default function RegisterScreen() {
   const [cfPassErrText, setCfPassErrText] = useState("");
   const [sexErrText, setSexErrText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPasswordShow, setIsPasswordShow] = useState(true);
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -120,12 +122,14 @@ export default function RegisterScreen() {
     setPhoneErrText("");
     setPassErrText("");
     setCfPassErrText("");
+    setIsLoading(true);
 
     try {
       const { user, token } = await authApi.register(data);
       dispatch(setUser(user));
+      dispatch(setToken(token));
       await AsyncStorage.setItem("token", token);
-      navigation.navigate("HomeScreen");
+      navigation.navigate("HomeTab");
     } catch (e) {
       const errors = e.data.errors;
       errors.forEach((e) => {
@@ -142,6 +146,8 @@ export default function RegisterScreen() {
           setShow(1);
         }
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -263,6 +269,8 @@ export default function RegisterScreen() {
                 secure={true}
                 data={data.password}
                 setData={(password) => setData({ ...data, password })}
+                isPasswordShow={isPasswordShow}
+                setIsPasswordShow={setIsPasswordShow}
               />
               {passErrText !== "" && TextErrorInput(passErrText)}
             </View>
@@ -274,14 +282,15 @@ export default function RegisterScreen() {
                 secure={true}
                 data={data.cfpassword}
                 setData={(cfpassword) => setData({ ...data, cfpassword })}
+                isPasswordShow={isPasswordShow}
+                setIsPasswordShow={setIsPasswordShow}
               />
               {cfPassErrText !== "" && TextErrorInput(cfPassErrText)}
             </View>
             {isLoading ? (
-              // <Lottie source={Images.LOADING} autoPlay />
-              <></>
+              <ActivityIndicator />
             ) : (
-              <Button title="Tiếp" onPress={handleRegister} color="green" />
+              <Button title="Hoàn tất" onPress={handleRegister} color="green" />
             )}
             <Button
               title="Quay lại"

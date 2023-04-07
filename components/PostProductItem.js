@@ -1,18 +1,42 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Colors from "../assets/constants/Colors";
 import { formatPriceToVnd } from "./formatPriceToVnd";
 import moment from "moment";
+import favouriteApi from "../api/favouriteApi";
+import { useSelector } from "react-redux";
 
 const PostProductItem = ({ postproduct, navigate }) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const user = useSelector((state) => state.user.data);
+  useEffect(() => {
+    const getFav = async () => {
+      try {
+        const rs = await favouriteApi.get({
+          user_id: user._id,
+          post_id: postproduct._id,
+        });
+        if (rs) {
+          setIsFavorite(true);
+        }
+      } catch {}
+    };
+    getFav();
+  }, []);
+  const formattedPrice = useMemo(
+    () => formatPriceToVnd(postproduct.price),
+    [postproduct]
+  );
+  const formattedTime = moment(postproduct.createdAt).format("DD/MM/YYYY");
+
   return (
     <TouchableOpacity onPress={navigate}>
       <View style={styles.container}>
         <View>
           <View style={styles.bookmarkIcon}>
             <IonIcons
-              name="bookmark-outline"
+              name={isFavorite ? "bookmark" : "bookmark-outline"}
               size={23}
               style={{ color: Colors.DEFAULT_RED }}
             />
@@ -28,14 +52,10 @@ const PostProductItem = ({ postproduct, navigate }) => {
             <IonIcons name="ellipsis-vertical-outline" size={19} />
           </View>
 
-          <Text style={styles.price}>
-            {formatPriceToVnd(postproduct.price)}
-          </Text>
+          <Text style={styles.price}>{formattedPrice}</Text>
           <View style={styles.timeContainer}>
             <IonIcons name="time" size={14} />
-            <Text style={styles.time}>
-              {moment(postproduct.createdAt).startOf().toNow()}
-            </Text>
+            <Text style={styles.time}>{formattedTime}</Text>
           </View>
         </View>
       </View>
@@ -47,7 +67,7 @@ export default PostProductItem;
 
 const styles = StyleSheet.create({
   container: {
-    width: 150,
+    width: 170,
     height: 250,
     backgroundColor: Colors.LIGHT_GREY,
     margin: 10,

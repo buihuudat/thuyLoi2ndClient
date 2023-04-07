@@ -5,8 +5,11 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Colors from "../assets/constants/Colors";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { Rating } from "react-native-elements";
@@ -15,83 +18,89 @@ import TitleContainer from "../components/TitleContainer";
 import IconAndSubTitle from "../components/IconAndSubTitle";
 import TitleBar from "../components/TitleBar";
 import { useDispatch, useSelector } from "react-redux";
-import { setToken } from "../redux/features/userSlice";
-import StorageService from "../redux/services/StorageService";
-import GeneralAction from "../redux/GeneralAction";
 import { useNavigation } from "@react-navigation/native";
+import { setToken, setUser } from "../redux/features/userSlice";
 
 const AccountScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-  const logout = () => {
-    StorageService.setToken("");
-    dispatch(GeneralAction.setToken(""));
-    dispatch(GeneralAction.setUserData(null));
-  };
-
   const user = useSelector((state) => state?.user.data);
+
+  const logout = () => {
+    dispatch(setUser(null));
+    dispatch(setToken(null));
+    navigate("SplashScreen");
+  };
 
   return (
     <View style={styles.container}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={Colors.DEFAULT_BLUE}
-        translucent
-      />
-      <TitleBar title="Tài khoản" />
+      <ScrollView>
+        <SafeAreaView
+          edges={["top"]}
+          style={{
+            flex: 1,
+            backgroundColor: Colors.DEFAULT_BLUE,
+          }}
+        />
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor={Colors.DEFAULT_BLUE}
+          translucent
+        />
+        <TitleBar title="Tài khoản" />
 
-      <View style={styles.mainContainer}>
-        <View style={styles.iconEditContainer}>
-          <IonIcons name="build" size={12} style={styles.iconEdit} />
-        </View>
+        <View style={styles.mainContainer}>
+          <View style={styles.iconEditContainer}>
+            <IonIcons name="build" size={12} style={styles.iconEdit} />
+          </View>
 
-        <View style={styles.contentContainer}>
-          <Image
-            style={styles.avatarProfile}
-            source={
-              user.avatar === "" &&
-              require("../assets/images/default-avatar-profile.jpg")
-            }
-          />
+          <View style={styles.contentContainer}>
+            <Image
+              style={styles.avatarProfile}
+              source={
+                user.avatar === "" &&
+                require("../assets/images/default-avatar-profile.jpg")
+              }
+            />
 
-          <View style={styles.infoAcountContainer}>
             <TouchableOpacity onPress={() => navigate("ProfileScreen")}>
-              <Text style={styles.name}>{user.fullname}</Text>
-            </TouchableOpacity>
-            <View style={styles.rating}>
-              <Rating
-                // showRating
-                onFinishRating={2}
-                // style={{ paddingVertical: 10 }}
-                readonly={false}
-                size={10}
-                // fractions={2}
-                imageSize={15}
-                defaultRating={2}
-                ratingCount={5}
-                isDisabled={false}
-                onSwipeRating={false}
-              />
-            </View>
+              <View style={styles.infoAcountContainer}>
+                <Text style={styles.name}>{user.fullname}</Text>
+                <View style={styles.rating}>
+                  <Rating
+                    // showRating
+                    onFinishRating={2}
+                    // style={{ paddingVertical: 10 }}
+                    readonly={false}
+                    size={10}
+                    // fractions={2}
+                    imageSize={15}
+                    defaultRating={2}
+                    ratingCount={5}
+                    isDisabled={false}
+                    onSwipeRating={false}
+                  />
+                </View>
 
-            <View style={styles.followContainer}>
-              <View style={styles.followContainerItem}>
-                <Text style={styles.numberFollow}>
-                  {user.follow.follower ?? 0}
-                </Text>
-                <Text style={styles.userFollow}>Người theo dõi</Text>
+                <View style={styles.followContainer}>
+                  <View style={styles.followContainerItem}>
+                    <Text style={styles.numberFollow}>
+                      {user.follow.follower ?? 0}
+                    </Text>
+                    <Text style={styles.userFollow}>Người theo dõi</Text>
+                  </View>
+                  <View style={styles.followContainerItem}>
+                    <Text style={styles.numberFollow}>
+                      {user.follow.following ?? 0}
+                    </Text>
+                    <Text style={styles.userFollow}>Người đang theo dõi</Text>
+                  </View>
+                </View>
               </View>
-              <View style={styles.followContainerItem}>
-                <Text style={styles.numberFollow}>
-                  {user.follow.following ?? 0}
-                </Text>
-                <Text style={styles.userFollow}>Người đang theo dõi</Text>
-              </View>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
-      </View>
-      <TitleContainer content="Quản lý đơn hàng" />
+        {/* <TitleContainer content="Quản lý đơn hàng" />
       <TouchableOpacity
         onPress={() => navigation.navigate("PurchaseOrderScreen")}
       >
@@ -109,33 +118,43 @@ const AccountScreen = ({ navigation }) => {
           icon="reader"
           bgr={Colors.DEFAULT_GREEN}
         />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
-      <TitleContainer content="Tiện ích" />
+        <TitleContainer content="Tiện ích" />
 
-      <TouchableOpacity onPress={() => navigation.navigate("FavoriteScreen")}>
-        <IconAndSubTitle
-          title="Tin đã lưu"
-          icon="bookmarks"
-          bgr={Colors.DEFAULT_PINK}
-        />
-      </TouchableOpacity>
-      <Divider />
-      <TouchableOpacity>
-        <IconAndSubTitle
-          title="Đánh giá"
-          icon="star-half"
-          bgr={Colors.DEFAULT_YELLOW}
-        />
-      </TouchableOpacity>
-      <TitleContainer content="Khác" />
-      <TouchableOpacity onPress={logout}>
-        <IconAndSubTitle
-          title="Đăng xuất"
-          icon="log-out"
-          bgr={Colors.INACTIVE_GREY}
-        />
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("FavouriteScreen")}
+        >
+          <IconAndSubTitle
+            title="Tin đã lưu"
+            icon="bookmarks"
+            bgr={Colors.DEFAULT_PINK}
+          />
+        </TouchableOpacity>
+        <Divider />
+        <TouchableOpacity>
+          <IconAndSubTitle
+            title="Đánh giá"
+            icon="star-half"
+            bgr={Colors.DEFAULT_YELLOW}
+          />
+        </TouchableOpacity>
+        <TitleContainer content="Khác" />
+        <TouchableOpacity onPress={() => navigate("ProfileScreen")}>
+          <IconAndSubTitle
+            title="Thông tin tài khoản"
+            icon="settings"
+            bgr={Colors.DEFAULT_BLUE}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={logout}>
+          <IconAndSubTitle
+            title="Đăng xuất"
+            icon="log-out"
+            bgr={Colors.INACTIVE_GREY}
+          />
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };

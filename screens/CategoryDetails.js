@@ -1,6 +1,3 @@
-{
-  /* tranthanhtu 8/3/2023 */
-}
 import {
   View,
   Text,
@@ -10,7 +7,7 @@ import {
   TouchableWithoutFeedback,
   FlatList,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Colors from "../assets/constants/Colors";
 import Feather from "react-native-vector-icons/Feather";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -20,7 +17,6 @@ import CategoryDetailItem from "../components/CategoryDetailItem";
 
 const CategoryDetails = ({ navigation, route }) => {
   const posts = route.params.posts;
-
   return (
     <View style={styles.container}>
       <StatusBar
@@ -81,7 +77,6 @@ const CategoryDetails = ({ navigation, route }) => {
               name="funnel-outline"
               size={23}
               color={Colors.DEFAULT_BLACK}
-              //   style={{}}
             />
 
             <Text style={styles.filterTitle}>Lọc</Text>
@@ -92,17 +87,11 @@ const CategoryDetails = ({ navigation, route }) => {
               name="caret-down-outline"
               size={20}
               color={Colors.DEFAULT_BLACK}
-              //   style={{}}
             />
           </View>
           <View style={styles.priceAndIconContainer}>
             <Text style={styles.filterTitle}>Giá</Text>
-            <IonIcons
-              name="add"
-              size={23}
-              color={Colors.DEFAULT_BLACK}
-              //   style={{}}
-            />
+            <IonIcons name="add" size={23} color={Colors.DEFAULT_BLACK} />
           </View>
         </View>
         <View style={styles.mainContainer}>

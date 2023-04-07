@@ -1,10 +1,15 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { io } from "socket.io-client";
 
-const IP = "192.168.1.9";
+const IP = "192.168.1.10";
+// const IP = "192.168.0.46";
 // const IP = "192.168.0.186";
-const baseURL = `http://${IP}:9000/api/`;
-const getToken = () => AsyncStorage.getItem("token");
+const PORT = 9000;
+export const host = `http://${IP}:${PORT}`;
+
+const baseURL = `http://${IP}:${PORT}/api/`;
+const getToken = async () => await AsyncStorage.getItem("token");
 
 const axiosClient = axios.create({
   baseURL,
@@ -16,7 +21,9 @@ axiosClient.interceptors.request.use(async (config) => {
     ...config,
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${getToken()}`,
+      authorization: `Bearer ${getToken().then((response) => {
+        return response;
+      })}`,
     },
   };
 });

@@ -1,6 +1,5 @@
-//tran thanh tu
-import { View, Text, TouchableOpacity, Alert, Animated } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import React, { useRef, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import HomeScreen from "../screens/HomeScreen";
@@ -9,38 +8,14 @@ import AccountScreen from "../screens/AccountScreen";
 import OrderScreen from "../screens/OrderScreen";
 import PostManagerScreen from "../screens/PostManagerScreen";
 import { StyleSheet } from "react-native";
-
-import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
 import PostProduct from "./handlers/PostProduct";
+import { useDispatch, useSelector } from "react-redux";
 
 const BottomTabs = createBottomTabNavigator();
 
 const HomeTabs = () => {
   const bottomSheet = useRef();
-
-  useEffect(() => {
-    const animatedValue = new Animated.Value(0);
-    animatedValue.addListener((value) => {});
-    (async () => {
-      if (Platform.OS !== "web") {
-        const { status } =
-          await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-          alert("Sorry, we need camera roll permissions to make this work!");
-        }
-      }
-    })();
-  }, []);
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== "web") {
-        const { status } = await ImagePicker.requestCameraPermissionsAsync();
-        if (status !== "granted") {
-          alert("Sorry, we need camera roll permissions to make this work!");
-        }
-      }
-    })();
-  }, []);
 
   return (
     <>
@@ -67,9 +42,13 @@ const HomeTabs = () => {
             position: "relative",
             borderTopLeftRadius: 25,
             borderTopRightRadius: 25,
-            height: 60,
+            height: 80,
+            width: "100%",
             backgroundColor: Colors.DEFAULT_BLUE,
             borderTopWidth: 0,
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
           },
           tabBarShowLabel: false,
           tabBarActiveTintColor: Colors.DEFAULT_YELLOW,
@@ -81,7 +60,7 @@ const HomeTabs = () => {
           component={HomeScreen}
           options={{
             tabBarIcon: ({ color }) => (
-              <IonIcons name="home-outline" size={23} color={color} />
+              <IonIcons name="home-outline" size={27} color={color} />
             ),
           }}
         />
@@ -90,7 +69,7 @@ const HomeTabs = () => {
           component={PostManagerScreen}
           options={{
             tabBarIcon: ({ color }) => (
-              <IonIcons name="reader-outline" size={23} color={color} />
+              <IonIcons name="reader-outline" size={27} color={color} />
             ),
           }}
         />
@@ -99,17 +78,11 @@ const HomeTabs = () => {
           component={HomeScreen}
           options={{
             tabBarIcon: ({ color }) => (
-              // <View style={styles.containerCircleBig}>
-              //   <View style={styles.containerCircleSmall}>
               <IonIcons
                 name="share-outline"
                 size={30}
                 color={Colors.DEFAULT_BLACK}
               />
-
-              //     <Text style={styles.title}>Đăng tin</Text>
-              //   </View>
-              // </View>
             ),
           }}
         />
@@ -119,7 +92,7 @@ const HomeTabs = () => {
           component={OrderScreen}
           options={{
             tabBarIcon: ({ color }) => (
-              <IonIcons name="cart-outline" size={23} color={color} />
+              <Ionicons name="ios-bookmarks-outline" size={27} color={color} />
             ),
           }}
         />
@@ -128,7 +101,7 @@ const HomeTabs = () => {
           component={AccountScreen}
           options={{
             tabBarIcon: ({ color }) => (
-              <IonIcons name="person-circle-outline" size={30} color={color} />
+              <IonIcons name="person-circle-outline" size={27} color={color} />
             ),
           }}
         />
@@ -145,7 +118,7 @@ export default HomeTabs;
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: -15,
+    bottom: 8,
     zIndex: 1,
     left: "40%",
   },
@@ -161,8 +134,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.DEFAULT_WHITE,
     justifyContent: "center",
     alignItems: "center",
-    width: 75,
-    height: 75,
+    width: 70,
+    height: 70,
     borderRadius: 100,
   },
   title: {

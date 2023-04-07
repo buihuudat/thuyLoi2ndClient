@@ -6,6 +6,8 @@ import {
   TextInput,
   Button,
   ScrollView,
+  SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { Entypo } from "@expo/vector-icons";
@@ -22,6 +24,7 @@ export default function ProfileScreen() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.data);
   const [isDisable, setIsDisable] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [msvErr, setMsvErr] = useState("");
   const [fullnameErr, setFullnameErr] = useState("");
@@ -42,6 +45,7 @@ export default function ProfileScreen() {
   };
 
   const handleUpdate = async () => {
+    setIsLoading(true);
     setMsvErr("");
     setFullnameErr("");
     setEmailErr("");
@@ -71,12 +75,24 @@ export default function ProfileScreen() {
           setAddressErr(e.msg);
         }
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleScroll = (event) => {
+    event.nativeEvent.contentOffset.y;
+  };
   const handleSettings = () => {};
   return (
     <View>
+      {/* <SafeAreaView
+        edges={["top"]}
+        style={{
+          flex: 1,
+          backgroundColor: Colors.DEFAULT_BLUE,
+        }}
+      /> */}
       <View
         style={{
           display: "flex",
@@ -84,6 +100,7 @@ export default function ProfileScreen() {
           justifyContent: "center",
           width: "100%",
           height: "100%",
+          // marginTop: 25,
         }}
       >
         <View
@@ -105,13 +122,13 @@ export default function ProfileScreen() {
               zIndex: 100,
               alignItems: "center",
               justifyContent: "space-between",
-              marginBottom: "auto",
+              // marginBottom: "auto",
             }}
           >
             <TouchableOpacity onPress={handleBack}>
               <Entypo
                 name="chevron-left"
-                size={34}
+                size={28}
                 color={Colors.DEFAULT_GREY}
               />
             </TouchableOpacity>
@@ -119,13 +136,14 @@ export default function ProfileScreen() {
               style={{
                 textAlign: "center",
                 color: Colors.DEFAULT_WHITE,
-                fontSize: 26,
+                fontSize: 20,
+                padding: 10,
               }}
             >
-              Profile
+              Trang cá nhân
             </Text>
             <TouchableOpacity onPress={handleSettings}>
-              <Feather name="settings" size={34} color={Colors.DEFAULT_GREY} />
+              <Feather name="settings" size={28} color={Colors.DEFAULT_GREY} />
             </TouchableOpacity>
           </View>
           {/* info */}
@@ -140,7 +158,13 @@ export default function ProfileScreen() {
             }}
           >
             <Image
-              style={{ width: 200, height: 200, borderRadius: 100 }}
+              style={{
+                marginLeft: "auto",
+                marginRight: "auto",
+                width: 120,
+                height: 120,
+                borderRadius: 100,
+              }}
               source={
                 user.avatar === "" &&
                 require("../assets/images/default-avatar-profile.jpg")
@@ -178,9 +202,14 @@ export default function ProfileScreen() {
           </View>
         </View>
         <ScrollView
+          showsHorizontalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
           style={{
-            height: "60%",
             padding: 50,
+            // maxHeight: "60%",
+            overflow: "scroll",
+            height: 100,
           }}
         >
           <View style={{ display: "flex", gap: 10 }}>
@@ -366,16 +395,19 @@ export default function ProfileScreen() {
                 onPress={() => setIsDisable(false)}
               />
             )}
-            {!isDisable && (
-              <Button
-                title="Cập nhật thông tin"
-                style={{
-                  padding: 10,
-                }}
-                color={Colors.DEFAULT_GREEN}
-                onPress={handleUpdate}
-              />
-            )}
+            {!isDisable &&
+              (isLoading ? (
+                <ActivityIndicator size="large" color={Colors.DEFAULT_BLUE} />
+              ) : (
+                <Button
+                  title="Cập nhật thông tin"
+                  style={{
+                    padding: 10,
+                  }}
+                  color={Colors.DEFAULT_GREEN}
+                  onPress={handleUpdate}
+                />
+              ))}
           </View>
         </ScrollView>
       </View>

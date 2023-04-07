@@ -3,7 +3,14 @@ import React from "react";
 import PostItem from "./PostItem";
 const ShowAccessPost = ({ posts }) => {
   return (
-    <View>
+    <View
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "center",
+      }}
+    >
       {posts.map((post, i) => (
         <PostItem post={post} key={i} />
       ))}
