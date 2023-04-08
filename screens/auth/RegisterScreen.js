@@ -49,12 +49,8 @@ export default function RegisterScreen() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const handleBack = () => {
-    navigation.navigate("LoginScreen");
-  };
-
   const handleNext = () => {
-    const { msv, firstname, lastname, fullname, sex } = data;
+    const { msv, firstname, lastname, sex } = data;
     let err = false;
     if (!msv) {
       setMsvErrText("Bạn chưa nhập mã sinh viên");
@@ -153,17 +149,6 @@ export default function RegisterScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.backgroundCurvedContainer}>
-        <TouchableOpacity onPress={handleBack}>
-          <IonIcons
-            name="chevron-back-outline"
-            size={25}
-            color={Colors.DEFAULT_WHITE}
-            style={{ marginTop: 20 }}
-          />
-        </TouchableOpacity>
-      </View>
-
       <View style={styles.mainContainer}>
         <Image
           style={{
@@ -340,12 +325,14 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     marginHorizontal: 20,
+    paddingTop: 50,
   },
   title: {
     fontSize: 25,
     fontWeight: 500,
     textAlign: "center",
     marginBottom: 20,
+    paddingTop: 10,
   },
   textButton: {
     fontWeight: 500,

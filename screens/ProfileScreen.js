@@ -6,7 +6,6 @@ import {
   TextInput,
   Button,
   ScrollView,
-  SafeAreaView,
   ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
@@ -19,10 +18,16 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import userApi from "../api/userApi";
 import { setUser } from "../redux/features/userSlice";
+
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import imageUpload from "../components/handlers/ImageUpload";
+
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.data);
+
   const [isDisable, setIsDisable] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,10 +45,10 @@ export default function ProfileScreen() {
     password: user.password,
     address: user.address,
   });
+
   const handleBack = () => {
     navigation.navigate("HomeTab");
   };
-
   const handleUpdate = async () => {
     setIsLoading(true);
     setMsvErr("");
@@ -79,7 +84,33 @@ export default function ProfileScreen() {
       setIsLoading(false);
     }
   };
+  const handleChangeAvatar = async () => {
+    let image = "";
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
+    if (result?.assets && !result.assets[0].cancelled) {
+      const rp = await FileSystem.readAsStringAsync(result?.assets[0]?.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      await imageUpload([{ url: `data:image/jpeg;base64,${rp}` }]).then(
+        (rs) => {
+          image = rs.url;
+        }
+      );
+    }
+    try {
+      const user = await userApi.updateAvatar({
+        _id: user._id,
+        avatar: image,
+      });
+      dispatch(setUser(user));
+    } catch {}
+  };
   const handleScroll = (event) => {
     event.nativeEvent.contentOffset.y;
   };
@@ -157,19 +188,21 @@ export default function ProfileScreen() {
               gap: 15,
             }}
           >
-            <Image
-              style={{
-                marginLeft: "auto",
-                marginRight: "auto",
-                width: 120,
-                height: 120,
-                borderRadius: 100,
-              }}
-              source={
-                user.avatar === "" &&
-                require("../assets/images/default-avatar-profile.jpg")
-              }
-            />
+            <TouchableOpacity onPress={handleChangeAvatar}>
+              <Image
+                style={{
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  width: 120,
+                  height: 120,
+                  borderRadius: 100,
+                }}
+                source={
+                  user.avatar === "" &&
+                  require("../assets/images/default-avatar-profile.jpg")
+                }
+              />
+            </TouchableOpacity>
             <Text
               style={{
                 color: "white",

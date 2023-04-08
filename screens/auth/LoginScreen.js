@@ -16,7 +16,6 @@ import TextErrorInput from "../../components/textErrorInput";
 import authApi from "../../api/authApi";
 import { setToken, setUser } from "../../redux/features/userSlice";
 import Colors from "../../assets/constants/Colors";
-import IonIcons from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FbLogin from "../../components/handlers/loginFB";
 
@@ -71,23 +70,18 @@ export default function LoginScreen({}) {
     }
   };
   return (
-    <View style={{ position: "relative", flex: 1 }}>
-      <View style={styles.backgroundCurvedContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate("SplashScreen")}>
-          <IonIcons
-            name="chevron-back-outline"
-            size={25}
-            color={Colors.DEFAULT_WHITE}
-            style={{ marginTop: 20 }}
-          />
-        </TouchableOpacity>
-      </View>
-
+    <View
+      style={{
+        position: "relative",
+        flex: 1,
+      }}
+    >
       <View
         style={
           styles.flexColumn && {
             padding: 10,
             marginHorizontal: 10,
+            paddingTop: 50,
           }
         }
       >
@@ -106,12 +100,13 @@ export default function LoginScreen({}) {
             fontSize: 25,
             fontWeight: 500,
             textAlign: "center",
+            paddingTop: 10,
           }}
         >
           Đăng nhập
         </Text>
 
-        <View style={{ marginBottom: 15 }}>
+        <View style={{ marginBottom: 15, paddingTop: 30 }}>
           <InputForm
             label={"Số điện thoại"}
             placeholder="Số điện thoại"
@@ -165,6 +160,7 @@ export default function LoginScreen({}) {
               gap: 5,
               justifyContent: "center",
               marginTop: 20,
+              alignItems: "center",
             }}
           >
             {/* login with FB */}
@@ -210,11 +206,5 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     zIndex: -1,
     paddingHorizontal: 10,
-  },
-  title: {
-    marginTop: 20,
-    fontSize: 18,
-    fontWeight: 500,
-    color: Colors.DEFAULT_WHITE,
   },
 });
