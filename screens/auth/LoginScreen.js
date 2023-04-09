@@ -5,6 +5,7 @@ import {
   Image,
   Alert,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -12,9 +13,10 @@ import { Logo } from "../../assets";
 import InputForm from "../../components/InputForm";
 import { useDispatch } from "react-redux";
 import TextErrorInput from "../../components/textErrorInput";
-import { setUser } from "../../redux/features/userSlice";
+import { setToken, setUser } from "../../redux/features/userSlice";
 import Colors from "../../assets/constants/Colors";
-import IonIcons from "react-native-vector-icons/Ionicons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import FbLogin from "../../components/handlers/loginFB";
 import authApi from "../../api/authAPI";
 
 export default function LoginScreen({}) {
@@ -50,8 +52,9 @@ export default function LoginScreen({}) {
       const { user, token } = await authApi.login(data);
 
       dispatch(setUser(user));
+      dispatch(setToken(token));
+      await AsyncStorage.setItem("token", token);
       navigation.navigate("HomeTab");
-      setIsLoading(false);
     } catch (e) {
       const errors = e.data.errors;
       errors.forEach((e) => {
@@ -62,27 +65,23 @@ export default function LoginScreen({}) {
           setPassErrText(e.msg);
         }
       });
+    } finally {
       setIsLoading(false);
     }
   };
   return (
-    <View style={{ position: "relative", flex: 1 }}>
-      <View style={styles.backgroundCurvedContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate("SplashScreen")}>
-          <IonIcons
-            name="chevron-back-outline"
-            size={25}
-            color={Colors.DEFAULT_WHITE}
-            style={{ marginTop: 20 }}
-          />
-        </TouchableOpacity>
-      </View>
-
+    <View
+      style={{
+        position: "relative",
+        flex: 1,
+      }}
+    >
       <View
         style={
           styles.flexColumn && {
             padding: 10,
             marginHorizontal: 10,
+            paddingTop: 50,
           }
         }
       >
@@ -95,21 +94,19 @@ export default function LoginScreen({}) {
           source={Logo}
           resizeMode="center"
         />
-        {isLoading ? (
-          // <Lottie source={Images.LOADING} autoPlay />
-          <></>
-        ) : (
-          <Text
-            style={{
-              fontSize: 25,
-              fontWeight: 500,
-              textAlign: "center",
-            }}
-          >
-            Đăng nhập
-          </Text>
-        )}
-        <View style={{ marginBottom: 15 }}>
+
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: 500,
+            textAlign: "center",
+            paddingTop: 10,
+          }}
+        >
+          Đăng nhập
+        </Text>
+
+        <View style={{ marginBottom: 15, paddingTop: 30 }}>
           <InputForm
             label={"Số điện thoại"}
             placeholder="Số điện thoại"
@@ -133,17 +130,21 @@ export default function LoginScreen({}) {
           />
           {passErrText !== "" && TextErrorInput(passErrText)}
 
-          <TouchableOpacity
-            onPress={handleLogin}
-            style={{
-              padding: 10,
-              marginVertical: 20,
-              borderRadius: 10,
-              backgroundColor: Colors.DEFAULT_BLUE,
-            }}
-          >
-            <Text style={styles.textButton}>Đăng nhập</Text>
-          </TouchableOpacity>
+          {isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <TouchableOpacity
+              onPress={handleLogin}
+              style={{
+                padding: 10,
+                marginVertical: 20,
+                borderRadius: 10,
+                backgroundColor: Colors.DEFAULT_BLUE,
+              }}
+            >
+              <Text style={styles.textButton}>Đăng nhập</Text>
+            </TouchableOpacity>
+          )}
 
           <Text
             style={{ textAlign: "center", fontWeight: 600 }}
@@ -159,19 +160,11 @@ export default function LoginScreen({}) {
               gap: 5,
               justifyContent: "center",
               marginTop: 20,
+              alignItems: "center",
             }}
           >
-            <TouchableOpacity
-              onPress={() => Alert.alert("Chức năng đang phát triển")}
-              style={{
-                padding: 10,
-                textAlign: "center",
-                borderRadius: 10,
-                backgroundColor: "#3878DB",
-              }}
-            >
-              <Text style={styles.textButton}>Facebook</Text>
-            </TouchableOpacity>
+            {/* login with FB */}
+            <FbLogin />
             <TouchableOpacity
               onPress={() => navigation.navigate("RegisterScreen")}
               style={{
@@ -213,11 +206,5 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     zIndex: -1,
     paddingHorizontal: 10,
-  },
-  title: {
-    marginTop: 20,
-    fontSize: 18,
-    fontWeight: 500,
-    color: Colors.DEFAULT_WHITE,
   },
 });

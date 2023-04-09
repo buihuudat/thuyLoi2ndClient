@@ -1,4 +1,9 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import {
   StyleSheet,
   Text,
@@ -11,18 +16,20 @@ import Colors from "../assets/constants/Colors";
 import { Logo } from "../assets";
 import { useDispatch, useSelector } from "react-redux";
 import SelectDropdown from "react-native-select-dropdown";
-import { Cities_VN } from "../data";
 import * as Animatable from "react-native-animatable";
 import Svg, { Path } from "react-native-svg";
 import { setCity } from "../redux/features/citySlice";
 import { useNavigation } from "@react-navigation/native";
 
 export default function SplashScreen() {
+  const [cityState, setCityState] = useState("");
+  const [isDisable, setIsDisable] = useState(true);
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [city, setCityState] = useState("");
-  const [isDisable, setIsDisable] = useState(true);
+
   const user = useSelector((state) => state?.user.data);
+  const city = useSelector((state) => state.city.data);
 
   useLayoutEffect(() => {
     if (city) {
@@ -30,44 +37,56 @@ export default function SplashScreen() {
     }
   }, []);
 
-  useEffect(() => {
-    if (city) {
-      setIsDisable(false);
-    }
-  }, [city]);
-  const handleNext = () => {
+  // useEffect(() => {
+  //   if (city || cityState) {
+  //     setIsDisable(false);
+  //   }
+  // }, [cityState]);
+
+  const handleNext = useCallback(() => {
     dispatch(setCity(city));
     if (!user) {
       navigation.navigate("LoginScreen");
     } else {
       navigation.navigate("HomeTab");
     }
-  };
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.imageLogo}>
         <Image alt="logo" source={Logo} />
 
+        <Text
+          style={{
+            // fontWeight: 500,
+            fontSize: 30,
+            paddingTop: 30,
+          }}
+        >
+          Chào mừng đến với
+        </Text>
         <Text style={styles.name}>Thủy Lợi Market</Text>
 
+        {/* set current city */}
         <View>
-          <SelectDropdown
+          {/* <SelectDropdown
             data={Cities_VN}
-            defaultButtonText={"Vị trí hiện tại"}
+            defaultButtonText={city || "Vị trí hiện tại"}
             onSelect={(selectedItem, index) => {
               setCityState(selectedItem);
             }}
-          />
+          /> */}
         </View>
 
-        <TouchableOpacity onPress={handleNext} disabled={isDisable}>
+        <TouchableOpacity onPress={handleNext}>
           <Animatable.View
-            animation={!isDisable ? "pulse" : undefined}
+            animation={"pulse"}
             easing="ease-in-out"
             iterationCount={"infinite"}
             style={{
               borderRadius: 20,
-              backgroundColor: isDisable ? "#999" : "#0047BE",
+              backgroundColor: "#0047BE",
               display: "flex",
               height: 60,
               width: 60,

@@ -1,6 +1,3 @@
-{
-  /* tranthanhtu 11/3/2023 */
-}
 import {
   View,
   Text,
@@ -87,15 +84,15 @@ const OrderSold = ({ navigation, history }) => {
       </View>
 
       {/* <ScrollView> */}
-        <TabView
-          renderTabBar={renderTabBar}
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
+      <TabView
+        renderTabBar={renderTabBar}
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
 
-          // overScrollMode="auto"
-          // initialLayout={{ width: layout.width }}
-        />
+        // overScrollMode="auto"
+        // initialLayout={{ width: layout.width }}
+      />
       {/* </ScrollView> */}
     </View>
   );
@@ -124,6 +121,6 @@ const styles = StyleSheet.create({
     marginTop: 35,
     fontSize: 18,
     fontWeight: 500,
-    color:Colors.DEFAULT_WHITE
+    color: Colors.DEFAULT_WHITE,
   },
 });

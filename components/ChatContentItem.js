@@ -1,15 +1,23 @@
-{
-  /* tranthanhtu 9/3/2023 */
-}
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Colors from "../assets/constants/Colors";
 
-const ChatContentItem = ({ item }) => {
+const ChatContentItem = ({ item, props }) => {
+  const { navigate } = useNavigation();
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => {
+        navigate("ChatScreen", {
+          from: props.from,
+          to: props.to,
+          message: item.content,
+        });
+      }}
+    >
       <Text style={styles.content}>{item.content}</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -2,196 +2,180 @@ import {
   View,
   StatusBar,
   StyleSheet,
-  TextInput,
-  TouchableWithoutFeedback,
   Image,
   FlatList,
-  TouchableOpacity,
   SafeAreaView,
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import Colors from "../assets/constants/Colors";
-import React, { useEffect, useState } from "react";
-import Feather from "react-native-vector-icons/Feather";
-import IonIcons from "react-native-vector-icons/Ionicons";
+import React, { useCallback, useEffect, useState } from "react";
 import Swiper from "react-native-swiper";
-import { dataCateGories, dataPostProducts } from "../data";
+import { dataCateGories } from "../data";
 import CategoryItem from "../components/CategoryItem";
 import PostProductItem from "../components/PostProductItem";
-import { ScrollView } from "react-native-virtualized-view";
 import TitleContainer from "../components/TitleContainer";
-import { Entypo } from "@expo/vector-icons";
 import productApi from "../api/postProductApi";
+import _ from "lodash";
+import { useNavigation } from "@react-navigation/native";
+import Navbar from "../components/navbar";
+import { ScrollView } from "react-native-virtualized-view";
 
 const HomeScreen = ({ navigation }) => {
+  const [refreshing, setRefreshing] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [isLoading, setisLoading] = useState(false);
+  const { navigate } = useNavigation();
+
+  // get posts
   useEffect(() => {
     const getPosts = async () => {
-      const rs = await productApi.gets();
-      setPosts(rs);
+      setisLoading(true);
+      try {
+        const rs = await productApi.gets();
+        setPosts(_.filter(rs, { status_check_post: "access" }));
+      } catch (e) {
+      } finally {
+        setisLoading(false);
+      }
     };
     getPosts();
   }, []);
 
-  const handleBack = () => {
-    navigation.navigate("SplashScreen");
-  };
+  // handle refresh
+  const _refresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const rs = await productApi.gets();
+      setPosts(_.filter(rs, { status_check_post: "access" }));
+    } catch (e) {}
+    setRefreshing(false);
+  }, []);
+
+  const handleViewProduct = useCallback(
+    (item) => {
+      navigation.navigate("PostProductItemDetail", { item });
+    },
+    [navigate]
+  );
+
+  const handleViewCategory = useCallback(
+    (item) => {
+      navigation.navigate("CategoryDetails", {
+        posts: _.filter(posts, {
+          status_check_post: "access",
+          category: item.type,
+        }),
+      });
+    },
+    [navigate]
+  );
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={Colors.DEFAULT_BLUE}
-      />
+    <>
+      {/* <SafeAreaView
+        edges={["top"]}
+        style={{
+          flex: 1,
+          backgroundColor: Colors.DEFAULT_BLUE,
+        }}
+      /> */}
+      <RefreshControl refreshing={refreshing} onRefresh={_refresh} />
+      <SafeAreaView style={styles.container}>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor={Colors.DEFAULT_BLUE}
+        />
+        <Navbar posts={posts} />
+        <ScrollView>
+          {/* banner */}
+          <View style={{ flex: 1, width: "100%", height: 120 }}>
+            <Swiper
+              containerStyle={styles.wrapper}
+              showsButtons={false}
+              loop={true}
+              autoplay={true}
+              paginationStyle={false}
+              showsPagination={false}
+            >
+              <View style={styles.slide}>
+                <Image
+                  style={styles.image}
+                  source={require("../assets/images/banners/banner_one.jpg")}
+                />
+              </View>
+              <View style={styles.slide}>
+                <Image
+                  style={styles.image}
+                  source={require("../assets/images/banners/banner_two.jpg")}
+                />
+              </View>
+              <View style={styles.slide}>
+                <Image
+                  style={styles.image}
+                  source={require("../assets/images/banners/banner_three.jpg")}
+                />
+              </View>
+              <View style={styles.slide}>
+                <Image
+                  style={styles.image}
+                  source={require("../assets/images/banners/banner_four.jpg")}
+                />
+              </View>
+            </Swiper>
+          </View>
 
-      <View style={styles.backgroundCurvedContainer}>
-        <TouchableOpacity onPress={handleBack}>
-          <Entypo name="chevron-left" size={34} color={Colors.DEFAULT_GREY} />
-        </TouchableOpacity>
+          <TitleContainer content="Khám phá danh mục" />
 
-        <View style={styles.inputContainer}>
-          <View style={styles.inputSubContainer}>
-            <Feather
-              name="search"
-              size={22}
-              color={Colors.DEFAULT_GREY}
-              style={{ marginRight: 10 }}
-            />
-            <TextInput
-              placeholder="Tìm kiếm"
-              placeholderTextColor={Colors.DEFAULT_GREY}
-              selectionColor={Colors.DEFAULT_GREY}
-              style={styles.inputText}
-              // onChangeText={(text) => setUsername(text)}
+          {/* post products */}
+          <View style={styles.mainContainer}>
+            <FlatList
+              data={dataCateGories}
+              horizontal={true}
+              keyExtractor={(item) => item?.id.toString()}
+              renderItem={({ item }) => (
+                <CategoryItem
+                  postproduct={item}
+                  navigate={() => handleViewCategory(item)}
+                />
+              )}
             />
           </View>
-        </View>
-        <TouchableWithoutFeedback>
-          <Feather
-            name="bell"
-            size={25}
-            color={Colors.DEFAULT_WHITE}
-            style={{ marginRight: 5 }}
-          />
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback>
-          <IonIcons
-            name="chatbox-ellipses-outline"
-            size={25}
-            color={Colors.DEFAULT_WHITE}
-            style={{ marginRight: 5 }}
-          />
-        </TouchableWithoutFeedback>
-      </View>
-      <ScrollView>
-        <View style={{ flex: 1, width: "100%", height: 120 }}>
-          <Swiper
-            containerStyle={styles.wrapper}
-            showsButtons={false}
-            loop={true}
-            autoplay={true}
-            paginationStyle={false}
-            showsPagination={false}
+          <TitleContainer content="Tin đăng dành cho bạn" />
+          <View
+            style={
+              styles.mainContainer && {
+                paddingBottom: 200,
+                marginLeft: "auto",
+                marginRight: "auto",
+              }
+            }
           >
-            <View style={styles.slide}>
-              <Image
-                style={styles.image}
-                source={require("../assets/images/banners/banner_one.jpg")}
-              />
-            </View>
-            <View style={styles.slide}>
-              <Image
-                style={styles.image}
-                source={require("../assets/images/banners/banner_two.jpg")}
-              />
-            </View>
-            <View style={styles.slide}>
-              <Image
-                style={styles.image}
-                source={require("../assets/images/banners/banner_three.jpg")}
-              />
-            </View>
-            <View style={styles.slide}>
-              <Image
-                style={styles.image}
-                source={require("../assets/images/banners/banner_four.jpg")}
-              />
-            </View>
-          </Swiper>
-        </View>
-
-        <TitleContainer content="Khám phá danh mục" />
-        <View style={styles.mainContainer}>
-          <FlatList
-            data={dataCateGories}
-            horizontal={true}
-            keyExtractor={(item) => item?.id}
-            renderItem={({ item }) => (
-              <CategoryItem
-                postproduct={item}
-                navigate={() => navigation.navigate("CategoryDetails")}
+            {isLoading ? (
+              <ActivityIndicator size="large" color={Colors.DEFAULT_BLUE} />
+            ) : (
+              <FlatList
+                data={posts}
+                numColumns={2}
+                keyExtractor={(item) => item?._id}
+                renderItem={({ item }) => (
+                  <PostProductItem
+                    postproduct={item}
+                    navigate={() => handleViewProduct(item)}
+                  />
+                )}
               />
             )}
-          />
-        </View>
-        <TitleContainer content="Tin đăng dành cho bạn" />
-        <View style={styles.mainContainer}>
-          <FlatList
-            data={posts}
-            numColumns={2}
-            keyExtractor={(item) => item?.id}
-            renderItem={({ item }) => (
-              <PostProductItem
-                postproduct={item}
-                navigate={() =>
-                  navigation.navigate("PostProductItemDetail", { item })
-                }
-              />
-            )}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 };
 export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
-  backgroundCurvedContainer: {
-    flexDirection: "row",
-    backgroundColor: Colors.DEFAULT_BLUE,
-    position: "relative",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    padding: 10,
-    alignSelf: "center",
-    zIndex: -1,
-  },
-  inputContainer: {
-    width: "70%",
-    height: 35,
-    backgroundColor: Colors.LIGHT_GREY,
-    paddingHorizontal: 10,
-    marginHorizontal: 10,
-    borderRadius: 8,
-    borderWidth: 0.5,
-    borderColor: Colors.DEFAULT_WHITE,
-    justifyContent: "center",
-  },
-  inputSubContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  inputText: {
-    fontSize: 18,
-    textAlignVertical: "center",
-    padding: 0,
-    height: "100%",
-    width: 100,
-    color: Colors.DEFAULT_BLACK,
     flex: 1,
   },
   wrapper: {},

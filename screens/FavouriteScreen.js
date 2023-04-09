@@ -5,6 +5,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import Colors from "../assets/constants/Colors";
@@ -20,6 +21,7 @@ const FavouriteScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
   const [favourite, setFavourite] = useState([]);
   const [isFav, setIsFav] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const user = useSelector((state) => state.user.data);
 
@@ -52,7 +54,10 @@ const FavouriteScreen = ({ navigation }) => {
         );
 
         setPosts(newPosts);
-      } catch {}
+      } catch {
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     getPost();
@@ -95,7 +100,9 @@ const FavouriteScreen = ({ navigation }) => {
       </View>
       <ScrollView>
         <View style={styles.mainContainer}>
-          {posts && (
+          {isLoading ? (
+            <ActivityIndicator size="large" color={Colors.DEFAULT_BLUE} />
+          ) : (
             <FlatList
               data={posts}
               numColumns={1}

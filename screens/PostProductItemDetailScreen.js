@@ -1,6 +1,3 @@
-{
-  /* tranthanhtu 8/3/2023 */
-}
 import {
   View,
   Text,
@@ -10,6 +7,8 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  Linking,
+  Alert,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import Colors from "../assets/constants/Colors";
@@ -23,7 +22,8 @@ import { Rating } from "react-native-ratings";
 import moment from "moment";
 import { formatPriceToVnd } from "../components/formatPriceToVnd";
 import favouriteApi from "../api/favouriteApi";
-import userApi from "../api/userAPI";
+import { useNavigation } from "@react-navigation/native";
+import productApi from "../api/postProductApi";
 
 const chatList = [
   {
@@ -44,207 +44,312 @@ const PostProductItemDetail = ({ navigation, route }) => {
   const [userSell, setUserSell] = useState({});
   const [favourite, setFavourite] = useState(false);
   const post = route.params.item;
+  const { navigate } = useNavigation();
   const user = useSelector((state) => state.user.data);
 
   useEffect(() => {
-    const getDataDetail = async () => {
-      const rsUser = await userApi.get({ _id: post.user[0].user_id });
-      const rsFavourite = await favouriteApi.get({
-        user_id: post.user[0].user_id,
-        post_id: post._id,
-      });
-      setFavourite(rsFavourite.post && rsFavourite.post.length > 0);
-      setUserSell(rsUser);
+    const getUserSell = async () => {
+      try {
+        const rs = await userApi.get({ _id: post.user[0].user_id });
+        setUserSell(rs);
+      } catch {}
     };
-    getDataDetail();
+    const getFavorite = async () => {
+      try {
+        const rs = await favouriteApi.get({
+          user_id: user._id,
+          post_id: post._id,
+        });
+        setFavourite(rs.post && rs.post.length > 0);
+      } catch {}
+    };
+    getUserSell();
+    getFavorite();
   }, [post]);
 
-  const handleAddFavourite = async () => {
-    const rs = await favouriteApi.update({
-      user_id: post.user[0].user_id,
-      post_id: post._id,
+  const handleAddFavourite = useCallback(async () => {
+    try {
+      const rs = await favouriteApi.update({
+        user_id: user._id,
+        post_id: post._id,
+      });
+      setFavourite(rs.status === "add");
+    } catch {}
+  }, [post, user]);
+
+  const handleChat = useCallback(() => {
+    navigate("ChatScreen", {
+      from: user._id,
+      to: userSell,
     });
-    setFavourite(rs.status === "add");
-  };
+  }, [navigate]);
+
+  const handleEdit = useCallback(() => {
+    Alert.alert("opps", "Chức năng hiện tại chưa thể dùng");
+  }, []);
+  const handleDelete = useCallback(async () => {
+    try {
+      const rs = await productApi.delete(post._id);
+      navigation.navigate(route.params.back ?? "HomeTab", {
+        posts: route.params.posts,
+      });
+    } catch {}
+  }, []);
+  const handleBack = useCallback(() => {
+    navigation.navigate(route.params.back ?? "HomeTab", {
+      posts: route.params.posts,
+    });
+  }, [navigate]);
 
   return (
-    <View style={styles.container}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={Colors.DEFAULT_BLUE}
-        translucent
-      />
+    userSell?._id && (
+      <View style={styles.container}>
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor={Colors.DEFAULT_BLUE}
+          translucent
+        />
 
-      <View style={styles.backgroundCurvedContainer}>
-        <TouchableWithoutFeedback
-          onPress={() => navigation.navigate("HomeTab")}
-        >
-          <IonIcons
-            name="chevron-back-outline"
-            size={25}
-            color={Colors.DEFAULT_WHITE}
-            style={{ marginTop: 40 }}
-          />
-        </TouchableWithoutFeedback>
+        <View style={styles.backgroundCurvedContainer}>
+          <TouchableWithoutFeedback onPress={handleBack}>
+            <IonIcons
+              name="chevron-back-outline"
+              size={25}
+              color={Colors.DEFAULT_WHITE}
+              style={{ marginTop: 40 }}
+            />
+          </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback>
-          <IonIcons
-            name="ellipsis-vertical-outline"
-            size={25}
-            color={Colors.DEFAULT_WHITE}
-            style={{ marginRight: 5, marginTop: 40 }}
-          />
-        </TouchableWithoutFeedback>
-      </View>
-      <ScrollView>
-        <SwiperPostProductItemDetail images={post.images} />
-        <View style={styles.contentContainer}>
-          <Text style={styles.title}>{post.title}</Text>
-          <View style={styles.priceAndIconFavoriteContainer}>
-            <Text style={styles.price}>{formatPriceToVnd(post.price)}</Text>
-            <TouchableOpacity
-              onPress={handleAddFavourite}
-              style={styles.iconAndContent}
-            >
-              <Text>{!favourite ? "Lưu tin" : "Đã lưu"}</Text>
-              <View style={styles.favoriteIcon}>
-                <IonIcons
-                  name={!favourite ? "heart-outline" : "heart"}
-                  size={22}
-                  style={{ color: Colors.DEFAULT_RED, padding: 5 }}
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.timeContainer}>
+          <TouchableWithoutFeedback>
             <IonIcons
-              name="time"
-              size={14}
-              style={{ color: Colors.DEFAULT_BLACK, paddingRight: 5 }}
+              name="ellipsis-vertical-outline"
+              size={25}
+              color={Colors.DEFAULT_WHITE}
+              style={{ marginRight: 5, marginTop: 40 }}
             />
-            <Text style={styles.time}>
-              {moment(post.createdAt).startOf("day").fromNow()}
-            </Text>
-          </View>
-          <View style={styles.adrressContainer}>
-            <IonIcons
-              name="location-outline"
-              size={22}
-              style={{ color: Colors.DEFAULT_BLACK }}
-            />
-            <Text style={styles.adrress}>
-              {`${post.location[0].district}, ${post.location[0].city}`}
-            </Text>
-          </View>
-          <View style={styles.profie}>
-            <View style={styles.profieContainerOne}>
-              <View style={styles.avaterAndNameContainer}>
-                <Image
-                  style={styles.avatarProfile}
-                  source={
-                    user.avatar === "" &&
-                    require("../assets/images/default-avatar-profile.jpg")
-                  }
-                />
-                <View style={styles.nameAndTimeContainer}>
-                  <Text style={styles.name}>{user.fullname}</Text>
-                  <View style={styles.iconAndTimeContainer}>
-                    <IonIcons
-                      name="radio-button-on-outline"
-                      size={11}
-                      style={{ color: Colors.DEFAULT_GREEN, paddingRight: 5 }}
-                    />
-                    <Text style={styles.time}>Đang hoạt động</Text>
+          </TouchableWithoutFeedback>
+        </View>
+        <ScrollView>
+          <SwiperPostProductItemDetail images={post.images} />
+          <View style={styles.contentContainer}>
+            <Text style={styles.title}>{post.title}</Text>
+            <View style={styles.priceAndIconFavoriteContainer}>
+              <Text style={styles.price}>{formatPriceToVnd(post.price)}</Text>
+              <TouchableOpacity
+                onPress={handleAddFavourite}
+                style={styles.iconAndContent}
+              >
+                <Text>{!favourite ? "Lưu tin" : "Đã lưu"}</Text>
+                <View style={styles.favoriteIcon}>
+                  <IonIcons
+                    name={!favourite ? "heart-outline" : "heart"}
+                    size={22}
+                    style={{ color: Colors.DEFAULT_RED, padding: 5 }}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.timeContainer}>
+              <IonIcons
+                name="time"
+                size={14}
+                style={{ color: Colors.DEFAULT_BLACK, paddingRight: 5 }}
+              />
+              <Text style={styles.time}>
+                {moment(post.createdAt).startOf("day").fromNow()}
+              </Text>
+            </View>
+            <View style={styles.adrressContainer}>
+              <IonIcons
+                name="location-outline"
+                size={22}
+                style={{ color: Colors.DEFAULT_BLACK }}
+              />
+              <Text style={styles.adrress}>
+                {`${post.location[0].district}, ${post.location[0].city}`}
+              </Text>
+            </View>
+            <View style={styles.profie}>
+              <View style={styles.profieContainerOne}>
+                <View style={styles.avaterAndNameContainer}>
+                  <Image
+                    style={styles.avatarProfile}
+                    source={
+                      userSell?.avatar === "" &&
+                      require("../assets/images/default-avatar-profile.jpg")
+                    }
+                  />
+                  <View style={styles.nameAndTimeContainer}>
+                    <Text style={styles.name}>{userSell?.fullname}</Text>
+                    <View style={styles.iconAndTimeContainer}>
+                      <IonIcons
+                        name="radio-button-on-outline"
+                        size={11}
+                        style={{ color: Colors.DEFAULT_GREEN, paddingRight: 5 }}
+                      />
+                      <Text style={styles.time}>Đang hoạt động</Text>
+                    </View>
                   </View>
                 </View>
+                <Text style={styles.buttonProfieDetail}>Xem trang</Text>
               </View>
-              <Text style={styles.buttonProfieDetail}>Xem trang</Text>
+              <View style={styles.profieContainerTwo}>
+                <View style={styles.titleAndIconContainer}>
+                  <Text style={styles.time}>Cá nhân</Text>
+                  <IonIcons
+                    name="person-circle-outline"
+                    size={18}
+                    style={{ color: Colors.INACTIVE_GREY, paddingRight: 5 }}
+                  />
+                </View>
+                <View style={styles.titleAndIconContainer}>
+                  <Text style={styles.time}>Đánh giá</Text>
+
+                  <Rating
+                    onFinishRating={2}
+                    readonly={false}
+                    size={10}
+                    fractions={2}
+                    imageSize={13}
+                    defaultRating={2}
+                    ratingCount={5}
+                    isDisabled={false}
+                    onSwipeRating={false}
+                  />
+                </View>
+                <View style={styles.titleAndIconContainer}>
+                  <Text style={styles.time}>Phản hồi chat</Text>
+                  <Text style={styles.time}>{"90%"}</Text>
+                </View>
+              </View>
             </View>
-            <View style={styles.profieContainerTwo}>
-              <View style={styles.titleAndIconContainer}>
-                <Text style={styles.time}>Cá nhân</Text>
+            <Text style={styles.description}>{post.description}</Text>
+            <View style={styles.phoneContainer}>
+              <Text>
+                {" "}
+                Liên hệ:{" "}
+                <Text
+                  style={styles.phone}
+                  onPress={() => Linking.openURL(`tel:${post.user[0].phone}`)}
+                >
+                  {post.user[0].phone}
+                </Text>
+              </Text>
+            </View>
+            {user._id !== userSell._id && (
+              <View style={styles.chatContainer}>
+                <Text style={styles.title}>Chat với người bán</Text>
+                <FlatList
+                  style={{ paddingBottom: 10 }}
+                  data={chatList}
+                  horizontal
+                  keyExtractor={(item) => item?.id}
+                  renderItem={({ item }) => (
+                    <ChatContentItem
+                      item={item}
+                      props={{ from: user._id, to: userSell }}
+                    />
+                  )}
+                />
+              </View>
+            )}
+          </View>
+        </ScrollView>
+        <View style={styles.contact}>
+          {user._id === userSell._id ? (
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-around",
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity
+                onPress={handleEdit}
+                style={{
+                  width: "50%",
+                  backgroundColor: Colors.DEFAULT_YELLOW,
+                  height: "100%",
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    alignItems: "center",
+                    padding: 10,
+                    color: Colors.DEFAULT_WHITE,
+                    fontSize: 20,
+                    fontWeight: 500,
+                  }}
+                >
+                  Chỉnh sửa
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleDelete}
+                style={{
+                  width: "50%",
+                  backgroundColor: Colors.LIGHT_RED,
+                  height: "100%",
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    alignItems: "center",
+                    padding: 10,
+                    color: Colors.SECONDARY_BLACK,
+                    fontSize: 20,
+                    fontWeight: 500,
+                  }}
+                >
+                  Xóa tin
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <>
+              <TouchableOpacity
+                style={styles.iconAndPhoneContactContainer}
+                onPress={() => Linking.openURL(`tel:${post.user[0].phone}`)}
+              >
                 <IonIcons
-                  name="person-circle-outline"
-                  size={18}
+                  name="call-outline"
+                  size={20}
+                  style={{ color: Colors.DEFAULT_WHITE, paddingRight: 5 }}
+                />
+                <Text style={styles.phoneContact}>Gọi điện</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.iconAndMessageContactContainer}
+                onPress={() => Linking.openURL(`sms:${post.user[0].phone}`)}
+              >
+                <IonIcons
+                  name="chatbox-outline"
+                  size={20}
                   style={{ color: Colors.INACTIVE_GREY, paddingRight: 5 }}
                 />
-              </View>
-              <View style={styles.titleAndIconContainer}>
-                <Text style={styles.time}>Đánh giá</Text>
+                <Text style={styles.phoneMessage}>Gửi SMS</Text>
+              </TouchableOpacity>
 
-                {/* <StarRating
-                  disabled={false}
-                  maxStars={5}
-                  rating={2}
-                  emptyStarColor={Colors.DEFAULT_YELLOW}
-                  fullStarColor={Colors.DEFAULT_YELLOW}
-                  starSize={13}
-                  // selectedStar={(rating) => this.onStarRatingPress(rating)}
-                /> */}
-                <Rating
-                  // showRating
-                  onFinishRating={2}
-                  // style={{ paddingVertical: 10 }}
-                  readonly={false}
-                  size={10}
-                  fractions={2}
-                  imageSize={13}
-                  defaultRating={2}
-                  ratingCount={5}
-                  isDisabled={false}
-                  onSwipeRating={false}
+              <TouchableOpacity
+                style={styles.iconAndChatContactContainer}
+                onPress={handleChat}
+              >
+                <IonIcons
+                  name="chatbubble-ellipses-outline"
+                  size={20}
+                  style={{ color: Colors.INACTIVE_GREY, paddingRight: 5 }}
                 />
-              </View>
-              <View style={styles.titleAndIconContainer}>
-                <Text style={styles.time}>Phản hồi chat</Text>
-                <Text style={styles.time}>{"90%"}</Text>
-              </View>
-            </View>
-          </View>
-          <Text style={styles.description}>{post.description}</Text>
-          <View style={styles.phoneContainer}>
-            <Text style={styles.phone}>Liên hệ: {post.user.phone}</Text>
-          </View>
-          <View style={styles.chatContainer}>
-            <Text style={styles.title}>Chat với người bán</Text>
-            <FlatList
-              style={{ paddingBottom: 10 }}
-              data={chatList}
-              horizontal
-              keyExtractor={(item) => item?.id}
-              renderItem={({ item }) => <ChatContentItem item={item} />}
-            />
-          </View>
-        </View>
-      </ScrollView>
-      <View style={styles.contact}>
-        <View style={styles.iconAndPhoneContactContainer}>
-          <IonIcons
-            name="call-outline"
-            size={20}
-            style={{ color: Colors.DEFAULT_WHITE, paddingRight: 5 }}
-          />
-          <Text style={styles.phoneContact}>Gọi điện</Text>
-        </View>
-
-        <View style={styles.iconAndMessageContactContainer}>
-          <IonIcons
-            name="chatbox-outline"
-            size={20}
-            style={{ color: Colors.INACTIVE_GREY, paddingRight: 5 }}
-          />
-          <Text style={styles.phoneMessage}>Gửi SMS</Text>
-        </View>
-        <View style={styles.iconAndChatContactContainer}>
-          <IonIcons
-            name="chatbubble-ellipses-outline"
-            size={20}
-            style={{ color: Colors.INACTIVE_GREY, paddingRight: 5 }}
-          />
-          <Text style={styles.phoneMessage}>Chat</Text>
+                <Text style={styles.phoneMessage}>Chat</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </View>
-    </View>
+    )
   );
 };
 export default PostProductItemDetail;
@@ -383,6 +488,7 @@ const styles = StyleSheet.create({
   },
   phone: {
     color: Colors.FABEBOOK_BLUE,
+    fontWeight: 600,
   },
   chatContainer: {
     paddingVertical: 10,

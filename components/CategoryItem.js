@@ -1,4 +1,3 @@
-//tran thanh tu
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Colors from "../assets/constants/Colors";

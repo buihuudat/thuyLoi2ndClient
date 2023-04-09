@@ -1,6 +1,3 @@
-{
-  /* tranthanhtu 8/3/2023 */
-}
 import {
   View,
   Text,
@@ -15,10 +12,11 @@ import Colors from "../assets/constants/Colors";
 import Feather from "react-native-vector-icons/Feather";
 import IonIcons from "react-native-vector-icons/Ionicons";
 
-import { dataPostProducts } from "../data";
 import { ScrollView } from "react-native-virtualized-view";
 import CategoryDetailItem from "../components/CategoryDetailItem";
-const CategoryDetails = ({ navigation }) => {
+
+const CategoryDetails = ({ navigation, route }) => {
+  const posts = route.params.posts;
   return (
     <View style={styles.container}>
       <StatusBar
@@ -29,7 +27,7 @@ const CategoryDetails = ({ navigation }) => {
 
       <View style={styles.backgroundCurvedContainer}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate("HomeTabs")}
+          onPress={() => navigation.navigate("HomeTab")}
         >
           <IonIcons
             name="chevron-back-outline"
@@ -79,7 +77,6 @@ const CategoryDetails = ({ navigation }) => {
               name="funnel-outline"
               size={23}
               color={Colors.DEFAULT_BLACK}
-              //   style={{}}
             />
 
             <Text style={styles.filterTitle}>Lọc</Text>
@@ -90,31 +87,39 @@ const CategoryDetails = ({ navigation }) => {
               name="caret-down-outline"
               size={20}
               color={Colors.DEFAULT_BLACK}
-              //   style={{}}
             />
           </View>
           <View style={styles.priceAndIconContainer}>
             <Text style={styles.filterTitle}>Giá</Text>
-            <IonIcons
-              name="add"
-              size={23}
-              color={Colors.DEFAULT_BLACK}
-              //   style={{}}
-            />
+            <IonIcons name="add" size={23} color={Colors.DEFAULT_BLACK} />
           </View>
         </View>
         <View style={styles.mainContainer}>
-          <FlatList
-            data={dataPostProducts}
-            numColumns={1}
-            keyExtractor={(item) => item?.id}
-            renderItem={({ item }) => (
-              <CategoryDetailItem
-                postproduct={item}
-                navigate={() => navigation.navigate("PostProductItemDetail")}
-              />
-            )}
-          />
+          {posts.length === 0 ? (
+            <View>
+              <Text style={{ textAlign: "center" }}>
+                Không tìm thấy sản phẩm
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              data={posts}
+              numColumns={1}
+              keyExtractor={(item) => item?._id}
+              renderItem={({ item }) => (
+                <CategoryDetailItem
+                  postproduct={item}
+                  navigate={() =>
+                    navigation.navigate("PostProductItemDetail", {
+                      item,
+                      posts,
+                      back: "CategoryDetails",
+                    })
+                  }
+                />
+              )}
+            />
+          )}
         </View>
       </ScrollView>
     </View>

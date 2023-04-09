@@ -6,6 +6,7 @@ import {
   TextInput,
   Button,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { Entypo } from "@expo/vector-icons";
@@ -16,12 +17,18 @@ import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { setUser } from "../redux/features/userSlice";
-import userApi from "../api/userAPI";
+
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import imageUpload from "../components/handlers/ImageUpload";
+
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.data);
+
   const [isDisable, setIsDisable] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [msvErr, setMsvErr] = useState("");
   const [fullnameErr, setFullnameErr] = useState("");
@@ -37,11 +44,12 @@ export default function ProfileScreen() {
     password: user.password,
     address: user.address,
   });
+
   const handleBack = () => {
     navigation.navigate("HomeTab");
   };
-
   const handleUpdate = async () => {
+    setIsLoading(true);
     setMsvErr("");
     setFullnameErr("");
     setEmailErr("");
@@ -71,12 +79,50 @@ export default function ProfileScreen() {
           setAddressErr(e.msg);
         }
       });
+    } finally {
+      setIsLoading(false);
     }
   };
+  const handleChangeAvatar = async () => {
+    let image = "";
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
+    if (result?.assets && !result.assets[0].cancelled) {
+      const rp = await FileSystem.readAsStringAsync(result?.assets[0]?.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      await imageUpload([{ url: `data:image/jpeg;base64,${rp}` }]).then(
+        (rs) => {
+          image = rs.url;
+        }
+      );
+    }
+    try {
+      const user = await userApi.updateAvatar({
+        _id: user._id,
+        avatar: image,
+      });
+      dispatch(setUser(user));
+    } catch {}
+  };
+  const handleScroll = (event) => {
+    event.nativeEvent.contentOffset.y;
+  };
   const handleSettings = () => {};
   return (
     <View>
+      {/* <SafeAreaView
+        edges={["top"]}
+        style={{
+          flex: 1,
+          backgroundColor: Colors.DEFAULT_BLUE,
+        }}
+      /> */}
       <View
         style={{
           display: "flex",
@@ -84,6 +130,7 @@ export default function ProfileScreen() {
           justifyContent: "center",
           width: "100%",
           height: "100%",
+          // marginTop: 25,
         }}
       >
         <View
@@ -105,13 +152,13 @@ export default function ProfileScreen() {
               zIndex: 100,
               alignItems: "center",
               justifyContent: "space-between",
-              marginBottom: "auto",
+              // marginBottom: "auto",
             }}
           >
             <TouchableOpacity onPress={handleBack}>
               <Entypo
                 name="chevron-left"
-                size={34}
+                size={28}
                 color={Colors.DEFAULT_GREY}
               />
             </TouchableOpacity>
@@ -119,13 +166,14 @@ export default function ProfileScreen() {
               style={{
                 textAlign: "center",
                 color: Colors.DEFAULT_WHITE,
-                fontSize: 26,
+                fontSize: 20,
+                padding: 10,
               }}
             >
-              Profile
+              Trang cá nhân
             </Text>
             <TouchableOpacity onPress={handleSettings}>
-              <Feather name="settings" size={34} color={Colors.DEFAULT_GREY} />
+              <Feather name="settings" size={28} color={Colors.DEFAULT_GREY} />
             </TouchableOpacity>
           </View>
           {/* info */}
@@ -139,13 +187,21 @@ export default function ProfileScreen() {
               gap: 15,
             }}
           >
-            <Image
-              style={{ width: 200, height: 200, borderRadius: 100 }}
-              source={
-                user.avatar === "" &&
-                require("../assets/images/default-avatar-profile.jpg")
-              }
-            />
+            <TouchableOpacity onPress={handleChangeAvatar}>
+              <Image
+                style={{
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  width: 120,
+                  height: 120,
+                  borderRadius: 100,
+                }}
+                source={
+                  user.avatar === "" &&
+                  require("../assets/images/default-avatar-profile.jpg")
+                }
+              />
+            </TouchableOpacity>
             <Text
               style={{
                 color: "white",
@@ -178,9 +234,14 @@ export default function ProfileScreen() {
           </View>
         </View>
         <ScrollView
+          showsHorizontalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
           style={{
-            height: "60%",
             padding: 50,
+            // maxHeight: "60%",
+            overflow: "scroll",
+            height: 100,
           }}
         >
           <View style={{ display: "flex", gap: 10 }}>
@@ -366,16 +427,19 @@ export default function ProfileScreen() {
                 onPress={() => setIsDisable(false)}
               />
             )}
-            {!isDisable && (
-              <Button
-                title="Cập nhật thông tin"
-                style={{
-                  padding: 10,
-                }}
-                color={Colors.DEFAULT_GREEN}
-                onPress={handleUpdate}
-              />
-            )}
+            {!isDisable &&
+              (isLoading ? (
+                <ActivityIndicator size="large" color={Colors.DEFAULT_BLUE} />
+              ) : (
+                <Button
+                  title="Cập nhật thông tin"
+                  style={{
+                    padding: 10,
+                  }}
+                  color={Colors.DEFAULT_GREEN}
+                  onPress={handleUpdate}
+                />
+              ))}
           </View>
         </ScrollView>
       </View>

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Button,
+  ActivityIndicator,
 } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -17,7 +18,7 @@ import TextErrorInput from "../../components/textErrorInput";
 
 import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { setUser } from "../../redux/features/userSlice";
+import { setToken, setUser } from "../../redux/features/userSlice";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Colors from "../../assets/constants/Colors";
 import authApi from "../../api/authAPI";
@@ -29,6 +30,7 @@ export default function RegisterScreen() {
     lastname: "",
     msv: "",
     phone: "",
+    email: "",
     password: "",
     sex,
     cfpassword: "",
@@ -38,20 +40,18 @@ export default function RegisterScreen() {
   const [fnErrText, setFnErrText] = useState("");
   const [lnErrText, setLnErrText] = useState("");
   const [phoneErrText, setPhoneErrText] = useState("");
+  const [emailErrorTexxt, setEmailErrorTexxt] = useState("");
   const [passErrText, setPassErrText] = useState("");
   const [cfPassErrText, setCfPassErrText] = useState("");
   const [sexErrText, setSexErrText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPasswordShow, setIsPasswordShow] = useState(true);
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const handleBack = () => {
-    navigation.navigate("LoginScreen");
-  };
-
   const handleNext = () => {
-    const { msv, firstname, lastname, fullname, sex } = data;
+    const { msv, firstname, lastname, sex } = data;
     let err = false;
     if (!msv) {
       setMsvErrText("Bạn chưa nhập mã sinh viên");
@@ -119,35 +119,37 @@ export default function RegisterScreen() {
     setPhoneErrText("");
     setPassErrText("");
     setCfPassErrText("");
+    setIsLoading(true);
 
     try {
       const { user, token } = await authApi.register(data);
       dispatch(setUser(user));
+      dispatch(setToken(token));
       await AsyncStorage.setItem("token", token);
-      navigation.navigate("home");
+      navigation.navigate("HomeTab");
     } catch (e) {
       const errors = e.data.errors;
       errors.forEach((e) => {
+        if (e.param === "msv") {
+          setMsvErrText(e.msg);
+          setShow(0);
+        }
+        if (e.param === "email") {
+          setEmailErrorTexxt(e.msg);
+          setShow(1);
+        }
         if (e.param === "phone") {
           setPhoneErrText(e.msg);
+          setShow(1);
         }
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.backgroundCurvedContainer}>
-        <TouchableOpacity onPress={handleBack}>
-          <IonIcons
-            name="chevron-back-outline"
-            size={25}
-            color={Colors.DEFAULT_WHITE}
-            style={{ marginTop: 20 }}
-          />
-        </TouchableOpacity>
-      </View>
-
       <View style={styles.mainContainer}>
         <Image
           style={{
@@ -238,12 +240,23 @@ export default function RegisterScreen() {
             </View>
             <View>
               <InputForm
+                label={"Email"}
+                placeholder="Email"
+                data={data.email}
+                setData={(email) => setData({ ...data, email })}
+              />
+              {emailErrorTexxt !== "" && TextErrorInput(emailErrorTexxt)}
+            </View>
+            <View>
+              <InputForm
                 label={"Mật khẩu"}
                 placeholder="Mật khẩu"
                 type="visible-password"
                 secure={true}
                 data={data.password}
                 setData={(password) => setData({ ...data, password })}
+                isPasswordShow={isPasswordShow}
+                setIsPasswordShow={setIsPasswordShow}
               />
               {passErrText !== "" && TextErrorInput(passErrText)}
             </View>
@@ -255,14 +268,15 @@ export default function RegisterScreen() {
                 secure={true}
                 data={data.cfpassword}
                 setData={(cfpassword) => setData({ ...data, cfpassword })}
+                isPasswordShow={isPasswordShow}
+                setIsPasswordShow={setIsPasswordShow}
               />
               {cfPassErrText !== "" && TextErrorInput(cfPassErrText)}
             </View>
             {isLoading ? (
-              // <Lottie source={Images.LOADING} autoPlay />
-              <></>
+              <ActivityIndicator />
             ) : (
-              <Button title="Tiếp" onPress={handleRegister} color="green" />
+              <Button title="Hoàn tất" onPress={handleRegister} color="green" />
             )}
             <Button
               title="Quay lại"
@@ -312,12 +326,14 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     marginHorizontal: 20,
+    paddingTop: 50,
   },
   title: {
     fontSize: 25,
     fontWeight: 500,
     textAlign: "center",
     marginBottom: 20,
+    paddingTop: 10,
   },
   textButton: {
     fontWeight: 500,
