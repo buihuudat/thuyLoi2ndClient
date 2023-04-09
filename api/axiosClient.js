@@ -1,8 +1,10 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const IP = "192.168.1.9";
-// const IP = "192.168.0.186";
+// const IP = "192.168.1.9";
+// const IP = "192.168.1.10";
+// const IP = "192.168.0.108";
+const IP = "192.168.0.135";
 const baseURL = `http://${IP}:5000/api/`;
 const getToken = () => AsyncStorage.getItem("token");
 

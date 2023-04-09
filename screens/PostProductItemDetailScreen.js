@@ -22,8 +22,8 @@ import ChatContentItem from "../components/ChatContentItem";
 import { Rating } from "react-native-ratings";
 import moment from "moment";
 import { formatPriceToVnd } from "../components/formatPriceToVnd";
-import userApi from "../api/userApi";
 import favouriteApi from "../api/favouriteApi";
+import userApi from "../api/userAPI";
 
 const chatList = [
   {

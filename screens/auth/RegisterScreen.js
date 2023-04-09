@@ -14,12 +14,13 @@ import InputForm from "../../components/InputForm";
 import SelectDropdown from "react-native-select-dropdown";
 import { sex } from "../../data";
 import TextErrorInput from "../../components/textErrorInput";
-import authApi from "../../api/authApi";
+
 import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setUser } from "../../redux/features/userSlice";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Colors from "../../assets/constants/Colors";
+import authApi from "../../api/authAPI";
 
 export default function RegisterScreen() {
   const [show, setShow] = useState(0);

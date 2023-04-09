@@ -26,6 +26,7 @@ import { filterCateGories } from "../data";
 import proviceApi from "../api/proviceAPI";
 
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from 'expo-file-system';
 
 const BottomTabs = createBottomTabNavigator();
 
@@ -43,6 +44,10 @@ const HomeTabs = () => {
   const [nameCity, setNamCity] = useState("");
 
   const [image, setImage] = useState([]);
+
+  const [base64, setBase64] = useState(null);
+
+  console.log(base64);
 
   useEffect(() => {
     const animatedValue = new Animated.Value(0);
@@ -76,8 +81,17 @@ const HomeTabs = () => {
       quality: 1,
     });
 
+    // if (result.canceled === false) {
+    //   setImage(result.assets[0].uri);
+    // }
+
     if (result.canceled === false) {
       setImage(result.assets[0].uri);
+      const response = await FileSystem.readAsStringAsync(result.assets[0].uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+ 
+      setBase64(`data:image/jpeg;base64,${response}`);
     }
   };
   const takePicture = async () => {
@@ -247,13 +261,13 @@ const HomeTabs = () => {
                 }}
               >
                 <Button title="Chụp ảnh" onPress={takePicture} />
-                {/* {image && (
+                {image && (
                   <Image
                     source={{ uri: image }}
                     // source={{ uri: 'data:image/jpeg;base64,' + image }}
                     style={{ width: 100, height: 100 }}
                   />
-                )} */}
+                )}
                 {/* {image && (
                   <Image
                     source={{ uri: image }}

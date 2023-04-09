@@ -15,8 +15,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import userApi from "../api/userApi";
 import { setUser } from "../redux/features/userSlice";
+import userApi from "../api/userAPI";
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
