@@ -1,16 +1,7 @@
-import {
-  View,
-  Text,
-  StatusBar,
-  StyleSheet,
-  FlatList,
-  SafeAreaView,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, FlatList } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
 import Colors from "../assets/constants/Colors";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import { useWindowDimensions } from "react-native";
-import NoOrder from "../components/NoOrder";
 import ShowAccessPost from "../components/postManager/ShowAccessPost";
 import ShowPendingPost from "../components/postManager/ShowPendingPost";
 import ShowRefusePost from "../components/postManager/ShowRefusePost";
@@ -47,6 +38,8 @@ const PostManagerScreen = () => {
   // const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const [posts, setPosts] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
   const user = useSelector((state) => state.user.data);
 
   useEffect(() => {
@@ -57,6 +50,17 @@ const PostManagerScreen = () => {
     getPosts();
   }, []);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const rs = await productApi.userGet({ user_id: user._id });
+      setPosts(rs);
+    } catch (e) {
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
   const filteredPosts = {
     access: posts.filter((post) => post.status_check_post === "access"),
     pending: posts.filter((post) => post.status_check_post === "pending"),
@@ -64,19 +68,27 @@ const PostManagerScreen = () => {
   };
 
   const sceneMap = {
-    1:
-      filteredPosts.access.length > 0
-        ? () => <ShowAccessPost posts={filteredPosts.access} />
-        : NoOrder,
-    2:
-      filteredPosts.pending.length > 0
-        ? () => <ShowPendingPost posts={filteredPosts.pending} />
-        : NoOrder,
-    3:
-      filteredPosts.refuse.length > 0
-        ? () => <ShowRefusePost posts={filteredPosts.refuse} />
-        : NoOrder,
-    4: NoOrder,
+    1: () => (
+      <ShowAccessPost
+        posts={filteredPosts.access}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+      />
+    ),
+    2: () => (
+      <ShowPendingPost
+        posts={filteredPosts.pending}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+      />
+    ),
+    3: () => (
+      <ShowRefusePost
+        posts={filteredPosts.refuse}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+      />
+    ),
   };
 
   const renderScene = SceneMap(sceneMap);

@@ -20,6 +20,7 @@ import { setToken, setUser } from "../redux/features/userSlice";
 import { followApi } from "../api/followApi";
 import { io } from "socket.io-client";
 import { host } from "../api/axiosClient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const socket = io(host);
 
@@ -46,6 +47,7 @@ const AccountScreen = ({ navigation }) => {
   const logout = useCallback(() => {
     socket.off("connect");
     socket.disconnect();
+    AsyncStorage.removeItem("user"); // Xoá giá trị user lưu trong AsyncStorage
     navigate("SplashScreen");
     dispatch(setUser(null));
     dispatch(setToken(null));

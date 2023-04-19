@@ -15,6 +15,7 @@ import * as Animatable from "react-native-animatable";
 import Svg, { Path } from "react-native-svg";
 import { setCity } from "../redux/features/citySlice";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SplashScreen() {
   const [cityState, setCityState] = useState("");
@@ -39,12 +40,17 @@ export default function SplashScreen() {
   // }, [cityState]);
 
   const handleNext = useCallback(() => {
-    if (!user) {
-      navigation.navigate("LoginScreen");
-    } else {
-      navigation.navigate("HomeTab");
-    }
-  }, []);
+    AsyncStorage.getItem("user", (error, result) => {
+      if (result) {
+        dispatch(setUser(JSON.parse(result)));
+      }
+      if (!user) {
+        navigation.navigate("LoginScreen");
+      } else {
+        navigation.navigate("HomeTab");
+      }
+    });
+  }, [user, navigation, dispatch]);
 
   return (
     <View style={styles.container}>

@@ -16,7 +16,6 @@ const NoOrder = () => {
 export default NoOrder;
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.DEFAULT_WHITE,
     justifyContent: "center",
     alignItems: "center",
     height: "100%",

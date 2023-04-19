@@ -5,6 +5,7 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import Colors from "../assets/constants/Colors";
@@ -22,6 +23,7 @@ const FavouriteScreen = ({ navigation }) => {
   const [favourite, setFavourite] = useState([]);
   const [isFav, setIsFav] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const user = useSelector((state) => state.user.data);
 
@@ -63,6 +65,17 @@ const FavouriteScreen = ({ navigation }) => {
     getPost();
   }, [favourite]);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const rs = await favouriteApi.gets({ user_id: user?._id });
+      setFavourite(rs);
+    } catch (e) {
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
   const handleBack = useCallback(() => {
     navigation.navigate("HomeTab");
   }, [navigation]);
@@ -87,11 +100,15 @@ const FavouriteScreen = ({ navigation }) => {
         backgroundColor={Colors.DEFAULT_BLUE}
       />
 
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View style={styles.mainContainer}>
           {isLoading ? (
             <ActivityIndicator size="large" color={Colors.DEFAULT_BLUE} />
-          ) : (
+          ) : posts.length > 0 ? (
             <FlatList
               data={posts}
               numColumns={1}
@@ -105,6 +122,16 @@ const FavouriteScreen = ({ navigation }) => {
                 />
               )}
             />
+          ) : (
+            <Text
+              style={{
+                textAlign: "center",
+                padding: 5,
+                fontSize: 20,
+              }}
+            >
+              Chưa có tin lưu
+            </Text>
           )}
         </View>
       </ScrollView>
