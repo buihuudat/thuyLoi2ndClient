@@ -10,7 +10,7 @@ import PostManagerScreen from "../screens/PostManagerScreen";
 import { StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import PostProduct from "./handlers/PostProduct";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const BottomTabs = createBottomTabNavigator();
 

@@ -25,6 +25,7 @@ import userApi from "../api/userApi";
 import favouriteApi from "../api/favouriteApi";
 import { useNavigation } from "@react-navigation/native";
 import productApi from "../api/postProductApi";
+import { BottomSheet, Tab } from "react-native-elements";
 
 const chatList = [
   {
@@ -102,14 +103,14 @@ const PostProductItemDetail = ({ navigation, route }) => {
     });
   }, [navigate]);
 
+  const handleSellerProfile = useCallback(() => {
+    navigate("SellerScreen", { _id: post.user[0].user_id });
+  }, [navigate]);
+
   return (
     userSell?._id && (
       <View style={styles.container}>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor={Colors.DEFAULT_BLUE}
-          translucent
-        />
+        <StatusBar barStyle="light-content" />
 
         <View style={styles.backgroundCurvedContainer}>
           <TouchableWithoutFeedback onPress={handleBack}>
@@ -136,19 +137,21 @@ const PostProductItemDetail = ({ navigation, route }) => {
             <Text style={styles.title}>{post.title}</Text>
             <View style={styles.priceAndIconFavoriteContainer}>
               <Text style={styles.price}>{formatPriceToVnd(post.price)}</Text>
-              <TouchableOpacity
-                onPress={handleAddFavourite}
-                style={styles.iconAndContent}
-              >
-                <Text>{!favourite ? "Lưu tin" : "Đã lưu"}</Text>
-                <View style={styles.favoriteIcon}>
-                  <IonIcons
-                    name={!favourite ? "heart-outline" : "heart"}
-                    size={22}
-                    style={{ color: Colors.DEFAULT_RED, padding: 5 }}
-                  />
-                </View>
-              </TouchableOpacity>
+              {post.check_post_status === "access" && (
+                <TouchableOpacity
+                  onPress={handleAddFavourite}
+                  style={styles.iconAndContent}
+                >
+                  <Text>{!favourite ? "Lưu tin" : "Đã lưu"}</Text>
+                  <View style={styles.favoriteIcon}>
+                    <IonIcons
+                      name={!favourite ? "heart-outline" : "heart"}
+                      size={22}
+                      style={{ color: Colors.DEFAULT_RED, padding: 5 }}
+                    />
+                  </View>
+                </TouchableOpacity>
+              )}
             </View>
             <View style={styles.timeContainer}>
               <IonIcons
@@ -176,8 +179,9 @@ const PostProductItemDetail = ({ navigation, route }) => {
                   <Image
                     style={styles.avatarProfile}
                     source={
-                      userSell?.avatar === "" &&
-                      require("../assets/images/default-avatar-profile.jpg")
+                      userSell.avatar
+                        ? { uri: userSell.avatar }
+                        : require("../assets/images/default-avatar-profile.jpg")
                     }
                   />
                   <View style={styles.nameAndTimeContainer}>
@@ -192,7 +196,12 @@ const PostProductItemDetail = ({ navigation, route }) => {
                     </View>
                   </View>
                 </View>
-                <Text style={styles.buttonProfieDetail}>Xem trang</Text>
+                <TouchableOpacity
+                  style={styles.buttonProfieDetail}
+                  onPress={handleSellerProfile}
+                >
+                  <Text>Xem trang</Text>
+                </TouchableOpacity>
               </View>
               <View style={styles.profieContainerTwo}>
                 <View style={styles.titleAndIconContainer}>
@@ -375,9 +384,8 @@ const styles = StyleSheet.create({
   },
   slide: {},
   image: {
-    width: "100%",
-    height: "100%",
-    objectFit: "contain",
+    // width: "100%",
+    resizeMode: "cover",
   },
   contentContainer: {
     paddingHorizontal: 15,
@@ -437,9 +445,9 @@ const styles = StyleSheet.create({
   avatarProfile: {
     width: 40,
     height: 40,
-    objectFit: "fill",
     borderRadius: 100,
     marginRight: 5,
+    resizeMode: "cover",
   },
   avaterAndNameContainer: {
     flexDirection: "row",
@@ -499,6 +507,7 @@ const styles = StyleSheet.create({
     height: 55,
     flexDirection: "row",
     justifyContent: "space-between",
+    marginBottom: 15,
   },
   iconAndPhoneContactContainer: {
     flexDirection: "row",

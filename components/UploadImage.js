@@ -20,8 +20,6 @@ export default function UploadImage({ images, setImages }) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
       multiple: true,
     });
 
@@ -29,7 +27,10 @@ export default function UploadImage({ images, setImages }) {
       const rp = await FileSystem.readAsStringAsync(result?.assets[0]?.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
-      setImages([...images, { url: `data:image/jpeg;base64,${rp}` }]);
+      setImages((prevImg) => [
+        ...prevImg,
+        { url: `data:image/jpeg;base64,${rp}` },
+      ]);
     }
   };
   const takePhoto = async () => {

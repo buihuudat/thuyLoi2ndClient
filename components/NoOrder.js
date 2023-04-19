@@ -8,7 +8,7 @@ const NoOrder = () => {
       <View style={styles.iconContainer}>
         <IonIcons name="cart-outline" size={70} style={styles.icon} />
       </View>
-      <Text style={styles.title}>Chưa có đơn hàng nào</Text>
+      <Text style={styles.title}>Chưa có tin nào</Text>
     </View>
   );
 };

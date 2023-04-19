@@ -1,6 +1,7 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Colors from "../assets/constants/Colors";
+import { Logo } from "../assets";
 
 const CategoryItem = ({ postproduct, navigate }) => {
   return (
@@ -32,6 +33,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 30,
+    resizeMode: "cover",
   },
   titlePostProduct: {
     flexDirection: "row",

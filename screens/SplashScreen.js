@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
+import React, { useCallback, useLayoutEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,11 +6,11 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  StatusBar,
 } from "react-native";
 import Colors from "../assets/constants/Colors";
 import { Logo } from "../assets";
 import { useDispatch, useSelector } from "react-redux";
-import SelectDropdown from "react-native-select-dropdown";
 import * as Animatable from "react-native-animatable";
 import Svg, { Path } from "react-native-svg";
 import { setCity } from "../redux/features/citySlice";
@@ -44,7 +39,6 @@ export default function SplashScreen() {
   // }, [cityState]);
 
   const handleNext = useCallback(() => {
-    dispatch(setCity(city));
     if (!user) {
       navigation.navigate("LoginScreen");
     } else {
@@ -54,12 +48,12 @@ export default function SplashScreen() {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle={"dark-content"} />
       <View style={styles.imageLogo}>
-        <Image alt="logo" source={Logo} />
+        <Image alt="logo" source={Logo} style={{ resizeMode: "cover" }} />
 
         <Text
           style={{
-            // fontWeight: 500,
             fontSize: 30,
             paddingTop: 30,
           }}

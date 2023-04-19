@@ -2,8 +2,8 @@ import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
-  Keyboard,
   TextInput,
+  StatusBar,
 } from "react-native";
 import React, { useCallback } from "react";
 import Colors from "../assets/constants/Colors";
@@ -11,13 +11,14 @@ import { Feather } from "@expo/vector-icons";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { FeatureBuilding } from "./handlers/featureBuilding";
+import { Header } from "react-native-elements";
 
 export default function navbar({ posts }) {
   const { navigate } = useNavigation();
 
   const handleSearch = useCallback(() => {
     navigate("Search", { posts });
-    Keyboard.dismiss;
+    // Keyboard.dismiss;
   }, [navigate]);
   const handleMessage = useCallback(() => {
     navigate("MessageScreen");
@@ -25,6 +26,8 @@ export default function navbar({ posts }) {
 
   return (
     <View>
+      <StatusBar barStyle={"light-content"} />
+      <Header backgroundColor={Colors.DEFAULT_BLUE} />
       <View style={styles.backgroundCurvedContainer}>
         <View style={styles.inputContainer}>
           <View style={styles.inputSubContainer}>

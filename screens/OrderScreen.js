@@ -1,20 +1,13 @@
-import {
-  View,
-  Text,
-  StatusBar,
-  StyleSheet,
-  FlatList,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { View, StyleSheet, FlatList, StatusBar } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import Colors from "../assets/constants/Colors";
 import { ScrollView } from "react-native-virtualized-view";
-import IonIcons from "react-native-vector-icons/Ionicons";
 import CategoryDetailItem from "../components/CategoryDetailItem";
 import productApi from "../api/postProductApi";
 import favouriteApi from "../api/favouriteApi";
 import { useSelector } from "react-redux";
 import _ from "lodash";
+import { Header } from "react-native-elements";
 
 const FavouriteScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
@@ -68,31 +61,25 @@ const FavouriteScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar
-        barStyle="dark-content"
+      <StatusBar barStyle={"light-content"} />
+      <Header
+        leftComponent={{
+          icon: "chevron-left",
+          color: Colors.DEFAULT_WHITE,
+          onPress: handleBack,
+        }}
+        centerComponent={{
+          text: "Tin đã lưu",
+          style: styles.title,
+        }}
+        rightComponent={{
+          icon: "menu",
+          color: Colors.DEFAULT_WHITE,
+        }}
         backgroundColor={Colors.DEFAULT_BLUE}
-        translucent
+        style={{ alignItems: "center" }}
       />
 
-      <View style={styles.backgroundCurvedContainer}>
-        <TouchableWithoutFeedback onPress={handleBack}>
-          <IonIcons
-            name="chevron-back-outline"
-            size={25}
-            color={Colors.DEFAULT_WHITE}
-            style={{ marginTop: 20 }}
-          />
-        </TouchableWithoutFeedback>
-        <Text style={styles.title}>Tin đã lưu</Text>
-        <TouchableWithoutFeedback>
-          <IonIcons
-            name="ellipsis-vertical-outline"
-            size={25}
-            color={Colors.DEFAULT_WHITE}
-            style={{ marginRight: 5, marginTop: 20 }}
-          />
-        </TouchableWithoutFeedback>
-      </View>
       <ScrollView>
         <View style={styles.mainContainer}>
           {posts && (
@@ -139,7 +126,6 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    marginTop: 20,
     fontSize: 19,
     fontWeight: 600,
     color: Colors.DEFAULT_WHITE,

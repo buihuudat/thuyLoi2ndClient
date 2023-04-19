@@ -64,18 +64,12 @@ export default function RegisterScreen() {
       setFnErrText("Bạn chưa nhập tên");
       err = true;
     }
-    if (firstname.length < 3) {
-      setFnErrText("Tên không hợp lệ");
-      err = true;
-    }
+
     if (!lastname) {
       setLnErrText("Bạn chưa nhập họ");
       err = true;
     }
-    if (lastname.length < 3) {
-      setLnErrText("Họ không hợp lệ");
-      err = true;
-    }
+
     if (!sex) {
       setSexErrText("Vui lòng chọn giới tính");
       err = true;
@@ -154,6 +148,7 @@ export default function RegisterScreen() {
           style={{
             marginLeft: "auto",
             marginRight: "auto",
+            resizeMode: "cover",
           }}
           alt="logo"
           source={Logo}

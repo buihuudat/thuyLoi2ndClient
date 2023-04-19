@@ -8,6 +8,8 @@ import moment from "moment";
 import { formatPriceToVnd } from "./formatPriceToVnd";
 import { useSelector } from "react-redux";
 import favouriteApi from "../api/favouriteApi";
+import { Logo } from "../assets";
+
 const CategoryDetailItem = ({ postproduct, navigate }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const user = useSelector((state) => state.user.data);
@@ -80,6 +82,7 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     height: 100,
+    resizeMode: "cover",
   },
   titlePostProduct: {
     flexDirection: "column",

@@ -19,7 +19,7 @@ const Item = ({ name, message, avatar }) => (
   <View style={styles.item}>
     <Image
       source={avatar ?? require("../assets/images/default-avatar-profile.jpg")}
-      style={{ width: 40, height: 40, borderRadius: 100 }}
+      style={{ width: 40, height: 40, borderRadius: 100, resizeMode: "cover" }}
     />
     <View>
       <Text style={styles.name}>{name}</Text>

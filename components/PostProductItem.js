@@ -6,6 +6,7 @@ import { formatPriceToVnd } from "./formatPriceToVnd";
 import moment from "moment";
 import favouriteApi from "../api/favouriteApi";
 import { useSelector } from "react-redux";
+import { Logo } from "../assets";
 
 const PostProductItem = ({ postproduct, navigate }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -76,6 +77,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 150,
+    resizeMode: "cover",
   },
   titlePostProduct: {
     flexDirection: "row",

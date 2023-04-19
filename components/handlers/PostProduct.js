@@ -23,6 +23,7 @@ import { useSelector } from "react-redux";
 import UploadImage from "../UploadImage";
 import productApi from "../../api/postProductApi";
 import imageUpload from "./ImageUpload";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function PostProduct({ bottomSheet }) {
   const [title, setTitle] = useState("");
@@ -65,10 +66,12 @@ export default function PostProduct({ bottomSheet }) {
   }, [city, provice]);
 
   const handlePostProduct = async () => {
+    setIsLoading(true);
+
     const rq = {
       user: {
         user_id: user._id,
-        phone: phone ?? user.phone,
+        phone: phone === "" ? user.phone : phone,
       },
       category: _.filter(dataCateGories, { title: data.filterCateGories })[0]
         ?.type,
@@ -94,18 +97,25 @@ export default function PostProduct({ bottomSheet }) {
       !rq.user.phone
     ) {
       Alert.alert("Lỗi", "Yêu cầu nhập đầu đủ các trường");
+      setIsLoading(false);
       return;
     }
     if (price < 1000) {
       Alert.alert("Lỗi", "Giá không hợp lệ");
+      setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
-
     try {
       await productApi.create(rq);
+      // socket.emit("send-post", "buihuudat@123");
       Alert.alert("Đăng thành công", "Bài đăng của bạn đang chờ được duyệt");
+      setData({});
+      setTitle("");
+      setDescription("");
+      setPrice("");
+      setPhone("");
+      setImages([]);
       bottomSheet.current.close();
     } catch (e) {
     } finally {
@@ -127,7 +137,7 @@ export default function PostProduct({ bottomSheet }) {
   return (
     <View style={styles.containerBS}>
       <BottomSheet ref={bottomSheet} height={800}>
-        <ScrollView style={styles.bottomSheetContainer}>
+        <View style={styles.bottomSheetContainer}>
           <View style={styles.headerBottomSheet}>
             <View>
               <TouchableOpacity style={styles.iconClose} onPress={handleClose}>
@@ -141,167 +151,173 @@ export default function PostProduct({ bottomSheet }) {
             </View>
             <View style={{ marginHorizontal: 20 }}></View>
           </View>
-          <ScrollView>
-            <View style={styles.selectDropdownContainer}>
-              <SelectDropdown
-                buttonStyle={{
-                  backgroundColor: Colors.DEFAULT_WHITE,
-                  width: "100%",
-                  height: "100%",
-                }}
-                buttonTextStyle={{
-                  textAlign: "left",
-                  marginHorizontal: 0,
-                  fontSize: 16,
-                }}
-                data={filterCateGories}
-                defaultButtonText={data.filterCateGories ?? "Chọn thể loại"}
-                onSelect={(selectedItem, index) => {
-                  setData({ ...data, filterCateGories: selectedItem });
-                  setKey(index);
-                }}
-                key={key}
-                renderDropdownIcon={(isOpened) => {
-                  return (
-                    <IonIcons
-                      name={isOpened ? "chevron-up" : "chevron-down"}
-                      color={"#444"}
-                      size={18}
-                    />
-                  );
-                }}
-              />
-            </View>
-            <UploadImage images={images} setImages={setImages} />
-            <TextInput
-              style={styles.input}
-              onChangeText={setTitle}
-              value={title}
-              placeholder="Tiêu đề"
-              placeholderTextColor={Colors.DEFAULT_BLACK}
-            />
-            <View style={styles.descriptionContainer}>
-              <AutoGrowingTextInput
-                maxHeight={200}
-                minHeight={70}
-                onChangeText={setDescription}
-                placeholder="Mô tả"
+          <KeyboardAwareScrollView>
+            <ScrollView>
+              <View style={styles.selectDropdownContainer}>
+                <SelectDropdown
+                  buttonStyle={{
+                    backgroundColor: Colors.DEFAULT_WHITE,
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  buttonTextStyle={{
+                    textAlign: "left",
+                    marginHorizontal: 0,
+                    fontSize: 16,
+                  }}
+                  data={filterCateGories}
+                  defaultButtonText={data.filterCateGories ?? "Chọn thể loại"}
+                  onSelect={(selectedItem, index) => {
+                    setData({ ...data, filterCateGories: selectedItem });
+                    setKey(index);
+                  }}
+                  key={key}
+                  renderDropdownIcon={(isOpened) => {
+                    return (
+                      <IonIcons
+                        name={isOpened ? "chevron-up" : "chevron-down"}
+                        color={"#444"}
+                        size={18}
+                      />
+                    );
+                  }}
+                />
+              </View>
+              <UploadImage images={images} setImages={setImages} />
+              <TextInput
+                style={styles.input}
+                onChangeText={setTitle}
+                value={title}
+                placeholder="Tiêu đề"
                 placeholderTextColor={Colors.DEFAULT_BLACK}
-                value={description}
-                style={styles.descriptionInput}
               />
-            </View>
-            <TextInput
-              style={styles.input}
-              onChangeText={setPrice}
-              value={price}
-              placeholder="Giá"
-              keyboardType="numeric"
-              placeholderTextColor={Colors.DEFAULT_BLACK}
-            />
-            <TextInput
-              style={styles.input}
-              onChangeText={setPhone}
-              value={phone}
-              placeholder="Số điện thoại liên hệ"
-              keyboardType="numeric"
-              placeholderTextColor={Colors.DEFAULT_BLACK}
-            />
-            <View style={styles.address}>
-              <View style={styles.selectDropdownCityContainer}>
-                <SelectDropdown
-                  buttonStyle={{
-                    backgroundColor: Colors.DEFAULT_WHITE,
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  buttonTextStyle={{
-                    textAlign: "left",
-                    marginHorizontal: 0,
-                    fontSize: 16,
-                  }}
-                  data={provice}
-                  defaultButtonText={nameCity ?? "Chọn Tỉnh/TP"}
-                  renderCustomizedRowChild={(item, index) => {
-                    return (
-                      <View style={styles.dropdown3RowChildStyle}>
-                        <Text style={styles.dropdown3RowTxt}>{item.name}</Text>
-                      </View>
-                    );
-                  }}
-                  buttonTextAfterSelection={(selectedItem, index) => {
-                    return selectedItem.name;
-                  }}
-                  onSelect={(selectedItem, index) => {
-                    setDistricts(selectedItem.districts);
-                    setCity(selectedItem.code);
-                  }}
-                  renderDropdownIcon={(isOpened) => {
-                    return (
-                      <IonIcons
-                        name={isOpened ? "chevron-up" : "chevron-down"}
-                        color={"#444"}
-                        size={18}
-                      />
-                    );
-                  }}
+              <View style={styles.descriptionContainer}>
+                <AutoGrowingTextInput
+                  maxHeight={200}
+                  minHeight={70}
+                  onChangeText={setDescription}
+                  placeholder="Mô tả"
+                  placeholderTextColor={Colors.DEFAULT_BLACK}
+                  value={description}
+                  style={styles.descriptionInput}
                 />
-                {/* {sexErrText !== "" && TextErrorInput(sexErrText)} */}
               </View>
-              <View style={styles.selectDropdownDistrictContainer}>
-                <SelectDropdown
-                  buttonStyle={{
-                    backgroundColor: Colors.DEFAULT_WHITE,
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  buttonTextStyle={{
-                    textAlign: "left",
-                    marginHorizontal: 0,
-                    fontSize: 16,
-                  }}
-                  data={districts}
-                  defaultButtonText={district}
-                  renderCustomizedRowChild={(item, index) => {
-                    return (
-                      <View style={styles.dropdown3RowChildStyle}>
-                        <Text style={styles.dropdown3RowTxt}>{item.name}</Text>
-                      </View>
-                    );
-                  }}
-                  buttonTextAfterSelection={(selectedItem, index) => {
-                    return selectedItem.name;
-                  }}
-                  onSelect={(selectedItem, index) => {
-                    setDistricts(selectedItem.name);
-                    setCity(selectedItem.code);
-                  }}
-                  rowTextForSelection={(item, index) => {
-                    return item.name;
-                  }}
-                  renderDropdownIcon={(isOpened) => {
-                    return (
-                      <IonIcons
-                        name={isOpened ? "chevron-up" : "chevron-down"}
-                        color={"#444"}
-                        size={18}
-                      />
-                    );
-                  }}
-                />
-                {/* {sexErrText !== "" && TextErrorInput(sexErrText)} */}
+              <TextInput
+                style={styles.input}
+                onChangeText={setPrice}
+                value={price}
+                placeholder="Giá"
+                keyboardType="numeric"
+                placeholderTextColor={Colors.DEFAULT_BLACK}
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={setPhone}
+                value={user?.phone ?? ""}
+                placeholder="Số điện thoại liên hệ"
+                keyboardType="numeric"
+                placeholderTextColor={Colors.DEFAULT_BLACK}
+              />
+              <View style={styles.address}>
+                <View style={styles.selectDropdownCityContainer}>
+                  <SelectDropdown
+                    buttonStyle={{
+                      backgroundColor: Colors.DEFAULT_WHITE,
+                      width: "100%",
+                      height: "100%",
+                    }}
+                    buttonTextStyle={{
+                      textAlign: "left",
+                      marginHorizontal: 0,
+                      fontSize: 16,
+                    }}
+                    data={provice}
+                    defaultButtonText={nameCity ?? "Chọn Tỉnh/TP"}
+                    renderCustomizedRowChild={(item, index) => {
+                      return (
+                        <View style={styles.dropdown3RowChildStyle}>
+                          <Text style={styles.dropdown3RowTxt}>
+                            {item.name}
+                          </Text>
+                        </View>
+                      );
+                    }}
+                    buttonTextAfterSelection={(selectedItem, index) => {
+                      return selectedItem.name;
+                    }}
+                    onSelect={(selectedItem, index) => {
+                      setDistricts(selectedItem.districts);
+                      setCity(selectedItem.code);
+                    }}
+                    renderDropdownIcon={(isOpened) => {
+                      return (
+                        <IonIcons
+                          name={isOpened ? "chevron-up" : "chevron-down"}
+                          color={"#444"}
+                          size={18}
+                        />
+                      );
+                    }}
+                  />
+                  {/* {sexErrText !== "" && TextErrorInput(sexErrText)} */}
+                </View>
+                <View style={styles.selectDropdownDistrictContainer}>
+                  <SelectDropdown
+                    buttonStyle={{
+                      backgroundColor: Colors.DEFAULT_WHITE,
+                      width: "100%",
+                      height: "100%",
+                    }}
+                    buttonTextStyle={{
+                      textAlign: "left",
+                      marginHorizontal: 0,
+                      fontSize: 16,
+                    }}
+                    data={districts}
+                    defaultButtonText={district}
+                    renderCustomizedRowChild={(item, index) => {
+                      return (
+                        <View style={styles.dropdown3RowChildStyle}>
+                          <Text style={styles.dropdown3RowTxt}>
+                            {item.name}
+                          </Text>
+                        </View>
+                      );
+                    }}
+                    buttonTextAfterSelection={(selectedItem, index) => {
+                      return selectedItem.name;
+                    }}
+                    onSelect={(selectedItem, index) => {
+                      setDistricts(selectedItem.name);
+                      setCity(selectedItem.code);
+                    }}
+                    rowTextForSelection={(item, index) => {
+                      return item.name;
+                    }}
+                    renderDropdownIcon={(isOpened) => {
+                      return (
+                        <IonIcons
+                          name={isOpened ? "chevron-up" : "chevron-down"}
+                          color={"#444"}
+                          size={18}
+                        />
+                      );
+                    }}
+                  />
+                  {/* {sexErrText !== "" && TextErrorInput(sexErrText)} */}
+                </View>
               </View>
-            </View>
 
-            <View style={styles.button}>
-              {isLoading ? (
-                <ActivityIndicator />
-              ) : (
-                <Button title="Đăng tin" onPress={handlePostProduct} />
-              )}
-            </View>
-          </ScrollView>
-        </ScrollView>
+              <View style={styles.button}>
+                {isLoading ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Button title="Đăng tin" onPress={handlePostProduct} />
+                )}
+              </View>
+            </ScrollView>
+          </KeyboardAwareScrollView>
+        </View>
       </BottomSheet>
     </View>
   );

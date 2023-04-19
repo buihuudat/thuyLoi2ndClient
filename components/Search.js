@@ -34,7 +34,7 @@ const Search = () => {
 
   const handleBack = useCallback(() => {
     navigate("HomeTab");
-    Keyboard.dismiss;
+    // Keyboard.dismiss;
   }, [navigate]);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const Search = () => {
         <Image
           title={item.title}
           source={{ uri: item.images[0].url }}
-          style={{ width: 60, height: 60 }}
+          style={{ width: 60, height: 60, resizeMode: "cover" }}
         />
         <View style={styles.itemContainer}>
           <Text style={styles.itemTitle}>{item?.title}</Text>

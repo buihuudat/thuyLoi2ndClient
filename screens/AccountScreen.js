@@ -5,50 +5,63 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  RefreshControl,
-  SafeAreaView,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Colors from "../assets/constants/Colors";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { Rating } from "react-native-elements";
+import { Header, Rating } from "react-native-elements";
 import { Divider } from "@rneui/themed";
 import TitleContainer from "../components/TitleContainer";
 import IconAndSubTitle from "../components/IconAndSubTitle";
-import TitleBar from "../components/TitleBar";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { setToken, setUser } from "../redux/features/userSlice";
+import { followApi } from "../api/followApi";
+import { io } from "socket.io-client";
+import { host } from "../api/axiosClient";
+
+const socket = io(host);
 
 const AccountScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const user = useSelector((state) => state?.user.data);
 
-  const logout = () => {
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+
+  useEffect(() => {
+    const getFollow = async () => {
+      try {
+        const followers = await followApi.followers({ _id: user._id });
+        const following = await followApi.following({ _id: user._id });
+        setFollowers(followers);
+        setFollowing(following);
+      } catch {}
+    };
+    getFollow();
+  }, []);
+
+  const logout = useCallback(() => {
+    socket.off("connect");
+    socket.disconnect();
+    navigate("SplashScreen");
     dispatch(setUser(null));
     dispatch(setToken(null));
-    navigate("SplashScreen");
-  };
+  }, [navigate]);
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <Header
+        centerComponent={{
+          text: "Tài khoản",
+          style: { color: Colors.DEFAULT_WHITE, fontSize: 20 },
+        }}
+        backgroundColor={Colors.DEFAULT_BLUE}
+      />
       <ScrollView>
-        <SafeAreaView
-          edges={["top"]}
-          style={{
-            flex: 1,
-            backgroundColor: Colors.DEFAULT_BLUE,
-          }}
-        />
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor={Colors.DEFAULT_BLUE}
-          translucent
-        />
-        <TitleBar title="Tài khoản" />
-
         <View style={styles.mainContainer}>
           <View style={styles.iconEditContainer}>
             <IonIcons name="build" size={12} style={styles.iconEdit} />
@@ -58,40 +71,38 @@ const AccountScreen = ({ navigation }) => {
             <Image
               style={styles.avatarProfile}
               source={
-                user.avatar === "" &&
-                require("../assets/images/default-avatar-profile.jpg")
+                user.avatar
+                  ? { uri: user?.avatar }
+                  : require("../assets/images/default-avatar-profile.jpg")
               }
             />
 
             <TouchableOpacity onPress={() => navigate("ProfileScreen")}>
               <View style={styles.infoAcountContainer}>
                 <Text style={styles.name}>{user.fullname}</Text>
-                <View style={styles.rating}>
+                {/* <View style={styles.rating}>
                   <Rating
-                    // showRating
                     onFinishRating={2}
-                    // style={{ paddingVertical: 10 }}
                     readonly={false}
                     size={10}
-                    // fractions={2}
                     imageSize={15}
                     defaultRating={2}
                     ratingCount={5}
                     isDisabled={false}
                     onSwipeRating={false}
                   />
-                </View>
+                </View> */}
 
                 <View style={styles.followContainer}>
                   <View style={styles.followContainerItem}>
                     <Text style={styles.numberFollow}>
-                      {user.follow.follower ?? 0}
+                      {followers.length ?? 0}
                     </Text>
                     <Text style={styles.userFollow}>Người theo dõi</Text>
                   </View>
                   <View style={styles.followContainerItem}>
                     <Text style={styles.numberFollow}>
-                      {user.follow.following ?? 0}
+                      {following.length ?? 0}
                     </Text>
                     <Text style={styles.userFollow}>Người đang theo dõi</Text>
                   </View>
@@ -171,14 +182,15 @@ const styles = StyleSheet.create({
   avatarProfile: {
     width: 65,
     height: 65,
-    objectFit: "fill",
     borderRadius: 100,
     marginRight: 1,
+    resizeMode: "cover",
   },
   contentContainer: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
+    gap: 10,
   },
   infoAcountContainer: {
     flexDirection: "column",

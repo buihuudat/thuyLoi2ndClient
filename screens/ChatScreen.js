@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  KeyboardAvoidingView,
   Modal,
   StatusBar,
   StyleSheet,
@@ -19,12 +20,14 @@ import { io } from "socket.io-client";
 import { useSelector } from "react-redux";
 import { FontAwesome5 } from "@expo/vector-icons";
 import UploadImage from "../components/UploadImage";
+import imageUpload from "../components/handlers/ImageUpload";
 
 const socket = io(host);
 
 function ChatScreen(props) {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSend, setIsSend] = useState(false);
   const [file, setFile] = useState("");
   const [images, setImages] = useState([]);
   const [selectShow, setSelectShow] = useState(false);
@@ -65,23 +68,16 @@ function ChatScreen(props) {
         setMessages(receivedMessages);
       } catch (error) {}
     });
-    // return () => {
-    //   // Huỷ đăng ký các sự kiện socket.io và hủy yêu cầu
-    //   socket.off("connect");
-    //   socket.off("msg-recieve");
-    //   socket.disconnect();
-    // };
   }, [messages]);
 
   async function sendMessage() {
     if (text.trim() === "" && !images) {
-      console.log(123);
       return;
     }
     const data = {
       message: {
         text: text,
-        images: images,
+        images: await imageUpload(images),
         file: file,
       },
       from: from,
@@ -127,7 +123,12 @@ function ChatScreen(props) {
       >
         {!item.fromSelf && (
           <Image
-            style={{ width: 30, height: 30, borderRadius: 100 }}
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 100,
+              resizeMode: "cover",
+            }}
             source={
               to?.avatar ??
               require("../assets/images/default-avatar-profile.jpg")
@@ -168,99 +169,112 @@ function ChatScreen(props) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={Colors.DEFAULT_BLUE}
-        translucent
-      />
-      <Header
-        leftComponent={{
-          icon: "arrow-left",
-          color: "#fff",
-          onPress: () => props.navigation.goBack(),
-        }}
-        centerComponent={{
-          text: to.fullname,
-          style: { color: "#fff", fontSize: 20 },
-        }}
-        backgroundColor={Colors.DEFAULT_BLUE}
-        style={{
-          alignItems: "center",
-        }}
-      />
-      {isLoading ? (
-        <ActivityIndicator size={"large"} color={Colors.DEFAULT_BLUE} />
-      ) : (
-        <FlatList
-          data={messages}
-          renderItem={renderItem}
-          keyExtractor={(item) => item._id}
-          inverted={true}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={{ flex: 1 }}>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor={Colors.DEFAULT_BLUE}
+          translucent={false}
         />
-      )}
+        <Header
+          leftComponent={{
+            icon: "arrow-left",
+            color: "#fff",
+            onPress: () => props.navigation.goBack(),
+          }}
+          centerComponent={{
+            text: to.fullname,
+            style: { color: "#fff", fontSize: 20 },
+          }}
+          backgroundColor={Colors.DEFAULT_BLUE}
+          style={{
+            alignItems: "center",
+          }}
+        />
 
-      {selectShow && (
-        <View style={{ marginTop: "auto" }}>
-          <UploadImage images={images} setImages={setImages} />
-        </View>
-      )}
-      <View
-        style={{
-          flexDirection: "row",
-          marginTop: "auto",
-          alignItems: "center",
-          gap: 5,
-        }}
-      >
-        <TextInput
+        {isLoading ? (
+          <ActivityIndicator size={"large"} color={Colors.DEFAULT_BLUE} />
+        ) : (
+          <FlatList
+            data={messages}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+            inverted={true}
+          />
+        )}
+
+        {selectShow && (
+          <View style={{ marginTop: "auto" }}>
+            <UploadImage images={images} setImages={setImages} />
+          </View>
+        )}
+        <View
           style={{
-            flex: 1,
-            height: 40,
-            margin: 5,
-            padding: 5,
-            borderRadius: 10,
-            backgroundColor: "#ddd",
+            flexDirection: "row",
+            marginTop: "auto",
+            alignItems: "center",
+            gap: 5,
           }}
-          placeholder="Nhập tin nhắn..."
-          value={text}
-          onChangeText={(text) => setText(text)}
-          autoFocus={true}
-          multiline={true}
-        />
-        <TouchableOpacity onPress={() => setSelectShow(!selectShow)}>
-          <FontAwesome5 name="images" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            height: 40,
-            width: 60,
-            backgroundColor: Colors.DEFAULT_BLUE,
-            margin: 5,
-            padding: 10,
-            borderRadius: 10,
-          }}
-          onPress={() => sendMessage()}
         >
-          <Text style={{ color: Colors.DEFAULT_WHITE, textAlign: "center" }}>
-            Gửi
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <Modal visible={modalVisible.type} transparent={true}>
-        <View style={styles.modalBackground}>
+          <TextInput
+            style={{
+              flex: 1,
+              // height: 40,
+              margin: 5,
+              padding: 5,
+              borderRadius: 10,
+              backgroundColor: "#ddd",
+              fontSize: 18,
+            }}
+            placeholder="Nhập tin nhắn..."
+            value={text}
+            onChangeText={(text) => setText(text)}
+            autoFocus={true}
+            multiline={true}
+          />
+          <TouchableOpacity onPress={() => setSelectShow(!selectShow)}>
+            <FontAwesome5 name="images" size={24} color="black" />
+          </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setModalVisible({ type: false, image: "" })}
+            style={{
+              height: 40,
+              width: 60,
+              backgroundColor: Colors.DEFAULT_BLUE,
+              margin: 5,
+              padding: 10,
+              borderRadius: 10,
+            }}
+            onPress={() => sendMessage()}
           >
-            <Image
-              source={{ uri: modalVisible.image }}
-              style={styles.modalImage}
-            />
+            {isSend ? (
+              <ActivityIndicator />
+            ) : (
+              <Text
+                style={{ color: Colors.DEFAULT_WHITE, textAlign: "center" }}
+              >
+                Gửi
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
-      </Modal>
-    </View>
+
+        <Modal visible={modalVisible.type} transparent={true}>
+          <View style={styles.modalBackground}>
+            <TouchableOpacity
+              onPress={() => setModalVisible({ type: false, image: "" })}
+            >
+              <Image
+                source={{ uri: modalVisible.image }}
+                style={styles.modalImage}
+              />
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 

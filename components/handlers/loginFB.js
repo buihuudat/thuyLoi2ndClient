@@ -16,7 +16,6 @@ export default function LoginScreen() {
           `https://graph.facebook.com/me?access_token=${token}`
         );
         const userData = await response.json();
-        console.log(userData);
       } else {
         console.log("Login cancelled");
       }

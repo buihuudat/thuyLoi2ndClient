@@ -89,6 +89,7 @@ export default function LoginScreen({}) {
           style={{
             marginLeft: "auto",
             marginRight: "auto",
+            resizeMode: "cover",
           }}
           alt="logo"
           source={Logo}

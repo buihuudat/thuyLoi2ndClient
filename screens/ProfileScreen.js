@@ -7,8 +7,10 @@ import {
   Button,
   ScrollView,
   ActivityIndicator,
+  Alert,
+  StatusBar,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Entypo } from "@expo/vector-icons";
 import Colors from "../assets/constants/Colors";
 import { useNavigation } from "@react-navigation/native";
@@ -18,10 +20,12 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import userApi from "../api/userApi";
 import { setUser } from "../redux/features/userSlice";
+import imageUpload from "../components/handlers/ImageUpload";
+import { Header } from "react-native-elements";
 
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
-import imageUpload from "../components/handlers/ImageUpload";
+import { followApi } from "../api/followApi";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
@@ -30,6 +34,9 @@ export default function ProfileScreen() {
 
   const [isDisable, setIsDisable] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
 
   const [msvErr, setMsvErr] = useState("");
   const [fullnameErr, setFullnameErr] = useState("");
@@ -44,12 +51,25 @@ export default function ProfileScreen() {
     phone: user.phone,
     password: user.password,
     address: user.address,
+    avatar: user.avatar,
   });
 
-  const handleBack = () => {
+  useEffect(() => {
+    const getFollow = async () => {
+      try {
+        const followers = await followApi.followers({ _id: user._id });
+        const following = await followApi.following({ _id: user._id });
+        setFollowers(followers);
+        setFollowing(following);
+      } catch {}
+    };
+    getFollow();
+  }, []);
+
+  const handleBack = useCallback(() => {
     navigation.navigate("HomeTab");
-  };
-  const handleUpdate = async () => {
+  }, [navigation]);
+  const handleUpdate = useCallback(async () => {
     setIsLoading(true);
     setMsvErr("");
     setFullnameErr("");
@@ -83,7 +103,7 @@ export default function ProfileScreen() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
   const handleChangeAvatar = async () => {
     let image = "";
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -94,36 +114,48 @@ export default function ProfileScreen() {
     });
 
     if (result?.assets && !result.assets[0].cancelled) {
+      setIsLoading(true);
       const rp = await FileSystem.readAsStringAsync(result?.assets[0]?.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
-      await imageUpload([{ url: `data:image/jpeg;base64,${rp}` }]).then(
-        (rs) => {
-          image = rs.url;
-        }
-      );
+      image = await imageUpload([{ url: `data:image/jpeg;base64,${rp}` }]);
     }
     try {
-      const user = await userApi.updateAvatar({
+      await userApi.updateAvatar({
         _id: user._id,
-        avatar: image,
+        avatar: image[0].url,
       });
-      dispatch(setUser(user));
-    } catch {}
+      Alert.alert("Hoàn tất", "Cập nhật ảnh đại diện thành công");
+      const rq = await userApi.get({ _id: user._id });
+      setData({ ...data, avatar: rq.avatar });
+      dispatch(setUser(rq));
+    } catch (e) {
+      Alert.alert("Lỗi", "Cập nhật ảnh thất bại, vui lòng thử lại sau");
+    } finally {
+      setIsLoading(false);
+    }
   };
-  const handleScroll = (event) => {
-    event.nativeEvent.contentOffset.y;
-  };
-  const handleSettings = () => {};
+
   return (
     <View>
-      {/* <SafeAreaView
-        edges={["top"]}
-        style={{
-          flex: 1,
-          backgroundColor: Colors.DEFAULT_BLUE,
+      <StatusBar barStyle={"light-content"} />
+      <Header
+        centerComponent={{
+          text: "Trang cá nhân",
+          style: { fontSize: 20, color: Colors.DEFAULT_WHITE },
         }}
-      /> */}
+        leftComponent={{
+          icon: "chevron-left",
+          color: Colors.DEFAULT_WHITE,
+          onPress: handleBack,
+        }}
+        rightComponent={{
+          icon: "edit",
+          color: Colors.DEFAULT_WHITE,
+          onPress: () => setIsDisable(!isDisable),
+        }}
+        backgroundColor={Colors.DEFAULT_BLUE}
+      />
       <View
         style={{
           display: "flex",
@@ -131,52 +163,18 @@ export default function ProfileScreen() {
           justifyContent: "center",
           width: "100%",
           height: "100%",
-          // marginTop: 25,
         }}
       >
         <View
           style={{
-            height: "40%",
             backgroundColor: Colors.DEFAULT_BLUE,
             borderBottomRightRadius: 20,
             borderBottomLeftRadius: 20,
             display: "flex",
             justifyContent: "center",
-            padding: 10,
+            padding: 50,
           }}
         >
-          {/* nav */}
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              zIndex: 100,
-              alignItems: "center",
-              justifyContent: "space-between",
-              // marginBottom: "auto",
-            }}
-          >
-            <TouchableOpacity onPress={handleBack}>
-              <Entypo
-                name="chevron-left"
-                size={28}
-                color={Colors.DEFAULT_GREY}
-              />
-            </TouchableOpacity>
-            <Text
-              style={{
-                textAlign: "center",
-                color: Colors.DEFAULT_WHITE,
-                fontSize: 20,
-                padding: 10,
-              }}
-            >
-              Trang cá nhân
-            </Text>
-            <TouchableOpacity onPress={handleSettings}>
-              <Feather name="settings" size={28} color={Colors.DEFAULT_GREY} />
-            </TouchableOpacity>
-          </View>
           {/* info */}
           <View
             style={{
@@ -196,13 +194,16 @@ export default function ProfileScreen() {
                   width: 120,
                   height: 120,
                   borderRadius: 100,
+                  resizeMode: "cover",
                 }}
                 source={
-                  user.avatar === "" &&
-                  require("../assets/images/default-avatar-profile.jpg")
+                  data.avatar
+                    ? { uri: data.avatar }
+                    : require("../assets/images/default-avatar-profile.jpg")
                 }
               />
             </TouchableOpacity>
+            {isLoading && <ActivityIndicator color={Colors.DEFAULT_WHITE} />}
             <Text
               style={{
                 color: "white",
@@ -222,14 +223,14 @@ export default function ProfileScreen() {
                 gap: 3,
               }}
             >
-              <Text style={{ color: "white", fontSize: 20 }}>
-                {user.follow.follower ?? 0}{" "}
-                <Text style={{ fontSize: 13 }}>Người theo dõi</Text>
+              <Text style={{ fontSize: 13, color: Colors.DEFAULT_WHITE }}>
+                <Text style={{ fontSize: 20 }}>{followers.length ?? 0}</Text>{" "}
+                Người theo dõi
               </Text>
               <Text style={{ color: "white", fontSize: 20 }}>|</Text>
-              <Text style={{ color: "white", fontSize: 20 }}>
-                <Text style={{ fontSize: 13 }}>Đang theo dõi </Text>
-                {user.follow.following ?? 0}{" "}
+              <Text style={{ fontSize: 13, color: Colors.DEFAULT_WHITE }}>
+                Đang theo dõi{" "}
+                <Text style={{ fontSize: 20 }}>{following.length ?? 0}</Text>
               </Text>
             </View>
           </View>
@@ -237,12 +238,9 @@ export default function ProfileScreen() {
         <ScrollView
           showsHorizontalScrollIndicator={true}
           showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
           style={{
             padding: 50,
-            // maxHeight: "60%",
-            overflow: "scroll",
-            height: 100,
+            height: "60%",
           }}
         >
           <View style={{ display: "flex", gap: 10 }}>
@@ -419,15 +417,6 @@ export default function ProfileScreen() {
             />
           </View>
           <View>
-            {isDisable && (
-              <Button
-                title="Chỉnh sửa thông tin"
-                style={{
-                  padding: 10,
-                }}
-                onPress={() => setIsDisable(false)}
-              />
-            )}
             {!isDisable &&
               (isLoading ? (
                 <ActivityIndicator size="large" color={Colors.DEFAULT_BLUE} />

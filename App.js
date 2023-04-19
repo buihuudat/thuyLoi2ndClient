@@ -16,6 +16,7 @@ import Search from "./components/Search";
 import ChatScreen from "./screens/ChatScreen";
 import { CardStyleInterpolators } from "@react-navigation/stack";
 import { TransitionSpecs } from "@react-navigation/stack";
+import SellerProfileScreen from "./screens/SellerProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -93,6 +94,7 @@ export default function App() {
             name="PostProductItemDetail"
             component={PostProductItemDetail}
           />
+          <Stack.Screen name="SellerScreen" component={SellerProfileScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

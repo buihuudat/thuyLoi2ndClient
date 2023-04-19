@@ -4,9 +4,8 @@ import {
   StyleSheet,
   Image,
   FlatList,
-  SafeAreaView,
-  RefreshControl,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import Colors from "../assets/constants/Colors";
 import React, { useCallback, useEffect, useState } from "react";
@@ -43,13 +42,15 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   // handle refresh
-  const _refresh = useCallback(async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
       const rs = await productApi.gets();
       setPosts(_.filter(rs, { status_check_post: "access" }));
-    } catch (e) {}
-    setRefreshing(false);
+    } catch (e) {
+    } finally {
+      setRefreshing(false);
+    }
   }, []);
 
   const handleViewProduct = useCallback(
@@ -63,31 +64,23 @@ const HomeScreen = ({ navigation }) => {
     (item) => {
       navigation.navigate("CategoryDetails", {
         posts: _.filter(posts, {
-          status_check_post: "access",
           category: item.type,
         }),
       });
     },
-    [navigate]
+    [posts]
   );
 
   return (
-    <>
-      {/* <SafeAreaView
-        edges={["top"]}
-        style={{
-          flex: 1,
-          backgroundColor: Colors.DEFAULT_BLUE,
-        }}
-      /> */}
-      <RefreshControl refreshing={refreshing} onRefresh={_refresh} />
-      <SafeAreaView style={styles.container}>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor={Colors.DEFAULT_BLUE}
-        />
+    <View style={{ flex: 1 }}>
+      <StatusBar barStyle="dark-content" />
+      <View style={styles.container}>
         <Navbar posts={posts} />
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           {/* banner */}
           <View style={{ flex: 1, width: "100%", height: 120 }}>
             <Swiper
@@ -168,8 +161,8 @@ const HomeScreen = ({ navigation }) => {
             )}
           </View>
         </ScrollView>
-      </SafeAreaView>
-    </>
+      </View>
+    </View>
   );
 };
 export default HomeScreen;
@@ -193,6 +186,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
+    resizeMode: "cover",
   },
   paginationStyle: {
     position: "absolute",

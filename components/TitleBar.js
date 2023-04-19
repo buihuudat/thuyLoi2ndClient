@@ -17,7 +17,6 @@ const styles = StyleSheet.create({
   backgroundCurvedContainer: {
     flexDirection: "row",
     backgroundColor: Colors.DEFAULT_BLUE,
-    height: 80,
     position: "relative",
     justifyContent: "center",
     alignItems: "center",

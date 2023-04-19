@@ -1,16 +1,23 @@
-import { View, Text, StatusBar, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StatusBar,
+  StyleSheet,
+  FlatList,
+  SafeAreaView,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import Colors from "../assets/constants/Colors";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { useWindowDimensions } from "react-native";
 import NoOrder from "../components/NoOrder";
-import TitleBar from "../components/TitleBar";
 import ShowAccessPost from "../components/postManager/ShowAccessPost";
 import ShowPendingPost from "../components/postManager/ShowPendingPost";
 import ShowRefusePost from "../components/postManager/ShowRefusePost";
 import productApi from "../api/postProductApi";
 import { useSelector } from "react-redux";
 import _ from "lodash";
+import { Header } from "react-native-elements";
 const renderTabBar = (props) => (
   <TabBar
     {...props}
@@ -35,57 +42,64 @@ const routes = [
   { key: "1", title: "Hiển thị" },
   { key: "2", title: "Chờ duyệt" },
   { key: "3", title: "Từ chối" },
-  { key: "4", title: "Tin nháp" },
 ];
 const PostManagerScreen = () => {
   // const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
-  const [accessPost, setAccessPost] = useState([]);
-  const [pendingPost, setPendingPost] = useState([]);
-  const [refusePost, setRefusePost] = useState([]);
+  const [posts, setPosts] = useState([]);
   const user = useSelector((state) => state.user.data);
 
   useEffect(() => {
     const getPosts = async () => {
       const rs = await productApi.userGet({ user_id: user._id });
-      setAccessPost(_.filter(rs, { status_check_post: "access" }));
-      setPendingPost(_.filter(rs, { status_check_post: "pending" }));
-      setRefusePost(_.filter(rs, { status_check_post: "refuse" }));
+      setPosts(rs);
     };
     getPosts();
   }, []);
 
-  const renderScene = SceneMap({
+  const filteredPosts = {
+    access: posts.filter((post) => post.status_check_post === "access"),
+    pending: posts.filter((post) => post.status_check_post === "pending"),
+    refuse: posts.filter((post) => post.status_check_post === "refuse"),
+  };
+
+  const sceneMap = {
     1:
-      accessPost.length > 0
-        ? () => <ShowAccessPost posts={accessPost} />
+      filteredPosts.access.length > 0
+        ? () => <ShowAccessPost posts={filteredPosts.access} />
         : NoOrder,
     2:
-      pendingPost.length > 0
-        ? () => <ShowPendingPost posts={pendingPost} />
+      filteredPosts.pending.length > 0
+        ? () => <ShowPendingPost posts={filteredPosts.pending} />
         : NoOrder,
     3:
-      refusePost.length > 0
-        ? () => <ShowRefusePost posts={refusePost} />
+      filteredPosts.refuse.length > 0
+        ? () => <ShowRefusePost posts={filteredPosts.refuse} />
         : NoOrder,
     4: NoOrder,
-  });
+  };
+
+  const renderScene = SceneMap(sceneMap);
   return (
     <View style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
+      <Header
         backgroundColor={Colors.DEFAULT_BLUE}
-        translucent
+        centerComponent={{
+          text: "Quản lý tin đăng",
+          style: {
+            textAlign: "center",
+            fontSize: 20,
+            fontWeight: 500,
+            color: "white",
+          },
+        }}
       />
-
-      <TitleBar title="Quản lý tin đăng" />
       <TabView
         renderTabBar={renderTabBar}
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}
-
-        // overScrollMode="auto"
+        overScrollMode="auto"
         // initialLayout={{ width: layout.width }}
       />
     </View>

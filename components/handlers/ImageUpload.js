@@ -5,7 +5,6 @@ const path = "https://api.cloudinary.com/v1_1/ddtagvynp/upload";
 const imageUpload = async (images) => {
   try {
     const uploadPromises = images.map(async (image) => {
-      console.log(image);
       const data = new FormData();
       data.append("file", image.url);
       data.append("upload_preset", "thuyloi2nd");
