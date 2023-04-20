@@ -72,18 +72,11 @@ const HomeScreen = ({ navigation }) => {
   );
 
   return (
-    <>
-      {/* <SafeAreaView
-        edges={["top"]}
-        style={{
-          flex: 1,
-          backgroundColor: Colors.DEFAULT_BLUE,
-        }}
-      /> */}
-      <RefreshControl refreshing={refreshing} onRefresh={_refresh} />
+   
       <SafeAreaView style={styles.container}>
+        {/* <RefreshControl refreshing={refreshing} onRefresh={_refresh} /> */}
         <StatusBar
-          barStyle="light-content"
+          barStyle="light-content"r
           backgroundColor={Colors.DEFAULT_BLUE}
         />
         <Navbar posts={posts} />
@@ -169,7 +162,7 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </ScrollView>
       </SafeAreaView>
-    </>
+  
   );
 };
 export default HomeScreen;

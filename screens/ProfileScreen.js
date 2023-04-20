@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import userApi from "../api/userAPI";
 import { setUser } from "../redux/features/userSlice";
 
 import * as ImagePicker from "expo-image-picker";
@@ -26,6 +27,7 @@ export default function ProfileScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.data);
+  console.log(user);
 
   const [isDisable, setIsDisable] = useState(true);
   const [isLoading, setIsLoading] = useState(false);

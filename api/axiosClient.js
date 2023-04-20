@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { io } from "socket.io-client";
 
-const IP = "192.168.1.10";
+const IP = "192.168.1.13";
 // const IP = "192.168.0.46";
 // const IP = "192.168.0.186";
 const PORT = 9000;
