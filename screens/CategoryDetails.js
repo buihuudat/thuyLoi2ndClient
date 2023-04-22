@@ -71,7 +71,7 @@ const CategoryDetails = ({ navigation, route }) => {
         </TouchableWithoutFeedback>
       </View>
       <ScrollView>
-        <View style={styles.filterContainer}>
+        {/* <View style={styles.filterContainer}>
           <View style={styles.filterAndIconContainer}>
             <IonIcons
               name="funnel-outline"
@@ -93,7 +93,7 @@ const CategoryDetails = ({ navigation, route }) => {
             <Text style={styles.filterTitle}>Giá</Text>
             <IonIcons name="add" size={23} color={Colors.DEFAULT_BLACK} />
           </View>
-        </View>
+        </View> */}
         <View style={styles.mainContainer}>
           {posts.length === 0 ? (
             <View>

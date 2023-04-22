@@ -137,21 +137,19 @@ const PostProductItemDetail = ({ navigation, route }) => {
             <Text style={styles.title}>{post.title}</Text>
             <View style={styles.priceAndIconFavoriteContainer}>
               <Text style={styles.price}>{formatPriceToVnd(post.price)}</Text>
-              {post.check_post_status === "access" && (
-                <TouchableOpacity
-                  onPress={handleAddFavourite}
-                  style={styles.iconAndContent}
-                >
-                  <Text>{!favourite ? "Lưu tin" : "Đã lưu"}</Text>
-                  <View style={styles.favoriteIcon}>
-                    <IonIcons
-                      name={!favourite ? "heart-outline" : "heart"}
-                      size={22}
-                      style={{ color: Colors.DEFAULT_RED, padding: 5 }}
-                    />
-                  </View>
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                onPress={handleAddFavourite}
+                style={styles.iconAndContent}
+              >
+                <Text>{!favourite ? "Lưu tin" : "Đã lưu"}</Text>
+                <View style={styles.favoriteIcon}>
+                  <IonIcons
+                    name={!favourite ? "heart-outline" : "heart"}
+                    size={22}
+                    style={{ color: Colors.DEFAULT_RED, padding: 5 }}
+                  />
+                </View>
+              </TouchableOpacity>
             </View>
             <View style={styles.timeContainer}>
               <IonIcons

@@ -8,7 +8,6 @@ import moment from "moment";
 import { formatPriceToVnd } from "./formatPriceToVnd";
 import { useSelector } from "react-redux";
 import favouriteApi from "../api/favouriteApi";
-import { Logo } from "../assets";
 
 const CategoryDetailItem = ({ postproduct, navigate }) => {
   const [isFavorite, setIsFavorite] = useState(false);
